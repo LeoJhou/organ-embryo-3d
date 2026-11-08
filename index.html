@@ -1,0 +1,1471 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>器官發育 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+TC:wght@600&display=swap">
+<style>
+/* Layout: 3D stage in the middle with the day scrubber under it; module notes on the left, 2D section on the right (stacked on phones). Module code lives in m1.js, m2.js… merged by tools/build.py. */
+:root {
+  --bg: #eef0ec; --panel: #f8f9f6; --stage: #e2e6e0; --ink: #1d2420; --mute: #56625b; --line: #d0d7d0;
+  --accent: #3d6fb0; --accent-ink: #ffffff; --chip: #e8ece6; --kg: #f3e3a6; --kg-ink: #5a4710; --warn: #a3541b;
+  --c-tr: #8a5cc4; --c-bc: #3d82c8; --c-pv: #c8453b; --c-pa: #e8923c; --c-sv: #3fa35c; /* 原始心管 5 段：動脈幹、心球、原始心室、原始心房、靜脈竇（一路帶到成人） */
+  --c-phf: #e7a196; --c-shf: #a48fd6; --c-endoc: #f0c84a; --c-jelly: #d7e6dc; --c-peri: #9fc7e8; --c-dm: #9a8f7c;
+  --c-gut: #d8c9a3; --c-ao: #b8383f; --c-vit: #c9962e; --c-umb: #2e9e8f; --c-card: #5f6fc0; --c-ref: #b9bfb8;
+  --f-display: "Noto Serif TC", "Songti TC", serif;
+  --f-body: -apple-system, "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC", sans-serif; /* 內文用系統字，省掉三個粗細的網路字型 */
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121614; --panel: #1a201c; --stage: #0e1210; --ink: #e3ebe5; --mute: #8fa096; --line: #2b352f;
+  --accent: #7aa6e6; --accent-ink: #0b1a2e; --chip: #222a25; --kg: #5a4a14; --kg-ink: #f6dd8a; --warn: #e0965a;
+  --c-tr: #a98ae6; --c-bc: #5f9fe0; --c-pv: #e0625a; --c-pa: #f2a65a; --c-sv: #5cc479;
+  --c-phf: #e8968a; --c-shf: #b3a0ea; --c-endoc: #f2d16b; --c-jelly: #3c4a42; --c-peri: #4f7896; --c-dm: #8c8676;
+  --c-gut: #b8a882; --c-ao: #e0626a; --c-vit: #e0b24a; --c-umb: #45c1b0; --c-card: #8293e6; --c-ref: #6c746e;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #121614; --panel: #1a201c; --stage: #0e1210; --ink: #e3ebe5; --mute: #8fa096; --line: #2b352f;
+  --accent: #7aa6e6; --accent-ink: #0b1a2e; --chip: #222a25; --kg: #5a4a14; --kg-ink: #f6dd8a; --warn: #e0965a;
+  --c-tr: #a98ae6; --c-bc: #5f9fe0; --c-pv: #e0625a; --c-pa: #f2a65a; --c-sv: #5cc479;
+  --c-phf: #e8968a; --c-shf: #b3a0ea; --c-endoc: #f2d16b; --c-jelly: #3c4a42; --c-peri: #4f7896; --c-dm: #8c8676;
+  --c-gut: #b8a882; --c-ao: #e0626a; --c-vit: #e0b24a; --c-umb: #45c1b0; --c-card: #8293e6; --c-ref: #6c746e;
+  color-scheme: dark; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.55 var(--f-body); overflow: hidden; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#app { height: 100%; display: grid; grid-template-rows: auto 1fr; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); background: var(--panel); }
+header h1 { font: 600 18px/1.2 var(--f-display); margin: 0; letter-spacing: .02em; }
+#mods { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { border: 1px solid var(--line); background: var(--chip); border-radius: 999px; padding: 2px 12px; font-size: 13px; cursor: pointer; }
+.tab[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tab:disabled { opacity: .55; cursor: default; }
+.tab small { font-size: 11px; opacity: .8; margin-left: 4px; }
+main { min-height: 0; display: grid; grid-template-columns: 300px minmax(0, 1fr) 360px; }
+aside { min-height: 0; overflow: auto; background: var(--panel); padding: 12px 14px; }
+#notes { border-right: 1px solid var(--line); }
+#bench { border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+#center { min-width: 0; min-height: 0; display: grid; grid-template-rows: 1fr auto; }
+#stage { position: relative; min-height: 0; background: var(--stage); overflow: hidden; }
+#stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+#labels { position: absolute; inset: 0; pointer-events: none; }
+#labs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+#labs > span { pointer-events: auto; cursor: pointer; position: absolute; transform: translate(-50%, -50%); font-size: 11.5px; line-height: 16px; padding: 0 4px; border-radius: 3px; white-space: nowrap; background: color-mix(in srgb, var(--panel) 82%, transparent); border-left: 3px solid var(--c); color: var(--ink); }
+#labs .kgN { font-size: 10px; padding: 0 3px; margin-left: 4px; }
+.tag3d { position: absolute; transform: translate(-50%, -100%); font-size: 12px; font-weight: 500; white-space: nowrap; padding: 1px 7px; border-radius: 4px; background: color-mix(in srgb, var(--panel) 88%, transparent); border: 1px solid var(--line); }
+.tag3d::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 10px; background: var(--mute); }
+.tag3d.hot { border-color: var(--warn); color: var(--warn); font-weight: 700; }
+.tag3d.flex { font-style: italic; font-weight: 400; color: var(--mute); border-style: dashed; }
+.tag3d.big { font-size: 13.5px; font-weight: 700; border-width: 2px; }
+#heatLg { position: absolute; left: 10px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11.5px; padding: 3px 8px; border-radius: 6px; background: color-mix(in srgb, var(--panel) 85%, transparent); color: var(--ink); pointer-events: none; }
+#heatLg[hidden] { display: none; }
+#heatLg i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+#views { position: absolute; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 3px 10px; font-size: 13px; cursor: pointer; }
+.btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn[data-toggle], .chip.tog { border-width: 2px; font-weight: 700; } /* 模組開關（腦室、透視核柱）：只加粗，不改顏色 */
+.btn[data-toggle] { padding: 2px 9px; }
+.chip.tog { padding: 1px 9px 1px 6px; }
+#scrub { padding: 10px 16px 12px; background: var(--panel); border-top: 1px solid var(--line); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center; }
+#dayBox { grid-row: span 2; display: flex; align-items: center; gap: 10px; }
+#play { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); font-size: 14px; cursor: pointer; }
+#dayNum { font: 600 22px/1 var(--f-display); font-variant-numeric: tabular-nums; min-width: 4.6em; }
+#dayNum small { display: block; font: 400 12px/1.4 var(--f-body); color: var(--mute); margin-top: 3px; }
+#day { width: 100%; accent-color: var(--accent); }
+#ticks { position: relative; height: 20px; font-size: 11px; color: var(--mute); }
+#ticks button { position: absolute; transform: translateX(-50%); border: 0; background: none; padding: 0 2px; font-size: 11px; color: var(--mute); cursor: pointer; white-space: nowrap; }
+#ticks button.on { color: var(--accent); font-weight: 700; }
+.lbl { font-size: 11px; letter-spacing: .08em; color: var(--mute); margin: 14px 0 6px; }
+.lbl:first-child { margin-top: 0; }
+#modTitle { font: 600 17px/1.3 var(--f-display); margin: 0 0 4px; }
+#modSub { color: var(--mute); font-size: 12.5px; margin: 0; }
+ol.ev { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; }
+ol.ev button { width: 100%; text-align: left; display: grid; grid-template-columns: 4.2em minmax(0, 1fr); gap: 6px; border: 0; border-radius: 6px; background: none; padding: 5px 6px; cursor: pointer; }
+ol.ev button:hover { background: var(--chip); }
+ol.ev button.on { background: var(--chip); box-shadow: inset 3px 0 0 var(--accent); }
+ol.ev .d { font-family: var(--f-mono); font-size: 12px; color: var(--mute); padding-top: 1px; }
+ol.ev .t { font-weight: 700; font-size: 13.5px; }
+ol.ev .s { display: block; font-weight: 400; color: var(--mute); font-size: 12.5px; }
+#legend { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--chip); border-radius: 999px; padding: 2px 10px 2px 7px; font-size: 12.5px; cursor: pointer; }
+.chip i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.chip[aria-pressed="false"] { opacity: .45; }
+.chip[aria-pressed="false"] i { background: transparent !important; outline: 1px solid var(--mute); }
+#card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); }
+#card h2 { font: 600 15px/1.3 var(--f-display); margin: 0 0 2px; }
+#card .en { color: var(--mute); font-size: 12.5px; margin-bottom: 2px; }
+#card .meta { font-size: 12px; color: var(--mute); margin-bottom: 6px; }
+#card p { margin: 0 0 6px; font-size: 13.5px; }
+#card ul { margin: 0; padding-left: 18px; font-size: 13px; }
+#card .trap { color: var(--warn); font-size: 12.5px; margin-top: 6px; }
+#card table.cmp { border-collapse: collapse; width: 100%; font-size: 12.5px; margin: 4px 0 6px; }
+#card .cmp th, #card .cmp td { border: 1px solid var(--line); padding: 3px 5px; text-align: left; vertical-align: top; }
+#card .cmp th { color: var(--mute); font-weight: 600; }
+#card .wide { overflow-x: auto; }
+#card.empty { color: var(--mute); font-size: 13px; }
+details.fold > summary { cursor: pointer; font-size: 13px; color: var(--accent); margin-top: 4px; }
+.kgN { font-size: 11px; background: var(--kg); color: var(--kg-ink); border-radius: 4px; padding: 0 5px; margin-left: 6px; font-weight: 700; white-space: nowrap; }
+.tag3d .kgN { font-size: 10px; padding: 0 3px; margin-left: 4px; font-style: normal; }
+.chip .kgN { font-size: 10.5px; margin-left: 0; }
+#findList .kgN { font-size: 10.5px; }
+#kgList { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+#kgList li > button { width: 100%; text-align: left; border: 0; background: none; padding: 3px 4px; border-radius: 5px; font-size: 12.5px; cursor: pointer; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; }
+#kgList li > button:hover { background: var(--chip); }
+#kgList .other { opacity: .62; }
+#kgList .kgMod { font-size: 11px; color: var(--mute); margin-right: 6px; }
+#kgList .id { font-family: var(--f-mono); font-size: 11.5px; color: var(--mute); }
+.q { font-size: 12.5px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; margin: 4px 0 6px; }
+.q ol { margin: 4px 0 0; padding-left: 0; list-style: none; }
+.q li.ok { color: var(--accent); font-weight: 700; }
+#secHead { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+#secWhere { margin-left: auto; }
+#secModes { display: inline-flex; }
+#secModes[hidden] { display: none; }
+#secModes .btn { padding: 1px 9px; font-size: 12.5px; border-radius: 0; }
+#secModes .btn:first-child { border-radius: 6px 0 0 6px; }
+#secModes .btn:last-child { border-radius: 0 6px 6px 0; margin-left: -1px; }
+#cut:disabled { opacity: .35; }
+#secHead h2 { font: 600 15px/1.3 var(--f-display); margin: 0; }
+#secWhere { font-size: 12px; color: var(--mute); }
+#card canvas.fig { width: 100%; display: block; box-sizing: border-box; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); margin: 6px 0 4px; }
+#sec { width: 100%; aspect-ratio: 720 / 460; max-width: 100%; box-sizing: border-box; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+#cut { width: 100%; margin-inline: 0; accent-color: var(--accent); }
+.row2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--mute); }
+.note { font-size: 12px; color: var(--mute); margin: 0; }
+#tools { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+/* 作者署名：桌面在最右；手機排到標題同一行的右邊 */
+#author { display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; line-height: 1.25; color: var(--ink); font-weight: 600; letter-spacing: .02em; white-space: nowrap; }
+#author small { font-size: 10.5px; font-weight: 400; color: var(--mute); }
+#findBox { position: relative; }
+#find { width: 13em; box-sizing: border-box; border: 1px solid var(--line); background: var(--bg); border-radius: 6px; padding: 3px 8px; font-size: 13px; }
+#findList { position: absolute; right: 0; top: calc(100% + 4px); z-index: 20; width: max-content; min-width: 100%; max-width: min(340px, calc(100vw - 32px)); max-height: 60vh; overflow: auto; margin: 0; padding: 4px; list-style: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 20px rgba(0, 0, 0, .18); }
+#findList[hidden] { display: none; }
+#findList button { width: 100%; text-align: left; border: 0; background: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; display: block; font-size: 13px; }
+#findList button:hover, #findList button.on { background: var(--chip); }
+#findList small { display: block; color: var(--mute); font-size: 11.5px; }
+#findList .none { padding: 4px 8px; color: var(--mute); font-size: 12.5px; }
+#tip { position: fixed; z-index: 30; pointer-events: none; font-size: 12.5px; padding: 2px 8px; border-radius: 4px; background: var(--ink); color: var(--bg); white-space: nowrap; }
+#tip[hidden], #views [hidden], #tools [hidden] { display: none; }
+dialog { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink); width: min(560px, calc(100vw - 32px)); box-sizing: border-box; max-height: 82vh; padding: 14px 18px 16px; }
+dialog::backdrop { background: rgba(0, 0, 0, .4); }
+dialog h2 { font: 600 16px/1.3 var(--f-display); margin: 0 0 8px; }
+dialog h3 { font-size: 13px; color: var(--mute); margin: 12px 0 4px; font-weight: 600; }
+dialog table { border-collapse: collapse; width: 100%; font-size: 13px; }
+dialog td { border-bottom: 1px solid var(--line); padding: 4px 6px; vertical-align: top; }
+dialog td:first-child { white-space: nowrap; width: 1%; }
+dialog ul { padding-left: 18px; margin: 0; font-size: 13px; }
+dialog li { margin-bottom: 3px; }
+dialog form { float: right; }
+kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--bg); }
+@media (max-width: 1100px) { main { grid-template-columns: 260px minmax(0, 1fr) 300px; } }
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  #app { height: auto; grid-template-rows: auto auto; }
+  main { display: flex; flex-direction: column; }
+  #center { order: 1; } #bench { order: 2; } #notes { order: 3; }
+  #stage { height: 56vh; min-height: 300px; }
+  aside { overflow: visible; border: 0 !important; border-top: 1px solid var(--line) !important; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  #scrub { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+}
+@media (max-width: 560px) { header h1 { order: -2; } #author { order: -1; margin-left: auto; } #tools { width: 100%; } #findBox { flex: 1; } #find { width: 100%; } }
+@media (max-width: 560px) { #scrub { grid-template-columns: minmax(0, 1fr); } #dayBox { grid-row: auto; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div id="app">
+  <header>
+    <h1>器官發育 3D</h1>
+    <nav id="mods" aria-label="模組"></nav>
+    <div id="tools">
+      <div id="findBox"><input id="find" type="search" placeholder="搜尋構造（/）" aria-label="搜尋構造" autocomplete="off" spellcheck="false"><ul id="findList" hidden></ul></div>
+      <button class="btn" id="shareBtn" title="複製目前畫面的連結">分享</button>
+      <button class="btn" id="srcBtn" title="資料來源">來源</button>
+      <button class="btn" id="helpBtn" aria-label="說明與快捷鍵" title="說明與快捷鍵（?）">?</button>
+    </div>
+    <div id="author"><small>作者</small>INMU_KING_2026</div>
+  </header>
+  <main>
+    <aside id="notes">
+      <div class="lbl">模組</div>
+      <h2 id="modTitle"></h2>
+      <p id="modSub"></p>
+      <div class="lbl" id="evLbl"></div>
+      <ol class="ev" id="events"></ol>
+      <div class="lbl" id="kgLbl"></div>
+      <ul id="kgList"></ul>
+    </aside>
+    <div id="center">
+      <div id="stage">
+        <div id="labs"></div>
+        <div id="views">
+          <span id="viewBtns" style="display:contents"></span>
+          <button class="btn" id="cut3d" aria-pressed="false" title="3D 也從切面位置切開（快捷鍵 C）">3D 切開</button>
+          <button class="btn" id="labBtn" aria-pressed="false" title="在模型上標出看得到的構造名稱（快捷鍵 N）">圖上名稱</button>
+          <button class="btn" id="kgBtn" aria-pressed="true" title="國考標記：圖例、搜尋、名稱標出考過幾題，卡片列出題目（快捷鍵 K）">國考</button>
+          <button class="btn" id="heatBtn" aria-pressed="false" title="模型與切面依考過題數上色（快捷鍵 G）">國考上色</button>
+          <button class="btn" id="tagBtn" aria-pressed="true" title="區域、地標的固定名稱（快捷鍵 L）">地標名稱</button>
+          <button class="btn" id="resetBtn" title="鏡頭、切面、開關、圖層回到預設，天數不變（快捷鍵 R）">回到預設</button>
+          <button class="btn" id="showAll" hidden title="把 H 隱藏的構造全部顯示"></button>
+        </div>
+        <div id="labels"></div>
+        <div id="heatLg" hidden><span><i style="background:#f7e7a6"></i>1 題</span><span><i style="background:#f3c977"></i>2 題</span><span><i style="background:#f0a54a"></i>3–4 題</span><span><i style="background:#c8331b"></i>5 題以上</span><span><i style="background:#9aa3a8"></i>沒考過</span></div>
+      </div>
+      <div id="scrub">
+        <div id="dayBox">
+          <button id="play" aria-label="播放">▶</button>
+          <div id="dayNum"></div>
+        </div>
+        <input id="day" type="range" step="0.05" aria-label="胚胎日數">
+        <div id="ticks"></div>
+      </div>
+    </div>
+    <aside id="bench">
+      <div id="secHead"><h2 id="secTitle"></h2><span id="secModes" role="group" aria-label="切面方向"></span><span id="secWhere"></span></div>
+      <canvas id="sec" width="720" height="460"></canvas>
+      <div class="row2"><span id="secL"></span><span id="secHint">拖曳改切面位置</span><span id="secR"></span></div>
+      <input id="cut" type="range" aria-label="切面位置">
+      <div class="lbl" id="legendLbl"></div>
+      <div id="legend"></div>
+      <div class="lbl">構造</div>
+      <div id="card" class="empty">點 3D 或下方切面上的構造看說明。</div>
+      <p class="note" id="note"></p>
+    </aside>
+  </main>
+</div>
+
+<div id="tip" hidden></div>
+<dialog id="helpDlg" aria-labelledby="helpH">
+  <form method="dialog"><button class="btn" aria-label="關閉">✕</button></form>
+  <h2 id="helpH">說明與快捷鍵</h2>
+  <h3>操作</h3>
+  <table>
+    <tr><td>旋轉／平移／縮放</td><td>拖曳 3D；右鍵拖曳或兩指拖曳平移；滾輪或捏合縮放</td></tr>
+    <tr><td>看構造說明</td><td>點 3D 或右欄切面上的構造；滑鼠停在構造上會顯示名稱</td></tr>
+    <tr><td>換天數</td><td>拖下方天數滑桿，或點左欄事件、滑桿下的刻度（事件會連切面一起跳）</td></tr>
+    <tr><td>換切面位置</td><td>拖右欄切面下方的滑桿</td></tr>
+    <tr><td>找構造</td><td>右上搜尋框，各模組一起找，中英文都可以</td></tr>
+    <tr><td><span class="kgN">國考 N</span></td><td>國考考過 N 題（圖例、搜尋結果、卡片標題；3D 上的圖上名稱與地標名稱寫成 <span class="kgN">考N</span>；題目在卡片的「國考題」摺疊）。按「國考」（K）關掉；「國考上色」（G）把模型與切面依題數上色，左下有色階</td></tr>
+    <tr><td>分享</td><td>網址會記住模組、天數、切面、開關與選取；按「分享」複製連結</td></tr>
+  </table>
+  <h3>快捷鍵</h3>
+  <table id="keyTbl"></table>
+</dialog>
+<dialog id="srcDlg" aria-labelledby="srcH">
+  <form method="dialog"><button class="btn" aria-label="關閉">✕</button></form>
+  <h2 id="srcH">資料來源</h2>
+  <ul>
+    <li><b>Langman's Medical Embryology</b>，15th ed.（為主；卡片標「Langman 15th」與圖號）。</li>
+    <li><b>Moore, The Developing Human: Clinically Oriented Embryology</b>，11th ed.（補充；標「Moore 11th p.XX」）。</li>
+    <li><b>國考題</b>：考選部醫師第一階段國家考試歷屆試題，題號寫成「年-次-題」。</li>
+    <li><b>2D 示意圖</b>：依上面書中的圖簡化重畫，不是原圖；圖上標了依據的圖號。</li>
+    <li><b>3D</b>：示意模型，形狀、大小與天數都是示意；用 <a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> 0.160（MIT）。</li>
+  </ul>
+  <p class="note" style="margin-top:8px">兩本書說法不同時並列，不另作取捨。</p>
+</dialog>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script>window.KG = [{"id": "112-2-醫學一-35", "stem": "胚胎第四週時，下列那一條血管不注入胎兒心臟？", "options": {"A": "卵黃囊靜脈（vitelline vein）", "B": "臍靜脈（umbilical vein）", "C": "總主靜脈（common cardinal vein）", "D": "子宮內膜靜脈（endometrial vein）"}, "answer": "D", "mod": "m1", "day": 26, "sel": "sv"}, {"id": "106-2-醫學一-35", "stem": "心臟傳導系統的蒲金氏纖維（Purkinje fibers）為下列何者特化而成？", "options": {"A": "心肌細胞（cardiac muscle cell）", "B": "神經細胞（nerve cell）", "C": "纖維母細胞（fibroblast）", "D": "內皮細胞（endothelial cell）"}, "answer": "A", "mod": "m1", "day": 22, "sel": "myo"}];</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+/* ---------- 共用工具（各模組共用） ---------- */
+const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const THEMED = [];   // 跟著主題換色的材質
+function mat(cssVar, extra = {}) {
+  const m = new THREE.MeshStandardMaterial({ color: css(cssVar), roughness: .62, metalness: 0, side: THREE.DoubleSide, ...extra });
+  m.userData.css = cssVar; THEMED.push(m); return m;
+}
+function themed(m, cssVar) { m.color.set(css(cssVar)); m.userData.css = cssVar; THEMED.push(m); return m; }
+const std = (o = {}) => new THREE.MeshStandardMaterial({ roughness: .6, metalness: 0, side: THREE.DoubleSide, ...o });
+// 依 css 變數快取的材質；bank.all 是全部建過的
+function matBank(extra) { const B = {}, get = (v) => B[v] || (B[v] = mat(v, extra)); get.all = B; return get; }
+// 頂點色用的顏色（css 變數 → THREE.Color），換主題時更新；themeGen 每換一次 +1，模組快取的幾何靠它判斷要不要重算
+// heatVar：國考上色時 css 變數 → 熱度色（管壁的頂點色用；變數名就是構造 id，例如 --c-dien → dien）；沒上色時 null
+const COLOR = {}; let themeGen = 0, heatVar = null;
+const colOf = (v) => COLOR[v] || (COLOR[v] = new THREE.Color(heatVar ? heatVar(v) : css(v)));
+// 一圈一圈接成管子的網格（n 圈 × 每圈 nr 點，頂點之後再填）；flip 反轉面的方向
+function ringGeometry(n, nr, colors, flip) {
+  const g = new THREE.BufferGeometry(), idx = [];
+  g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * nr * 3), 3));
+  if (colors) g.setAttribute("color", new THREE.BufferAttribute(new Float32Array(n * nr * 3), 3));
+  for (let i = 0; i < n - 1; i++) for (let k = 0; k < nr; k++) {
+    const a = i * nr + k, b = i * nr + (k + 1) % nr, c = (i + 1) * nr + k, d = (i + 1) * nr + (k + 1) % nr;
+    if (flip) idx.push(a, c, b, b, c, d); else idx.push(a, b, c, b, d, c);
+  }
+  g.setIndex(idx); return g;
+}
+// 切面標示框：半透明面＋邊線，跟著主題換色
+function planeFrame(op, edgeOp) {
+  return [new THREE.Mesh(new THREE.PlaneGeometry(1, 1), themed(new THREE.MeshBasicMaterial({ transparent: true, opacity: op, side: THREE.DoubleSide, depthWrite: false }), "--accent")),
+    new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(1, 1)), themed(new THREE.LineBasicMaterial({ transparent: true, opacity: edgeOp }), "--accent"))];
+}
+function ellipse(cx, cy, rx, ry, n) { const o = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; o.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a)]); } return o; }
+const area = (P) => { let a = 0; for (let i = 0; i < P.length; i++) { const p = P[i], q = P[(i + 1) % P.length]; a += p[0] * q[1] - q[0] * p[1]; } return a / 2; };
+function clearGroup(g) { for (const m of g.children) { m.geometry.dispose(); m.material.dispose?.(); } g.clear(); }
+// 切面多邊形 → 3D 切口的面；to3(x, y) → [x, y, z]
+function capGeometry(P, to3) {
+  if (P.length < 3 || Math.abs(area(P)) < 1e-5) return null;
+  const pts = P.map(([x, y]) => new THREE.Vector2(x, y));
+  let tri; try { tri = THREE.ShapeUtils.triangulateShape(pts, []); } catch (e) { return null; }
+  if (!tri.length) return null;
+  const pos = new Float32Array(pts.length * 3); pts.forEach((p, i) => pos.set(to3(p.x, p.y), i * 3));
+  const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(pos, 3)); g.setIndex(tri.flat()); g.computeVertexNormals();
+  return g;
+}
+function capMesh(g, baseMat, struct) {
+  const m = baseMat.clone(); m.clippingPlanes = []; m.transparent = false; m.opacity = 1; m.depthWrite = true; m.vertexColors = false; m.side = THREE.DoubleSide;
+  m.emissive = new THREE.Color(baseMat.color).multiplyScalar(.25);
+  const mesh = new THREE.Mesh(g, m); mesh.userData = { struct }; return mesh;
+}
+// 2D 切面：填色（pts 為像素座標）
+function fillPoly(ctx, pts, color, struct) {
+  if (pts.length < 3) return;
+  if (heatVar && struct && mod.struct[struct]) color = heatHex(kgOf(mod, struct));
+  ctx.beginPath(); pts.forEach((q, i) => (i ? ctx.lineTo(...q) : ctx.moveTo(...q))); ctx.closePath();
+  ctx.fillStyle = color; ctx.fill();
+  ctx.lineWidth = 1; ctx.strokeStyle = "rgba(0,0,0,.25)"; ctx.stroke();
+  if (state.sel === struct) { ctx.lineWidth = 2.5; ctx.strokeStyle = css("--warn"); ctx.stroke(); }
+}
+// 2D 切面：左右兩欄引線標籤；labs = [[文字, [px, py], "L"|"R", 構造]]
+let leaderHits = []; // 2D 切面上的名稱也可點：[struct, 外框多邊形]
+function drawLeaders(ctx, labs, W, H, dpr) {
+  const ink = css("--ink"), mute = css("--mute");
+  ctx.font = `500 ${Math.round(12.5 * dpr)}px ${css("--f-body")}`; ctx.lineJoin = "round"; ctx.textBaseline = "middle";
+  for (const side of ["L", "R"]) {
+    const g = labs.filter((l) => l[2] === side).map((l) => ({ l, q: l[1] })).sort((a, b) => a.q[1] - b.q[1]);
+    const gapY = 15 * dpr; let lastY = -1e9;
+    for (const it of g) { it.y = Math.max(it.q[1], lastY + gapY); lastY = it.y; }
+    const over = lastY - (H - 12); if (over > 0) for (const it of g) it.y -= over;
+    for (const it of g) {
+      const x = side === "L" ? 6 * dpr : W - 6 * dpr;
+      ctx.strokeStyle = mute; ctx.lineWidth = dpr; ctx.beginPath(); ctx.moveTo(...it.q);
+      const tx = side === "L" ? x + ctx.measureText(it.l[0]).width + 4 * dpr : x - ctx.measureText(it.l[0]).width - 4 * dpr;
+      ctx.lineTo(tx, it.y); ctx.stroke();
+      ctx.beginPath(); ctx.arc(it.q[0], it.q[1], 2 * dpr, 0, Math.PI * 2); ctx.fillStyle = mute; ctx.fill();
+      ctx.textAlign = side === "L" ? "left" : "right";
+      if (it.l[3]) { const w = ctx.measureText(it.l[0]).width, x0 = side === "L" ? x - 2 * dpr : x - w - 2 * dpr, h = 8 * dpr; leaderHits.push([it.l[3], [[x0, it.y - h], [x0 + w + 4 * dpr, it.y - h], [x0 + w + 4 * dpr, it.y + h], [x0, it.y + h]]]); }
+      ctx.strokeStyle = css("--bg"); ctx.lineWidth = 3.5 * dpr; ctx.strokeText(it.l[0], x, it.y);
+      ctx.fillStyle = state.sel === it.l[3] ? css("--warn") : ink; ctx.fillText(it.l[0], x, it.y);
+    }
+  }
+}
+function dirText(ctx, W, H, dpr, top, bottom) {
+  ctx.fillStyle = css("--mute"); ctx.font = `400 ${Math.round(11 * dpr)}px ${css("--f-body")}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  if (top) ctx.fillText(top, W / 2, 9 * dpr);
+  if (bottom) ctx.fillText(bottom, W / 2, H - 8 * dpr);
+}
+
+/* ---------- three.js ---------- */
+const stage = document.getElementById("stage");
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+const PR = Math.min(2, devicePixelRatio), TOUCH = matchMedia("(pointer: coarse)").matches;
+renderer.setPixelRatio(PR);
+// 手機、平板播放時每幀都重算幾何，像素比先降到 1.5，停下再回來
+function setPlayPR(playing) { const r = TOUCH && playing ? Math.min(PR, 1.5) : PR; if (renderer.getPixelRatio() !== r) { renderer.setPixelRatio(r); resize(); } }
+renderer.localClippingEnabled = true;
+stage.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(36, 1, .05, 200);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = .12;
+// 捏合縮放（同神解模型）：觸控捏合預設跟手指距離 1:1，要捏很多次才拉得近 → 觸控時把指數調高，滑鼠滾輪維持原本一步。
+const PINCH_GAIN = 2.6;
+stage.addEventListener("pointerdown", (e) => { controls.zoomSpeed = e.pointerType === "touch" ? PINCH_GAIN : 1; }, true);
+// 觸控板捏合是 ctrl+wheel；OrbitControls 每個事件固定縮 5%，不管手指動多少 → 改照實際 deltaY 縮放。
+stage.addEventListener("wheel", (e) => {
+  if (!e.ctrlKey) return;
+  e.preventDefault(); e.stopPropagation(); fly = null;
+  const off = camera.position.clone().sub(controls.target);
+  const d = THREE.MathUtils.clamp(off.length() * Math.exp(e.deltaY * .025), controls.minDistance, controls.maxDistance);
+  camera.position.copy(controls.target).add(off.setLength(d)); needsRender = true;
+}, { capture: true, passive: false });
+function setZoomLimits() { // 各模組的縮放範圍：最近＝各視角原始距離最小值的 0.3 倍，最遠＝切過去時距離（窄畫面會拉遠）的 3 倍，不超過 far
+  const ds = mod.views.map((V) => { const v = V.v(); return Math.hypot(...v.p.map((x, i) => x - v.t[i])); });
+  const d = camera.position.distanceTo(controls.target);
+  controls.minDistance = Math.min(d, ...ds) * .3; controls.maxDistance = Math.min(Math.max(d, ...ds) * 3, camera.far * .7);
+}
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a80, 1.6));
+const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(3, 8, -4); scene.add(key);
+const fill = new THREE.DirectionalLight(0xffffff, .5); fill.position.set(-4, 2, 6); scene.add(fill);
+
+/* ---------- 狀態 ---------- */
+const state = { mod: "m1", day: 22, cut3d: false, tags: true, labs: true, kg: true, heat: false, sel: null, playing: false };
+try { const s = JSON.parse(localStorage.getItem("heartembryo.ui") || "{}"); if (typeof s.tags === "boolean") state.tags = s.tags; if (typeof s.labs === "boolean") state.labs = s.labs; if (typeof s.kg === "boolean") state.kg = s.kg; if (typeof s.mod === "string") state.mod = s.mod; } catch (e) {}
+const saveUi = () => { try { localStorage.setItem("heartembryo.ui", JSON.stringify({ tags: state.tags, labs: state.labs, kg: state.kg, mod: state.mod })); } catch (e) {} };
+
+/* ===== 模組 1：心管的形成與彎曲（第 17–28 天；Langman 15th 為主、Moore 11th 補充） ===== */
+const M1 = (() => {
+const V3 = THREE.Vector3;
+/* 心管材料座標 m：-1 靜脈端 → 1.5 動脈端；5 段的範圍與半徑（示意比例） */
+const SEGS = [
+  { id: "sv", a: -1, b: -.6, r: .2 },
+  { id: "pa", a: -.6, b: -.05, r: .25 },
+  { id: "pv", a: -.05, b: .5, r: .36 },
+  { id: "bc", a: .5, b: 1.05, r: .28 },
+  { id: "tr", a: 1.05, b: 1.5, r: .2 },
+];
+const SEGN = { sv: "靜脈竇", pa: "原始心房", pv: "原始心室", bc: "心球", tr: "動脈幹" };
+const segOf = (m) => (SEGS.find((s) => m < s.b) || SEGS[4]).id;
+const segAt = (m, t) => (t < 21.5 && m <= .52 ? "phf" : segOf(m));
+const mOfCut = (c) => lerp(-1, 1.5, c);
+// 看得到的範圍：第 21.5 天起動脈端（心球、動脈幹）與靜脈端（靜脈竇）陸續加入
+const mMin = (t) => lerp(-.6, -1, sm(21.5, 24, t));
+const mMax = (t) => lerp(.5, 1.5, sm(21.5, 25, t));
+
+// cut：點事件時切面跳到的位置（0 靜脈端、1 動脈端）：一般切原始心室；第 24 天切靜脈竇看兩角
+const EVENTS = [
+  { d: 17, cut: .5, t: "心區", s: "臟壁中胚層的心臟前驅細胞在胚盤頭端排成馬蹄形，這是初級心區（Langman 15th Fig. 13.1、13.5）。" },
+  { d: 18, cut: .5, t: "心內膜管與次級心區", s: "血管生成細胞聚成左右兩條心內膜管，外圍是心肌前驅細胞。次級心區在初級心區內側，之後加入心管的動脈端（Langman 15th Fig. 13.2、13.5）。" },
+  { d: 21, cut: .5, t: "開始跳動", s: "Langman：約第 21 天；Moore 11th p.59、263：約第 22 天。" },
+  { d: 22, cut: .55, t: "單一心管", s: "左右兩管由頭往尾融合成一條，尾端（心房）還分開。內層心內膜、外層心肌，中間夾心膠質；背側心繫膜把心管吊在心包腔背壁。第一對主動脈弓接到背主動脈（Langman 15th Fig. 13.5、13.7A）。" },
+  { d: 23, cut: .5, t: "開始彎曲", s: "頭端（心球）往腹側、尾側、右側彎；心房端往背側、頭側、左側移（Langman 15th Fig. 13.7）。Moore 11th p.268–269 稱 D-loop。" },
+  { d: 24, cut: .1, t: "靜脈竇", s: "靜脈竇左右兩角各收三條靜脈：卵黃靜脈、臍靜脈、總主靜脈（Langman 15th Fig. 13.11A；112-2 國考）。" },
+  { d: 28, cut: .5, t: "彎曲完成", s: "第 23–28 天完成彎曲：原始心房成共同心房、移到背側頭側；心球在右、原始心室在左（Langman 15th Fig. 13.8）。接下來是分隔（模組 2）。" },
+];
+
+const SRC_T = `<p class="src">胚胎段 → 成人構造：Langman 15th 第 13 章；靜脈竇左角另見 Moore 11th p.279。</p>`;
+const SEG_TABLE = `<details class="fold"><summary>心管 5 段 → 成人構造</summary><table class="cmp"><tr><th>胚胎段</th><th>成人構造</th></tr>`
+  + `<tr><th>動脈幹 truncus arteriosus</th><td>升主動脈與肺動脈幹的根部與近端</td></tr>`
+  + `<tr><th>心球中段 conus cordis</th><td>兩心室的流出道</td></tr>`
+  + `<tr><th>心球近端 1/3</th><td>右心室小樑部</td></tr>`
+  + `<tr><th>原始心室</th><td>左心室小樑部</td></tr>`
+  + `<tr><th>原始心房</th><td>左右心耳（小樑化、有梳狀肌）</td></tr>`
+  + `<tr><th>靜脈竇右角</th><td>右心房平滑部 sinus venarum</td></tr>`
+  + `<tr><th>靜脈竇左角</th><td>冠狀竇、左心房斜靜脈</td></tr></table>${SRC_T}</details>`;
+const fn = (v) => (typeof v === "function" ? v : () => v);
+
+const STRUCT = {
+  phf: { name: "初級心區", en: "first heart field (FHF)", meta: "臟壁中胚層",
+    body: `<p>第 3 週，臟壁中胚層的心臟前驅細胞在胚盤頭端、口咽膜頭側排成馬蹄形。初級心區形成部分心房與整個左心室（Langman 15th Fig. 13.1）。</p><p>其中的血管生成細胞聚成左右兩條<b>心內膜管</b>，外圍的細胞成為心肌（Langman 15th Fig. 13.5）。胚體頭摺與側摺後，兩管移到胸部、在中線融合。</p>` },
+  shf: { name: "次級心區", en: "second heart field (SHF)", meta: "咽部背側的臟壁中胚層",
+    body: `<p>位在初級心區內側，比初級心區晚一步加入心管，接在動脈端，形成<b>右心室與流出道</b>（圓錐、動脈幹）（Langman 15th Fig. 13.2）。Moore 11th p.268：心肌細胞持續從背壁中胚層加入心管。</p><p>背側心繫膜也來自次級心區。</p>`,
+    trap: `流出道沒能正常延長，和 DORV、VSD、TOF 等流出道缺損有關（Langman 15th 第 13 章）。` },
+  tr: { name: "動脈幹", en: "truncus arteriosus", meta: "心球遠端・動脈端",
+    body: `<p>心管最頭端，血從這裡出心臟，經主動脈弓進背主動脈。</p><p>成人：<b>升主動脈與肺動脈幹的根部與近端</b>。之後由螺旋走向的動脈幹嵴分隔成兩條（模組 2）。</p>`,
+    trap: `兩書都把動脈幹算在心球裡：Langman 分近端 1/3、中段 conus cordis、遠端 truncus arteriosus；Moore 11th p.268 列 truncus arteriosus、conus arteriosus、conus cordis。模型為了配色把它分開畫。`,
+    more: SEG_TABLE },
+  bc: { name: "心球", en: "bulbus cordis", meta: "動脈端（次級心區）",
+    body: `<p>Langman 15th 第 13 章把心球分三段：</p><ul><li><b>近端 1/3</b> → 右心室小樑部</li><li><b>中段 conus cordis</b> → 兩心室的流出道</li><li><b>遠端 truncus arteriosus</b> → 主動脈與肺動脈的根部與近端（另見動脈幹）</li></ul><p>彎曲後心球移到右側；心球與原始心室交界外面的凹溝是 bulboventricular sulcus，裡面的狹窄處就是原始室間孔。</p>`,
+    trap: `右心室小樑部來自心球，不是原始心室。`, more: SEG_TABLE },
+  pv: { name: "原始心室", en: "primitive ventricle", meta: "初級心區",
+    body: `<p>心管最粗的一段，彎曲時往腹側、尾側移，最後落在左側。成人：<b>左心室小樑部</b>（Langman 15th 第 13 章；初級心區形成整個左心室，Fig. 13.1）。</p><p>往頭側經原始室間孔接心球；往尾側經房室管接原始心房，房室管之後由心內膜墊分隔（模組 2）。</p>`,
+    trap: `原始心室 → 左心室；右心室小樑部來自心球近端。`, more: SEG_TABLE },
+  pa: { name: "原始心房", en: "primitive atrium", meta: "初級心區",
+    body: `<p>一開始左右分開，第 4 週融合成共同心房；彎曲時往背側、頭側、左側移，最後位在心球與原始心室的背側頭側（Langman 15th Fig. 13.7、13.8）。</p><p>成人（Langman 15th 第 13 章）：</p><ul><li>原始右心房 → 小樑化的右心耳，有梳狀肌</li><li>原始左心房 → 只剩小樑化的左心耳；平滑壁來自肺靜脈併入</li></ul>`,
+    trap: `右心房的平滑部（sinus venarum）來自靜脈竇右角，不是原始心房（Langman 15th Fig. 13.18A）。`, more: SEG_TABLE },
+  sv: { name: "靜脈竇", en: "sinus venosus", meta: "靜脈端・第 4 週",
+    body: `<p>心管最尾端，左右兩角各收三條靜脈（Langman 15th Fig. 13.11A）：</p><ul><li><b>卵黃靜脈</b>（vitelline／omphalomesenteric vein）：卵黃囊</li><li><b>臍靜脈</b>（umbilical vein）：胎盤</li><li><b>總主靜脈</b>（common cardinal vein）：胚體</li></ul><p>之後血流轉往右側，左角萎縮（模組 4）：</p><ul><li>右角 → 併入右心房，成為平滑的 sinus venarum（Langman 15th Fig. 13.18A）</li><li>左角 → 左總主靜脈第 10 週閉鎖後，只剩<b>冠狀竇</b>與<b>左心房斜靜脈</b>（Langman 15th 第 13 章；Moore 11th p.279）</li></ul>`,
+    trap: `112-2-35：第 4 週注入胎兒心臟的是卵黃、臍、總主三對靜脈；子宮內膜靜脈是母體的，不注入胎兒心臟。`,
+    kg: ["112-2-醫學一-35"], more: SEG_TABLE },
+  myo: { name: "心肌層", en: "myocardium", meta: "心管外層・臟壁中胚層",
+    body: `<p>心管外層，由心區的臟壁中胚層而來（Langman 15th Fig. 13.5）。</p><ul><li>開始跳動：Langman 約第 21 天；Moore 11th p.59、263 約第 22 天</li><li>傳導系統（包括 Purkinje 纖維）由心肌細胞特化而來（Langman 15th 第 13 章）</li></ul>` },
+  jelly: { name: "心膠質", en: "cardiac jelly", meta: "心肌與心內膜之間",
+    body: `<p>心肌層與心內膜之間的一層厚細胞外基質（Langman 15th Fig. 13.5）。之後在房室管與流出道局部隆起，成為心內膜墊（模組 2）。</p>` },
+  endoc: { name: "心內膜", en: "endocardium", meta: "心管內層",
+    body: `<p>由左右兩條心內膜管融合而來，成為心管的內皮（Langman 15th Fig. 13.5）。按「3D 切開」可以看到心管裡面這一層。</p>` },
+  dm: { name: "背側心繫膜", en: "dorsal mesocardium", meta: "次級心區",
+    body: `<p>把心管吊在心包腔背壁的一層組織，來自次級心區。之後中央斷開消失，留下的通道就是<b>心包橫竇</b>（transverse pericardial sinus）（Langman 15th 第 13 章）。</p>` },
+  peri: { name: "心包腔", en: "pericardial cavity", meta: "胚內體腔頭端",
+    body: `<p>胚內體腔的頭端部分，心管從背壁凸進來。</p><p>心管表面的<b>心外膜</b>（epicardium）來自 proepicardial organ 的間皮細胞（Langman 15th 第 13 章）。</p>` },
+  gut: { name: "前腸", en: "foregut", meta: "參考構造（內胚層）",
+    body: `<p>胚體頭摺之後，心臟位在前腸腹側、口咽膜尾側（Moore 11th p.268，Fig. 13.9）。模型沒畫胚體摺疊，只把前腸畫在心管背側當方向參考。</p>` },
+  ao: { name: "背主動脈與第一主動脈弓", en: "dorsal aorta／1st aortic arch", meta: "參考構造",
+    body: `<p>第 4 週，動脈幹出來的血經第一對主動脈弓繞過前腸兩側，進入左右背主動脈（Langman 15th Fig. 13.7）。</p><p>主動脈弓之後依序出現，衍生物在模組 3。</p>` },
+  vit: { name: "卵黃靜脈", en: "vitelline (omphalomesenteric) vein", meta: "注入靜脈竇・第 4 週",
+    body: `<p>把卵黃囊的血帶回靜脈竇（Langman 15th Fig. 13.11A）。之後參與肝內血管與門脈系統（模組 4）。</p>`, kg: ["112-2-醫學一-35"] },
+  umb: { name: "臍靜脈", en: "umbilical vein", meta: "注入靜脈竇・第 4 週",
+    body: `<p>把胎盤的含氧血帶回靜脈竇（Langman 15th Fig. 13.11A）。之後的變化見模組 4、5。</p>`, kg: ["112-2-醫學一-35"] },
+  card: { name: "總主靜脈", en: "common cardinal vein", meta: "注入靜脈竇・第 4 週",
+    body: `<p>前主靜脈（頭部）與後主靜脈（身體尾側）在這裡會合，再注入靜脈竇角（Langman 15th Fig. 13.11A）。</p><p>左總主靜脈第 10 週閉鎖，左角只剩冠狀竇與左心房斜靜脈（Langman 15th 第 13 章）。</p>`, kg: ["112-2-醫學一-35"] },
+  dextro: { name: "右位心", en: "dextrocardia", meta: "先天異常・開關 D",
+    body: `<p>心管往<b>左</b>彎（正常往右），心臟落在胸腔右側（Langman 15th 第 13 章）。左右不對稱在原腸化時建立，右位心可在原腸化或彎曲時被誘發。</p><ul><li>合併所有器官左右顛倒：全內臟反位（situs inversus）</li><li>只有部分器官顛倒：heterotaxy，常合併心臟缺損</li></ul><p>相關基因見 Langman 15th Table 13.1、13.2。Moore 11th p.268–269：正常往右彎稱 D-loop。</p>`,
+    trap: `右位心＝心管往「左」彎；正常是往右的 D-loop。` },
+};
+for (const s in STRUCT) { STRUCT[s].name = fn(STRUCT[s].name); STRUCT[s].body = fn(STRUCT[s].body); }
+
+const LEGEND = [
+  ...SEGS.slice().reverse().map((s) => ({ id: s.id, name: SEGN[s.id], css: "--c-" + s.id })),
+  { id: "phf", name: "初級心區", css: "--c-phf" },
+  { id: "shf", name: "次級心區", css: "--c-shf" },
+  { id: "peri", name: "心包腔", css: "--c-peri", toggle: true },
+  { id: "ref", name: "前腸與主動脈", css: "--c-ref", toggle: true },
+  { id: "vein", name: "靜脈", css: "--c-card", toggle: true },
+];
+const flags = { dextro: false };
+
+const M = {
+  id: "m1", name: "心管與彎曲", title: "心管的形成與彎曲", sub: "第 3–4 週：心區 → 成對心管 → 單一心管 → 彎曲（cardiac looping）。",
+  range: [17, 28], speed: 1, events: EVENTS, evLbl: "時間軸（Langman）",
+  legendLbl: "心管分段（點一下看說明）・開關", legend: LEGEND, layers: { peri: true, ref: true, vein: true },
+  flags, toggles: [{ id: "dextro", label: "右位心", title: "右位心（D）：心管往左彎", key: "d" }],
+  secTitle: "心管切面（垂直心管）", secEnds: ["靜脈端", "動脈端"], cutRange: [.02, .98, .005], cut: .5,
+  note: "示意模型：沒畫胚體摺疊，心管比例放大；顏色是心管 5 段，一路帶到成人構造。來源：Langman 15th 為主、Moore 11th 補充，兩書不同處並列。",
+  struct: STRUCT, group: new THREE.Group(), autoFit: true,
+};
+M.legendClick = (l) => { if (l.toggle) M.layers[l.id] = !M.layers[l.id]; else select(l.id); };
+M.legendPressed = (l) => (l.toggle ? M.layers[l.id] : undefined);
+scene.add(M.group);
+
+/* ---------- 心管的形狀 ---------- */
+const RK = SEGS.map((s) => [(s.a + s.b) / 2, s.r]);
+function radius(m, t) {
+  let r;
+  if (m <= RK[0][0]) r = RK[0][1];
+  else if (m >= RK[4][0]) r = RK[4][1];
+  else { let i = 0; while (m > RK[i + 1][0]) i++; r = lerp(RK[i][1], RK[i + 1][1], sm(RK[i][0], RK[i + 1][0], m)); }
+  const k = sm(21.5, 23, t); // 段與段之間的凹溝（竇房、房室管、心球心室溝）
+  for (const b of [-.6, -.05, .5]) r *= 1 - .16 * k * Math.exp(-(((m - b) / .07) ** 2));
+  return r * lerp(.55, 1, sm(19, 22, t)) * lerp(1, .8, sm(23, 27, t)); // 彎曲後變細，避免第 28 天像甜甜圈
+}
+// 左右兩管的半間距：心室區第 21–22 天由頭往尾融合；心房第 24–26.5 天融合；靜脈竇兩角不融合
+function sep(m, t) {
+  const tf = m >= .5 ? 21 : lerp(21, 22, clamp((.5 - m) / .55, 0, 1));
+  const sV = .35 * (1 - sm(tf - .5, tf + .3, t)), sA = .35 * (1 - sm(24, 26.5, t));
+  const s = lerp(sA, sV, sm(-.25, -.02, m)), horn = .35 + .44 * clamp((-.6 - m) / .4, 0, 1);
+  return lerp(s, horn, sm(-.55, -.8, m));
+}
+// 馬蹄形心區（第 17–19 天）
+function horse(m, σ, A = .9) {
+  const s = clamp((m + .6) / 1.1, 0, 1);
+  if (s < .55) return [σ * A, -1 + s / .55, .3];
+  const th = (s - .55) / .45 * Math.PI / 2;
+  return [σ * A * Math.cos(th), .72 * Math.sin(th), .3];
+}
+// 彎曲完成（第 28 天）的中心線：非均勻 Catmull-Rom（Hermite）；+x＝病人左、+y 頭、+z 腹
+const LK = [[-1, [0, .2, -.3]], [-.6, [0, .5, -.2]], [-.35, [.15, .8, .2]], [-.05, [.6, .3, .6]], [.22, [.45, -.45, 1.4]],
+  [.5, [-.3, -.5, 1.6]], [.75, [-.75, .1, 1.5]], [1.05, [-.55, .9, 1.3]], [1.5, [0, 1.7, .9]]];
+const LT = LK.map((k, i) => { const a = LK[Math.max(0, i - 1)], b = LK[Math.min(LK.length - 1, i + 1)]; return [0, 1, 2].map((j) => (b[1][j] - a[1][j]) / (b[0] - a[0])); });
+function loopC(m) {
+  m = clamp(m, -1, 1.5); let i = 0; while (i < LK.length - 2 && m > LK[i + 1][0]) i++;
+  const h = LK[i + 1][0] - LK[i][0], u = (m - LK[i][0]) / h, u2 = u * u, u3 = u2 * u;
+  const h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u, h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+  return [0, 1, 2].map((j) => h00 * LK[i][1][j] + h10 * h * LT[i][j] + h01 * LK[i + 1][1][j] + h11 * h * LT[i + 1][j]);
+}
+// 某一管（σ = -1 病人右、+1 病人左）在 m 的中心
+function pos(m, σ, t, out) {
+  const b = sm(19, 21.5, t), L = sm(23, 28, t), s = sep(m, t), h = horse(m, σ);
+  let x = lerp(h[0], σ * s, b), y = lerp(h[1], -.2 + 1.3 * m, b), z = lerp(h[2], .6, b);
+  if (L > 0) { const c = loopC(m); x = lerp(x, (flags.dextro ? -c[0] : c[0]) + σ * s, L); y = lerp(y, c[1], L); z = lerp(z, c[2], L); }
+  return out.set(x, y, z);
+}
+const _a = new V3(), _b = new V3();
+const midAt = (m, t, out = new V3()) => pos(m, -1, t, out).add(pos(m, 1, t, _a)).multiplyScalar(.5);
+const tanAt = (m, t, out = new V3()) => midAt(m + .01, t, out).sub(midAt(m - .01, t, _b)).normalize();
+
+/* ---------- 顏色 ---------- */
+const WHITE = new THREE.Color(1, 1, 1), _col = new THREE.Color();
+function segW(m) {
+  const w = SEGS.map((s, i) => (i ? sm(s.a - .04, s.a + .04, m) : 1) * (i < 4 ? 1 - sm(s.b - .04, s.b + .04, m) : 1));
+  const tot = w.reduce((a, b) => a + b, 0) || 1; return w.map((x) => x / tot);
+}
+function tubeColor(m, t) {
+  const w = segW(m); _col.setRGB(0, 0, 0);
+  SEGS.forEach((s, i) => { if (w[i]) { const c = colOf("--c-" + s.id); _col.r += c.r * w[i]; _col.g += c.g * w[i]; _col.b += c.b * w[i]; } });
+  const fP = (1 - sm(20.5, 22.5, t)) * (1 - sm(.45, .6, m)); if (fP) _col.lerp(colOf("--c-phf"), fP);
+  const fS = (1 - sm(24, 26.5, t)) * sm(.45, .6, m); if (fS) _col.lerp(colOf("--c-shf"), fS);
+  const si = SEGS.findIndex((s) => s.id === state.sel);
+  if (si >= 0 && w[si]) _col.lerp(WHITE, .35 * w[si]);
+  else if (state.sel === "phf" && fP) _col.lerp(WHITE, .35 * fP);
+  return _col;
+}
+
+/* ---------- 3D 網格 ---------- */
+const NM = 120, NR = 20;
+const tubeMat = std({ vertexColors: true }), endoMat = mat("--c-endoc");
+function mkTube(material, struct) {
+  const o = new THREE.Mesh(ringGeometry(NM, NR, !struct), material);
+  if (struct) o.userData.struct = struct; else o.userData.tube = true;
+  M.group.add(o); return o;
+}
+const tubes = [mkTube(tubeMat), mkTube(tubeMat)], endos = [mkTube(endoMat, "endoc"), mkTube(endoMat, "endoc")];
+const CEN = Array.from({ length: NM }, () => new V3()), TAN = Array.from({ length: NM }, () => new V3()), LEN = new Float32Array(NM);
+const _N = new V3(), _B = new V3();
+function fillTube(mesh, σ, lo, hi, t, rk, openStart, colored) {
+  const g = mesh.geometry, P = g.attributes.position.array, C = colored ? g.attributes.color.array : null;
+  for (let i = 0; i < NM; i++) { pos(lerp(lo, hi, i / (NM - 1)), σ, t, CEN[i]); LEN[i] = i ? LEN[i - 1] + CEN[i].distanceTo(CEN[i - 1]) : 0; }
+  for (let i = 0; i < NM; i++) TAN[i].subVectors(CEN[Math.min(NM - 1, i + 1)], CEN[Math.max(0, i - 1)]).normalize();
+  _N.set(1, 0, 0); if (Math.abs(_N.dot(TAN[0])) > .9) _N.set(0, 0, 1);
+  const r0 = radius(lo, t) * rk, r1 = radius(hi, t) * rk, Ltot = LEN[NM - 1];
+  for (let i = 0; i < NM; i++) {
+    const T = TAN[i]; _N.addScaledVector(T, -_N.dot(T)).normalize(); _B.crossVectors(T, _N);
+    const m = lerp(lo, hi, i / (NM - 1));
+    // 兩端收成半球（切開時起點不收口）
+    let tp = 1;
+    if (!openStart && LEN[i] < r0) { const u = 1 - LEN[i] / r0; tp = Math.sqrt(Math.max(0, 1 - u * u)); }
+    if (Ltot - LEN[i] < r1) { const u = 1 - (Ltot - LEN[i]) / r1; tp = Math.min(tp, Math.sqrt(Math.max(0, 1 - u * u))); }
+    const r = radius(m, t) * rk * tp, col = C ? tubeColor(m, t) : null;
+    for (let k = 0; k < NR; k++) {
+      const a = k / NR * Math.PI * 2, ca = Math.cos(a) * r, sa = Math.sin(a) * r, o = (i * NR + k) * 3;
+      P[o] = CEN[i].x + ca * _N.x + sa * _B.x; P[o + 1] = CEN[i].y + ca * _N.y + sa * _B.y; P[o + 2] = CEN[i].z + ca * _N.z + sa * _B.z;
+      if (C) { C[o] = col.r; C[o + 1] = col.g; C[o + 2] = col.b; }
+    }
+  }
+  g.attributes.position.needsUpdate = true; if (C) g.attributes.color.needsUpdate = true;
+  g.computeVertexNormals(); g.computeBoundingSphere(); g.computeBoundingBox(); // raycast 會先看 boundingBox
+}
+
+// 3D 切開的切口：三層環（心肌、心膠質、心內膜），中間留管腔
+const CB = {}, capMat = (v) => CB[v] || (CB[v] = themed(new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), v));
+const capG = new THREE.Group(); M.group.add(capG);
+const CAPS = [-1, 1].map((σ) => {
+  const mk = (r0, r1, v, s) => { const o = new THREE.Mesh(new THREE.RingGeometry(r0, r1, 40), capMat(v)); o.userData.struct = s; return o; };
+  const g = new THREE.Group(); g.add(mk(.78, 1, "--c-pv", "pv"), mk(.5, .78, "--c-jelly", "jelly"), mk(.42, .5, "--c-endoc", "endoc"));
+  capG.add(g); g.userData.σ = σ; return g;
+});
+// 非切開時的切面標示框
+const frameG = new THREE.Group(); frameG.add(...planeFrame(.16, .7)); M.group.add(frameG);
+
+// 心包腔（半透明，不點選）
+const peri = new THREE.Mesh(new THREE.SphereGeometry(1, 40, 24), mat("--c-peri", { transparent: true, opacity: .14, depthWrite: false }));
+M.group.add(peri);
+// 背側心繫膜
+const dm = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), mat("--c-dm", { transparent: true }));
+dm.userData.struct = "dm"; M.group.add(dm);
+// 參考構造：前腸、背主動脈、第一主動脈弓
+const GUT_Z = -.75, AO_X = .4, AO_Z = -1.15;
+const gut = new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, 3.8, 28), mat("--c-gut", { transparent: true }));
+gut.position.set(0, .1, GUT_Z); gut.userData.struct = "gut"; M.group.add(gut);
+const aoMat = mat("--c-ao");
+const aortae = [-1, 1].map((σ) => { const o = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 14), aoMat); o.userData.struct = "ao"; o.userData.σ = σ; M.group.add(o); return o; });
+const arches = [-1, 1].map(() => { const o = new THREE.Mesh(new THREE.BufferGeometry(), aoMat); o.userData.struct = "ao"; M.group.add(o); return o; });
+// 靜脈：每邊卵黃、臍、總主（加前、後主靜脈）
+const VEINS = [["vit", "--c-vit"], ["umb", "--c-umb"], ["card", "--c-card"], ["card", "--c-card"], ["card", "--c-card"]];
+const veins = [-1, 1].map(() => VEINS.map(([s, v]) => { const o = new THREE.Mesh(new THREE.BufferGeometry(), mat(v)); o.userData.struct = s; M.group.add(o); return o; }));
+// 次級心區細胞（小球）
+const NS = 40, shf = new THREE.InstancedMesh(new THREE.SphereGeometry(.06, 10, 8), mat("--c-shf"), NS);
+shf.userData.struct = "shf"; M.group.add(shf);
+const jr = (k) => { const x = Math.sin(k * 91.17 + 3.1) * 43758.5453; return x - Math.floor(x) - .5; };
+const SHF_P = Array.from({ length: NS }, () => new V3());
+const dummy = new THREE.Object3D();
+
+function tubeGeo(o, pts, r) {
+  o.geometry.dispose();
+  o.geometry = r > .004 ? new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map((p) => new V3(...p))), 28, r, 8, false) : new THREE.BufferGeometry();
+  o.visible = r > .004;
+}
+const archPts = (σ, t) => {
+  const top = midAt(mMax(t) - .02, t), y = top.y;
+  return [[top.x + σ * .05, y, top.z], [σ * .3 + top.x * .5, y + .35, top.z * .6], [σ * .48, y + .55, GUT_Z], [σ * AO_X, y + .35, AO_Z], [σ * AO_X, y - .1, AO_Z]];
+};
+const veinPts = (σ, t) => {
+  const H = pos(mMin(t), σ, t, new V3()), h = H.toArray(), J = [h[0] + σ * .75, h[1], h[2] - .7];
+  return [
+    [h, [h[0] + σ * .15, h[1] - .6, h[2] + .35], [h[0] + σ * .25, h[1] - 1.4, h[2] + .6]],
+    [h, [h[0] + σ * .45, h[1] - .4, h[2] + .25], [h[0] + σ * .75, h[1] - 1.4, h[2] + .4]],
+    [h, [h[0] + σ * .5, h[1], h[2] - .35], J],
+    [J, [J[0] + σ * .05, J[1] + .8, J[2] - .1], [J[0] + σ * .05, J[1] + 1.6, J[2] - .15]],
+    [J, [J[0] + σ * .05, J[1] - .8, J[2] - .1], [J[0] + σ * .05, J[1] - 1.6, J[2] - .15]],
+  ];
+};
+
+/* ---------- 每次更新 ---------- */
+let prevD = null;
+const TUBE = { lo: -.6, hi: .5 };
+const dmK = (t) => sm(21, 22, t) * (1 - sm(23, 24.5, t));
+const shfK = (t) => sm(17.6, 18.4, t) * (1 - sm(24.5, 26.5, t));
+M.update = function () {
+  const t = state.day, lo0 = mMin(t), hi = mMax(t), mc = mOfCut(M.cut);
+  let lo = lo0, open = false, show = true;
+  if (state.cut3d) { if (mc > hi) show = false; else if (mc > lo0) { lo = mc; open = true; } }
+  TUBE.lo = lo; TUBE.hi = hi;
+  [-1, 1].forEach((σ, i) => {
+    tubes[i].visible = show; if (show) fillTube(tubes[i], σ, lo, hi, t, 1, open, true);
+    endos[i].visible = show && state.cut3d; if (endos[i].visible) fillTube(endos[i], σ, lo, hi, t, .46, open, false);
+  });
+  // 切口與切面框
+  const r = radius(mc, t), inR = mc >= lo0 - 1e-3 && mc <= hi + 1e-3, T = tanAt(mc, t), q = new THREE.Quaternion().setFromUnitVectors(new V3(0, 0, 1), T);
+  const pL = pos(mc, -1, t, new V3()), pR = pos(mc, 1, t, new V3()), two = pL.distanceTo(pR) > .6 * r, seg = segAt(mc, t);
+  for (const g of CAPS) {
+    const σ = g.userData.σ; g.visible = state.cut3d && open && (σ === 1 || two);
+    if (!g.visible) continue;
+    g.position.copy(σ === 1 ? pR : pL); g.quaternion.copy(q); g.scale.setScalar(r);
+    const myo = g.children[0]; myo.material = capMat("--c-" + seg); myo.userData.struct = seg;
+  }
+  frameG.visible = !state.cut3d && inR;
+  if (frameG.visible) { frameG.position.copy(pL).add(pR).multiplyScalar(.5); frameG.quaternion.copy(q); frameG.scale.setScalar(pL.distanceTo(pR) + 2 * r + .5); }
+  // 心包腔：直管期 → 彎曲期
+  const L = sm(23, 28, t), pk = sm(19, 21, t);
+  peri.visible = M.layers.peri && !state.cut3d && pk > .02; peri.material.opacity = .14 * pk;
+  peri.position.set(0, lerp(.15, .6, L), lerp(.55, .65, L)); peri.scale.set(lerp(1.15, 1.5, L), lerp(1.85, 1.55, L), lerp(.78, 1.15, L));
+  // 背側心繫膜（直管期）
+  const dk = dmK(t); dm.visible = dk > .03; dm.material.opacity = .85 * dk;
+  if (dm.visible) { const y0 = pos(-.6, 1, t, _a).y, y1 = pos(.5, 1, t, _b).y, z0 = .6 - radius(.2, t) * .9, z1 = GUT_Z + .24; dm.position.set(0, (y0 + y1) / 2, (z0 + z1) / 2); dm.scale.set(.05, Math.abs(y1 - y0), Math.abs(z0 - z1)); }
+  // 參考構造
+  const gk = sm(20, 22, t), ref = M.layers.ref && gk > .02;
+  gut.visible = ref; gut.material.opacity = gk;
+  const archR = .07 * sm(21.8, 22.6, t);
+  [-1, 1].forEach((σ, i) => {
+    const A = archPts(σ, t), yTop = A[3][1];
+    aortae[i].visible = ref; aortae[i].position.set(σ * AO_X, (yTop - 1.9) / 2, AO_Z); aortae[i].scale.set(.08, yTop + 1.9, .08);
+    if (ref) tubeGeo(arches[i], A, archR); else arches[i].visible = false;
+  });
+  aoMat.transparent = gk < .99; aoMat.opacity = gk;
+  // 靜脈（第 22.5–24 天長出）
+  const vk = sm(22.5, 24, t), vs = M.layers.vein && vk > .02;
+  [-1, 1].forEach((σ, i) => { const VP = vs ? veinPts(σ, t) : null; veins[i].forEach((o, j) => { if (vs) tubeGeo(o, VP[j], .055 * vk); else o.visible = false; }); });
+  // 次級心區
+  const sk = shfK(t), b = sm(19, 21.5, t); shf.visible = sk > .01;
+  if (shf.visible) {
+    for (let k = 0; k < NS; k++) {
+      const σ = k % 2 ? 1 : -1, s = ((k >> 1) + .5) / (NS / 2), j1 = jr(k), j2 = jr(k + 50), j3 = jr(k + 99);
+      const h = horse(lerp(-.6, .5, s), σ, .55), st = [σ * (.22 + .1 * j1), .1 + s + .1 * j2, -.05 + .1 * j3];
+      const mig = sm(21.5 + .6 * s, 23.5 + 1.2 * s, t), mt = mMax(t) - .03 - .3 * s, c = midAt(mt, t, _a), rr = radius(mt, t);
+      const tg = [c.x + j1 * .2, c.y + j2 * .2, c.z - rr * .9 + j3 * .15];
+      SHF_P[k].set(lerp(lerp(h[0] + j1 * .12, st[0], b), tg[0], mig), lerp(lerp(h[1] + j2 * .12, st[1], b), tg[1], mig), lerp(lerp(-.05 + j3 * .1, st[2], b), tg[2], mig));
+      dummy.position.copy(SHF_P[k]); dummy.scale.setScalar(sk); dummy.updateMatrix(); shf.setMatrixAt(k, dummy.matrix);
+    }
+    shf.instanceMatrix.needsUpdate = true; shf.computeBoundingSphere(); shf.computeBoundingBox();
+  }
+  // 右位心打開：跳到彎曲完成並顯示卡片
+  if (prevD === false && flags.dextro) setTimeout(() => { if (state.day < 26) setDay(28); select("dextro"); });
+  prevD = flags.dextro;
+};
+
+// 選到還沒出現或被關掉的構造：打開圖層、跳到看得到的天數
+M.reveal = (s) => {
+  let ch = false; const t = state.day;
+  const lay = { peri: "peri", gut: "ref", ao: "ref", vit: "vein", umb: "vein", card: "vein" }[s];
+  if (lay && !M.layers[lay]) { M.layers[lay] = true; ch = true; }
+  const need = { vit: 24, umb: 24, card: 24, sv: 24, bc: 23, tr: 24, ao: 22.5, dm: 22, gut: 22, endoc: 20, jelly: 20 }[s];
+  if (need && t < need - .3) { state.day = need; ch = true; }
+  if ((s === "phf" && t > 21.5) || (s === "shf" && t > 25)) { state.day = s === "phf" ? 19 : 21; ch = true; }
+  if (s === "dm" && t > 23.5) { state.day = 22; ch = true; }
+  return ch;
+};
+
+/* ---------- 名稱標籤 ---------- */
+M.tagAnchors = function () {
+  const t = state.day, A = [], mc = state.cut3d ? mOfCut(M.cut) : -9, lo = mMin(t), hi = mMax(t), v = new V3();
+  const push = (txt, m, p, s, cls) => { if (m == null || m >= mc) A.push([txt, p, s, cls]); };
+  if (t < 21.5) { const p = pos(.25, 1, t, v); push("初級心區", .25, [p.x + .25, p.y, p.z + .1], "phf"); }
+  else for (const s of SEGS) {
+    const a = Math.max(s.a, lo), b = Math.min(s.b, hi); if (b - a < .12) continue;
+    const m = (a + b) / 2, p = s.id === "sv" ? pos(m, 1, t, v) : midAt(m, t, v);
+    push(SEGN[s.id], m, [p.x, p.y, p.z + radius(m, t)], s.id);
+  }
+  if (shf.visible && shfK(t) > .4) { const c = new V3(); SHF_P.forEach((p) => c.add(p)); c.multiplyScalar(1 / NS); push("次級心區", null, c.toArray(), "shf"); }
+  if (dm.visible && dmK(t) > .4) push("背側心繫膜", null, [0, dm.position.y, dm.position.z], "dm");
+  if (M.layers.ref && t >= 22.3) push("第一主動脈弓", null, archPts(1, t)[2], "ao");
+  if (M.layers.ref && sm(20, 22, t) > .5) push("前腸", null, [0, -1.5, GUT_Z + .22], "gut");
+  if (M.layers.vein && sm(22.5, 24, t) > .6) {
+    const VP = veinPts(1, t); push("卵黃靜脈", null, VP[0][2], "vit"); push("臍靜脈", null, VP[1][2], "umb"); push("總主靜脈", null, VP[2][2], "card");
+  }
+  return A;
+};
+M.tagShown = () => true;
+
+/* ---------- 2D 切面（垂直心管；背側在上，畫面右＝病人左） ---------- */
+M.drawSection = function (ctx, W, H, dpr) {
+  const t = state.day, mc = mOfCut(M.cut), Ly = M.layers, hits = [], labs = [];
+  // 範圍取第 17–28 天各段最大值（半寬 rx ≤ 1.38、管半徑 ≤ .36），切面拖動時比例尺不變
+  const X0 = -1.45, X1 = 1.45, Y0 = -.75, Y1 = 1.45, pad = W * .03, top = H * .07;
+  const sc = Math.min((W - 2 * pad) / (X1 - X0), (H - 2 * top) / (Y1 - Y0)), ox = W / 2, oy = top + Y1 * sc;
+  const P = ([x, y]) => [ox + x * sc, oy - y * sc];
+  const inR = mc >= mMin(t) - 1e-3 && mc <= mMax(t) + 1e-3;
+  if (!inR) {
+    ctx.fillStyle = css("--mute"); ctx.font = `400 ${Math.round(13 * dpr)}px ${css("--f-body")}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("這一段還沒加入心管，往後拖時間軸", W / 2, H / 2);
+    return { hits, where: "此段尚未加入" };
+  }
+  const r = radius(mc, t), pL = pos(mc, -1, t, new V3()), pR = pos(mc, 1, t, new V3()), half = pL.distanceTo(pR) / 2;
+  const two = half > .3 * r, xs = two ? [-half, half] : [0], seg = segAt(mc, t);
+  const rx = half + r + .3, ry = r + .3, gutY = ry + .45;
+  const add = (pts, color, s) => { const q = pts.map(P); fillPoly(ctx, q, color, s); if (s) hits.push([s, q]); };
+  if (Ly.peri && sm(19, 21, t) > .3) { add(ellipse(0, 0, rx, ry, 64), css("--c-peri"), "peri"); labs.push(["心包腔", [-rx + .12, -.1], "L", "peri"]); }
+  if (dmK(t) > .3 && mc > -.62 && mc < .55) { add([[-.05, r * .9], [.05, r * .9], [.05, ry], [-.05, ry]], css("--c-dm"), "dm"); labs.push(["背側心繫膜", [.05, (r + ry) / 2], "R", "dm"]); }
+  const segCol = "#" + tubeColor(mc, t).getHexString();
+  for (const x of xs) {
+    add(ellipse(x, 0, r, r, 48), segCol, seg);
+    add(ellipse(x, 0, r * .78, r * .78, 48), css("--c-jelly"), "jelly");
+    add(ellipse(x, 0, r * .5, r * .5, 40), css("--c-endoc"), "endoc");
+    add(ellipse(x, 0, r * .42, r * .42, 40), css("--bg"), null);
+  }
+  const xl = xs[0], xr = xs[xs.length - 1], segName = seg === "phf" ? "初級心區" : SEGN[seg];
+  labs.push([`心肌層（${segName}）`, [xl - r * .89, .05], "L", seg]);
+  labs.push(["心膠質", [xr + r * .64, .08], "R", "jelly"]);
+  labs.push(["心內膜", [xr + r * .46 * .7, -r * .46 * .7], "R", "endoc"]);
+  if (Ly.ref && sm(20, 22, t) > .3) {
+    add(ellipse(0, gutY, .22, .22, 32), css("--c-gut"), "gut"); labs.push(["前腸", [-.22, gutY], "L", "gut"]);
+    for (const σ of [-1, 1]) add(ellipse(σ * .45, gutY + .12, .08, .08, 20), css("--c-ao"), "ao");
+    labs.push(["背主動脈", [.53, gutY + .12], "R", "ao"]);
+  }
+  drawLeaders(ctx, labs.map(([txt, p, side, s]) => [txt, P(p), side, s]), W, H, dpr);
+  dirText(ctx, W, H, dpr, "背側", "腹側（畫面右＝病人左）");
+  const where = `${segName}・${seg === "sv" ? "左右兩角" : two ? "左右兩管" : "單一心管"}`;
+  return { hits, where };
+};
+
+/* ---------- 卡片、天數、鏡頭、點選 ---------- */
+M.cardState = () => ({ t: state.day });
+M.dayInfo = (t) => (t < 19 ? "心區" : t < 21.5 ? "成對心管" : t < 23 ? "單一心管" : t < 27.8 ? "彎曲中" : "彎曲完成");
+M.views = [
+  { id: "front", label: "正面", v: () => ({ p: [0, .4, 9], t: [0, .3, .4] }) },
+  { id: "left", label: "左側", v: () => ({ p: [9, .4, .4], t: [0, .3, .4] }) },
+  { id: "oblique", label: "斜面", v: () => ({ p: [5.2, 3.2, 6.8], t: [0, .3, .4] }) },
+  { id: "cut", label: "切面", cut: true, near: true, v: () => { // near：看切口，不拉遠到整個模型入鏡
+    const t = state.day, mc = clamp(mOfCut(M.cut), mMin(t), mMax(t)), c = midAt(mc, t), T = tanAt(mc, t);
+    return { p: c.clone().addScaledVector(T, -4.2).add(new V3(.9, 1, .7)).toArray(), t: c.toArray() };
+  } },
+];
+M.defaultView = "front";
+const visible = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
+M.pick = function (ray) {
+  const objs = [];
+  M.group.traverse((o) => { if (o.isMesh && o !== peri && (o.userData.struct || o.userData.tube) && visible(o) && (o.material.opacity ?? 1) > .15) objs.push(o); });
+  for (const h of ray.intersectObjects(objs, false)) {
+    const o = h.object;
+    if (o.userData.tube) { const i = Math.floor(h.face.a / NR); return segAt(lerp(TUBE.lo, TUBE.hi, i / (NM - 1)), state.day); }
+    return o.userData.struct;
+  }
+  return null;
+};
+Object.assign(M, { pos, radius, sep, mMin, mMax });
+return M;
+})();
+
+
+const MODS = [M1, { id: "m2", name: "分隔", soon: true }, { id: "m3", name: "動脈弓", soon: true }, { id: "m4", name: "靜脈", soon: true }, { id: "m5", name: "胎兒循環", soon: true }];
+let mod = MODS.find((m) => m.id === state.mod && !m.soon) || M1;
+
+function update() {
+  heatColors(); mod.update(); applyHidden(); applyHeat(); labDirty = true; labJob = null;
+  drawSection(); renderDay();
+  if (state.sel) showCard(state.sel);
+  needsRender = true; // 名稱標籤在迴圈畫完這一幀時一起更新
+  saveHash();
+}
+
+/* ---------- 名稱標籤 ---------- */
+const tagBox = document.getElementById("labels");
+const v3 = new THREE.Vector3();
+function renderTags() {
+  tagBox.innerHTML = "";
+  if (!state.tags) return;
+  const w = stage.clientWidth, h = stage.clientHeight;
+  for (const [txt, p, struct, cls] of mod.tagAnchors()) {
+    if (!mod.tagShown(p) || hidden.has(struct)) continue;
+    v3.set(...p).project(camera); if (v3.z > 1) continue;
+    const el = document.createElement("div"); el.className = "tag3d" + (cls ? " " + cls : ""); el.innerHTML = escH(txt) + kgMini(tagKg(txt, struct));
+    el.style.left = ((v3.x + 1) / 2 * w) + "px"; el.style.top = ((1 - v3.y) / 2 * h - 10) + "px";
+    tagBox.appendChild(el);
+  }
+  // 重疊的往上推
+  const els = [...tagBox.children].map((el) => ({ el, r: el.getBoundingClientRect() })).sort((a, b) => b.r.top - a.r.top);
+  const placed = [];
+  for (const it of els) {
+    let dy = 0;
+    for (let k = 0; k < 6; k++) {
+      const hit = placed.find((p) => it.r.left < p.right && it.r.right > p.left && it.r.top - dy < p.bottom && it.r.bottom - dy > p.top);
+      if (!hit) break; dy += it.r.bottom - dy - hit.top + 2;
+    }
+    if (dy) it.el.style.top = (parseFloat(it.el.style.top) - dy) + "px";
+    placed.push({ left: it.r.left, right: it.r.right, top: it.r.top - dy, bottom: it.r.bottom - dy });
+  }
+}
+
+/* ---------- 圖上名稱（照神解、全身模型）：鏡頭停 220 ms 後，用 mod.pick 對畫面格點打射線，數每個構造占幾格；
+   格數夠的在最靠近重心的那一格標名稱，錨點是那一格打到的 3D 點，轉動時跟著模型走。射線分幀打（每幀 ≤ 6 ms），不卡畫面 ---------- */
+const labBox = document.getElementById("labs"), LAB_EL = new Map();
+let labs = [], labJob = null, labDirty = true, lastMove = 0;
+const labRay = new THREE.Raycaster(), labNdc = new THREE.Vector2();
+function clearLabs() { labBox.replaceChildren(); LAB_EL.clear(); labs = []; labJob = null; }
+const labName = (s) => nameOf(s).replace(/（.*?）/g, "").trim();
+const sameName = (t, name) => name.split("／").some((p) => p && (t.includes(p) || p.includes(t)));
+function labAnchor() { // 射線打到的第一個看得到的點；切開時只算留下的那半（切口在切面上，tagShown 有容差）
+  for (const h of labRay.intersectObject(mod.group, true)) {
+    let o = h.object, ok = o.isMesh && o.material.visible !== false && (o.material.opacity ?? 1) >= .2 && o.layers.test(labRay.layers);
+    for (; ok && o; o = o.parent) ok = o.visible;
+    if (ok && mod.tagShown(h.point.toArray())) return h.point.clone();
+  }
+  return labRay.ray.at(camera.position.distanceTo(controls.target), new THREE.Vector3());
+}
+function labStart() {
+  const W = stage.clientWidth, H = stage.clientHeight, step = Math.max(14, Math.sqrt(W * H / 700));
+  labJob = W && H ? { nx: Math.max(2, Math.round(W / step)), ny: Math.max(2, Math.round(H / step)), i: 0, st: new Map() } : null;
+}
+function labRun(budget) { // 跑完回傳 true
+  const J = labJob, t0 = performance.now();
+  while (J.i < J.nx * J.ny) {
+    const x = J.i % J.nx, y = (J.i / J.nx) | 0; J.i++;
+    labNdc.set((x + .5) / J.nx * 2 - 1, 1 - (y + .5) / J.ny * 2); labRay.setFromCamera(labNdc, camera);
+    const s = mod.pick(labRay);
+    if (s && mod.struct[s] && !hidden.has(s)) { let r = J.st.get(s); if (!r) J.st.set(s, r = { n: 0, sx: 0, sy: 0, pts: [] }); r.n++; r.sx += x; r.sy += y; r.pts.push([x, y]); }
+    if (performance.now() - t0 > budget) return false;
+  }
+  return true;
+}
+function labFinish() {
+  const J = labJob; labJob = null;
+  // 地標名稱已經標了的（同名）不再標
+  const fixed = state.tags ? [...tagBox.children].map((e) => (e.firstChild?.textContent || "").replace(/（.*?）/g, "").trim()) : [];
+  const cand = [...J.st].map(([s, r]) => ({ s, ...r, m: s === state.sel })).filter((c) => c.m || c.n >= 2)
+    .filter((c) => !fixed.some((t) => t && sameName(t, labName(c.s)))).sort((a, b) => (b.m - a.m) || b.n - a.n).slice(0, 40);
+  labs = [];
+  for (const c of cand) {
+    const cx = c.sx / c.n, cy = c.sy / c.n; let best = c.pts[0], bd = 1e9;
+    for (const p of c.pts) { const d = (p[0] - cx) ** 2 + (p[1] - cy) ** 2; if (d < bd) { bd = d; best = p; } }
+    labNdc.set((best[0] + .5) / J.nx * 2 - 1, 1 - (best[1] + .5) / J.ny * 2); labRay.setFromCamera(labNdc, camera);
+    const name = labName(c.s), kn = kgOf(mod, c.s), lg = mod.legend.find((l) => l.id === c.s && !l.toggle), col = heatVar ? heatHex(kn) : lg ? `var(${lg.css})` : "var(--mute)", sig = name + "|" + kn + "|" + col;
+    let el = LAB_EL.get(c.s);
+    if (!el) { el = document.createElement("span"); el.addEventListener("click", () => select(c.s)); LAB_EL.set(c.s, el); }
+    if (el._sig !== sig) { el._sig = sig; el.innerHTML = escH(name) + kgMini(kn); el.style.setProperty("--c", col); }
+    labs.push({ s: c.s, p: labAnchor(), el });
+  }
+  const keep = new Set(labs.map((L) => L.el));
+  for (const [k, el] of LAB_EL) if (!keep.has(el)) { el.remove(); LAB_EL.delete(k); }
+  for (const L of labs) if (!L.el.parentNode) labBox.append(L.el);
+  for (const L of labs) { L.el.style.display = ""; L.ow = L.el.offsetWidth; }
+  placeLabs();
+}
+function placeLabs() { // 重疊的藏起來，先放的（選取的、面積大的）留著；也避開地標名稱
+  if (!labs.length) return;
+  const w = stage.clientWidth, h = stage.clientHeight, sr = stage.getBoundingClientRect();
+  const boxes = [...tagBox.children].map((e) => { const r = e.getBoundingClientRect(); return [r.left - sr.left, r.top - sr.top, r.right - sr.left, r.bottom - sr.top]; });
+  for (const L of labs) {
+    v3.copy(L.p).project(camera);
+    const x = Math.max(2 + L.ow / 2, Math.min((v3.x + 1) / 2 * w, w - 2 - L.ow / 2)), y = (1 - v3.y) / 2 * h, b = [x - L.ow / 2, y - 9, x + L.ow / 2, y + 9];
+    if (v3.z > 1 || y < 0 || y > h || boxes.some((o) => b[0] < o[2] && b[2] > o[0] && b[1] < o[3] && b[3] > o[1])) { L.el.style.display = "none"; continue; }
+    boxes.push(b); L.el.style.display = ""; L.el.style.left = x + "px"; L.el.style.top = y + "px";
+  }
+}
+const setLabs = (v) => { state.labs = v; $("labBtn").setAttribute("aria-pressed", String(v)); saveUi(); if (!v) clearLabs(); else labDirty = true; };
+
+/* ---------- 2D 切面 ---------- */
+const secCv = document.getElementById("sec"), sctx = secCv.getContext("2d");
+let secHits = [];
+function drawSection() {
+  const dpr = Math.min(2, devicePixelRatio || 1), cw = secCv.clientWidth || 360;
+  const tw = Math.round(cw * dpr), th = Math.round(cw * 460 / 720 * dpr);
+  if (secCv.width !== tw || secCv.height !== th) { secCv.width = tw; secCv.height = th; }
+  const W = secCv.width, H = secCv.height;
+  sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, W, H);
+  leaderHits = [];
+  const r = mod.drawSection(sctx, W, H, dpr);
+  secHits = r.hits.concat(leaderHits);
+  document.getElementById("secWhere").textContent = r.where;
+}
+function hitSection(ev) {
+  const r = secCv.getBoundingClientRect();
+  const x = (ev.clientX - r.left) / r.width * secCv.width, y = (ev.clientY - r.top) / r.height * secCv.height;
+  for (let i = secHits.length - 1; i >= 0; i--) {
+    const [s, P] = secHits[i]; let inside = false;
+    for (let a = 0, b = P.length - 1; a < P.length; b = a++) { const [xa, ya] = P[a], [xb, yb] = P[b]; if ((ya > y) !== (yb > y) && x < (xb - xa) * (y - ya) / (yb - ya) + xa) inside = !inside; }
+    if (inside) return s;
+  }
+  return null;
+}
+secCv.addEventListener("click", (e) => select(hitSection(e)));
+new ResizeObserver(() => drawSection()).observe(secCv);
+// 卡片裡的靜態 2D 示意圖：<canvas class="fig" data-fig="名稱" data-r="高寬比">，由 mod.figs[名稱](ctx, W, H, dpr) 畫（摺疊打開時才有寬度）
+const figRO = new ResizeObserver((es) => es.forEach((e) => drawFig(e.target)));
+function drawFig(cv) {
+  const f = mod.figs?.[cv.dataset.fig], cw = cv.clientWidth; if (!f || !cw) return;
+  const dpr = Math.min(2, devicePixelRatio || 1), r = +cv.dataset.r || .8, W = Math.round(cw * dpr), H = Math.round(cw * r * dpr);
+  cv.style.aspectRatio = `1 / ${r}`;
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const ctx = cv.getContext("2d"); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+  f(ctx, W, H, dpr);
+}
+
+/* ---------- 卡片 ---------- */
+const cardEl = document.getElementById("card");
+const EMPTY = "點 3D 或下方切面上的構造看說明。";
+function select(s) { // mod.reveal(s)：選到某些構造時模組自己開開關或跳天數，有變就重畫
+  state.sel = s; labDirty = true;
+  if (mod.reveal?.(s)) { dayIn.value = state.day; renderLegend(); update(); }
+  showCard(s); drawSection(); saveHash();
+}
+function showCard(s) { // 內容沒變就不動（摺疊維持開關）；變了也把原本打開的摺疊留著
+  const C = s && mod.struct[s];
+  if (!C) { cardEl.className = "empty"; cardEl.innerHTML = EMPTY; cardEl.dataset.sig = ""; return; }
+  const st = mod.cardState(s);
+  const kgs = (C.kg || []).filter((id) => KGI[id]);
+  const en = typeof C.en === "function" ? C.en(st) : C.en;
+  const html = `<h2>${C.name(st)}${kgTag(kgs.length)}</h2>${en ? `<div class="en">${en}</div>` : ""}<div class="meta">${C.meta}</div>${C.body(st)}${C.trap ? `<div class="trap">${C.trap}</div>` : ""}${C.more || ""}` +
+    (kgs.length && state.kg ? `<details class="fold"><summary>國考題（${kgs.length}）</summary>${kgs.map(qHtml).join("")}</details>` : "");
+  const sig = mod.id + "|" + s + "|" + html;
+  if (cardEl.dataset.sig === sig) return;
+  const open = cardEl.dataset.sig?.startsWith(mod.id + "|" + s + "|") ? new Set([...cardEl.querySelectorAll("details[open] > summary")].map((x) => x.textContent)) : new Set();
+  cardEl.className = ""; cardEl.innerHTML = html; cardEl.dataset.sig = sig;
+  cardEl.querySelectorAll("details > summary").forEach((x) => { if (open.has(x.textContent)) x.parentElement.open = true; });
+  figRO.disconnect(); cardEl.querySelectorAll("canvas.fig").forEach((c) => figRO.observe(c));
+}
+
+/* ---------- 國考 ---------- */
+const KGI = Object.fromEntries((window.KG || []).map((q) => [q.id, q]));
+// 考過幾題：3D 標籤、圖例、搜尋結果、卡片標題共用
+const kgOf = (m, s) => (m.struct?.[s]?.kg || []).filter((id) => KGI[id]).length;
+const kgTag = (n) => (n && state.kg ? `<span class="kgN">國考 ${n}</span>` : "");
+const kgMini = (n) => (n && state.kg ? `<span class="kgN">考${n}</span>` : ""); // 3D 上的名稱用短的（照全身模型）
+
+/* ---------- 國考開關（K）與國考上色（照全身模型；國考關掉時上色也關） ---------- */
+const heatHex = (n) => (!n ? "#9aa3a8" : n >= 5 ? "#c8331b" : n >= 3 ? "#f0a54a" : n >= 2 ? "#f3c977" : "#f7e7a6");
+let heatSig = "";
+function heatColors() { // 管壁頂點色：換模組或開關時把 COLOR 換成熱度色／原色，themeGen +1 讓模組重算幾何
+  const sig = state.kg && state.heat ? mod.id : "";
+  if (sig === heatSig) return;
+  heatSig = sig; heatVar = sig ? (v) => heatHex(kgOf(mod, v.slice(4))) : null;
+  for (const v in COLOR) COLOR[v].set(heatVar ? heatVar(v) : css(v)); themeGen++;
+}
+// 網格：上色時換成「原材質的複本＋熱度色」，每次 update 從原材質同步（透明度、切面），關掉換回原材質
+const HEATC = new WeakMap(), HEATS = new WeakSet();
+function applyHeat() {
+  mod.group.traverse((o) => {
+    if (!o.isMesh || !o.material || Array.isArray(o.material)) return;
+    if (!HEATS.has(o.material)) o.userData.mat0 = o.material;
+    const base = o.userData.mat0, s = o.userData.struct;
+    if (!heatVar || !mod.struct[s]) { o.material = base; return; }
+    const n = kgOf(mod, s); let c = HEATC.get(base); if (!c) HEATC.set(base, (c = {}));
+    let hm = c[n]; if (!hm) { hm = c[n] = base.clone(); HEATS.add(hm); }
+    const cp = base.clippingPlanes; hm.copy(base); hm.clippingPlanes = cp; hm.vertexColors = false; hm.color.set(heatHex(n));
+    if (base.emissive?.getHex()) hm.emissive.copy(hm.color).multiplyScalar(.25);
+    o.material = hm;
+  });
+}
+const setKg = (v) => { state.kg = v; if (!v) state.heat = false; saveUi(); kgUi(); };
+const setHeat = (v) => { if (!state.kg) return; state.heat = v; kgUi(); };
+function kgBtns() {
+  $("kgBtn").setAttribute("aria-pressed", String(state.kg)); $("heatBtn").setAttribute("aria-pressed", String(state.heat)); $("heatBtn").disabled = !state.kg;
+  $("heatLg").hidden = !(state.kg && state.heat);
+}
+function kgUi() {
+  kgBtns(); for (const el of $("labs").children) el._sig = "";
+  update(); renderLegend(); renderTags(); if (state.sel) showCard(state.sel); // update 先換好 heatVar，圖例色塊才跟著換
+}
+// 3D 標籤只在文字就是該構造名稱時標（m3 的延腦／橋腦／中腦是位置標籤，點了選基板，不標）
+const tagKg = (txt, s) => { const n = kgOf(mod, s), t = txt.replace(/（.*?）/g, "").trim(); return n && nameOf(s).split("／").some((p) => p && (t.includes(p) || p.includes(t))) ? n : 0; };
+function qHtml(id) {
+  const q = KGI[id]; if (!q) return "";
+  return `<div class="q"><b>${q.id.replace("-醫學一-", "-")}</b>　${q.stem}<ol>${Object.entries(q.options).map(([k, v]) => `<li class="${k === q.answer ? "ok" : ""}">(${k}) ${v}</li>`).join("")}</ol></div>`;
+}
+function renderKg() {
+  // 全部模組共用一份清單：本模組在前，其他模組標上模組名，點了先切過去
+  const all = window.KG || [], ids = [...all.filter((q) => q.mod === mod.id), ...all.filter((q) => q.mod !== mod.id)];
+  document.getElementById("kgLbl").innerHTML = `國考相關<span class="kgN">${ids.length}</span>`;
+  const ul = document.getElementById("kgList"); ul.innerHTML = "";
+  for (const q of ids) {
+    const li = document.createElement("li"), other = q.mod !== mod.id;
+    const tag = other ? `<span class="kgMod">${MODS.find((m) => m.id === q.mod)?.name || q.mod}</span>` : "";
+    li.innerHTML = `<button${other ? ' class="other"' : ""}><span class="id">${q.id.replace("-醫學一-", "-")}</span><span>${tag}${q.options[q.answer]}</span></button>`;
+    li.firstChild.addEventListener("click", () => {
+      const open = li.querySelector(".q"); if (open) { open.remove(); return; }
+      stopPlay();
+      if (q.mod !== mod.id) { setMod(q.mod); const li2 = [...document.querySelectorAll("#kgList li")].find((x) => x.dataset.id === q.id); li2?.insertAdjacentHTML("beforeend", qHtml(q.id)); }
+      else li.insertAdjacentHTML("beforeend", qHtml(q.id));
+      if (q.day) setDay(q.day);
+      if (q.sel) select(q.sel);
+    });
+    li.dataset.id = q.id; ul.appendChild(li);
+  }
+}
+
+/* ---------- 介面 ---------- */
+const $ = (id) => document.getElementById(id);
+const dayIn = $("day"), cutIn = $("cut");
+function setDay(d) { state.day = clamp(d, ...mod.range); dayIn.value = state.day; update(); }
+dayIn.addEventListener("input", () => { state.day = +dayIn.value; stopPlay(); update(); });
+cutIn.addEventListener("input", () => { mod.cut = +cutIn.value; update(); });
+// 點時間軸事件：天數與切面一起跳（事件可帶 cut）；拖天數滑桿、播放時切面不動
+function goEvent(e) { stopPlay(); if (e.cut != null) { mod.cut = e.cut; cutIn.value = e.cut; } setDay(e.d); }
+function renderDay() {
+  const t = state.day;
+  $("dayNum").innerHTML = `第 ${Math.floor(t + .001)} 天<small>第 ${Math.ceil(Math.floor(t + .001) / 7)} 週 · ${mod.dayInfo(t)}</small>`;
+  let cur = -1; mod.events.forEach((e, i) => { if (t >= e.d - .05) cur = i; });
+  document.querySelectorAll("#events button").forEach((b, i) => b.classList.toggle("on", i === cur));
+  document.querySelectorAll("#ticks button").forEach((b, i) => b.classList.toggle("on", i === cur));
+}
+const setCut3d = (v) => { state.cut3d = v; $("cut3d").setAttribute("aria-pressed", String(v)); update(); };
+const setTags = (v) => { state.tags = v; $("tagBtn").setAttribute("aria-pressed", String(v)); saveUi(); renderTags(); labDirty = true; labJob = null; needsRender = true; };
+function legendPressed(l) { return mod.legendPressed ? mod.legendPressed(l) : mod.layers[l.id]; }
+function renderLegend() { // 圖例內容變了（m3 簡化／詳細）才重建，焦點留在原本的 chip
+  const sig = mod.legend.map((l) => [l.id, l.name, l.css, l.dim, l.toggle].join()).join("|") + "|" + state.kg + (heatVar ? "H" : "");
+  if ($("legend").dataset.sig !== sig) {
+    const fid = document.activeElement?.closest?.("#legend .chip")?.dataset.lid;
+    buildLegend(); $("legend").dataset.sig = sig;
+    if (fid) document.querySelector(`#legend .chip[data-lid="${fid}"]`)?.focus();
+  }
+  document.querySelectorAll("#legend .chip").forEach((b, i) => {
+    const v = legendPressed(mod.legend[i]);
+    if (v === undefined) b.removeAttribute("aria-pressed"); else b.setAttribute("aria-pressed", String(v));
+  });
+  document.querySelectorAll("#viewBtns [data-toggle]").forEach((b) => b.setAttribute("aria-pressed", String(!!mod.flags[b.dataset.toggle])));
+}
+function toggleFlag(id) { mod.flags[id] = !mod.flags[id]; renderLegend(); update(); }
+function buildLegend() {
+  const lg = $("legend"); lg.innerHTML = "";
+  for (const l of mod.legend) {
+    const b = document.createElement("button"); b.className = l.toggle ? "chip tog" : "chip"; b.dataset.lid = l.id + (l.toggle ? ":t" : "");
+    b.innerHTML = `<i style="background: ${heatVar && !l.toggle ? heatHex(kgOf(mod, l.id)) : `var(${l.css})`}${l.dim ? "; opacity: .3" : ""}"></i>${l.name}${l.toggle ? "" : kgTag(kgOf(mod, l.id))}`;
+    b.addEventListener("click", () => {
+      if (mod.legendClick) mod.legendClick(l); else mod.layers[l.id] = !mod.layers[l.id];
+      renderLegend(); if (mod.legendClick && !l.toggle) return; update();
+    });
+    lg.appendChild(b);
+  }
+}
+// 窄畫面時，與前一個重疊的刻度先藏起來
+function thinTicks() {
+  let last = -Infinity;
+  for (const b of $("ticks").children) {
+    b.style.visibility = "";
+    const r = b.getBoundingClientRect();
+    if (r.left < last + 2) b.style.visibility = "hidden"; else last = r.right;
+  }
+}
+addEventListener("resize", thinTicks);
+function renderMod() {
+  document.querySelectorAll("#mods .tab").forEach((b, i) => b.setAttribute("aria-current", String(MODS[i] === mod)));
+  $("modTitle").textContent = mod.title; $("modSub").textContent = mod.sub; $("evLbl").textContent = mod.evLbl;
+  const [a, b] = mod.range;
+  dayIn.min = a; dayIn.max = b;
+  const ol = $("events"), ticks = $("ticks"); ol.innerHTML = ""; ticks.innerHTML = "";
+  for (const e of mod.events) {
+    const li = document.createElement("li");
+    li.innerHTML = `<button><span class="d">第 ${e.d} 天</span><span><span class="t">${e.t}</span><span class="s">${e.s}</span></span></button>`;
+    li.firstChild.addEventListener("click", () => goEvent(e));
+    ol.appendChild(li);
+    const tb = document.createElement("button"); tb.textContent = e.d; tb.title = e.t;
+    tb.style.left = ((e.d - a) / (b - a) * 100) + "%"; tb.addEventListener("click", () => goEvent(e));
+    ticks.appendChild(tb);
+  }
+  requestAnimationFrame(thinTicks);
+  $("legendLbl").textContent = mod.legendLbl;
+  $("legend").dataset.sig = "";
+  const vb = $("viewBtns"); vb.innerHTML = "";
+  for (const v of mod.views) {
+    const b = document.createElement("button"); b.className = "btn"; b.textContent = v.label;
+    b.addEventListener("click", () => flyTo(v.id)); vb.appendChild(b);
+  }
+  for (const tg of mod.toggles || []) {
+    const b = document.createElement("button"); b.className = "btn"; b.textContent = tg.label; b.title = tg.title; b.dataset.toggle = tg.id;
+    b.addEventListener("click", () => toggleFlag(tg.id)); vb.appendChild(b);
+  }
+  renderLegend();
+  const sb = $("secModes"); sb.innerHTML = ""; sb.hidden = !mod.secModes;
+  for (const o of mod.secModes || []) {
+    const b = document.createElement("button"); b.className = "btn"; b.textContent = o.label; b.title = o.title; b.dataset.mode = o.id;
+    b.addEventListener("click", () => setSecMode(o.id)); sb.appendChild(b);
+  }
+  const [c0, c1, cs] = mod.cutRange; cutIn.min = c0; cutIn.max = c1; cutIn.step = cs; cutIn.value = mod.cut;
+  renderSecMode();
+  $("note").textContent = mod.note;
+}
+// 2D 切面方向（模組有 secModes 才有，例如 m2 矢狀／冠狀）；fixed 的模式是固定示意圖，切面滑桿停用
+function renderSecMode() {
+  const o = mod.secModes?.find((x) => x.id === mod.secMode);
+  $("secTitle").textContent = o?.title ?? mod.secTitle;
+  $("secL").textContent = o?.fixed ? "" : mod.secEnds[0]; $("secR").textContent = o?.fixed ? "" : mod.secEnds[1];
+  $("secHint").textContent = o?.fixed ? o.hint : "拖曳改切面位置"; cutIn.disabled = !!o?.fixed;
+  for (const b of $("secModes").children) b.setAttribute("aria-pressed", b.dataset.mode === mod.secMode);
+}
+function setSecMode(id) { mod.secMode = id; renderSecMode(); drawSection(); saveHash(); }
+function setMod(id, keepPlaying, day) {
+  const m = MODS.find((x) => x.id === id); if (!m || m.soon) return;
+  if (!keepPlaying) stopPlay();
+  mod = m; state.mod = id; state.sel = null; hidden.clear(); saveUi(); clearLabs();
+  for (const x of MODS) if (x.group) x.group.visible = x === mod;
+  renderMod(); renderKg(); showCard(null);
+  state.day = clamp(day ?? state.day, ...mod.range); dayIn.value = state.day;
+  update(); // 先建好這一天的幾何，autoFit 才量得到
+  fly = null; const v = fitDist(view(mod.defaultView).v()); camera.position.set(...v.p); controls.target.set(...v.t); setZoomLimits();
+  update();
+}
+function buildUi() {
+  const nav = $("mods");
+  MODS.forEach((m, i) => {
+    const b = document.createElement("button"); b.className = "tab"; b.innerHTML = `${i + 1}. ${m.name}${m.soon ? "<small>製作中</small>" : ""}`;
+    b.disabled = !!m.soon; b.addEventListener("click", () => setMod(m.id)); nav.appendChild(b);
+  });
+  $("cut3d").addEventListener("click", () => setCut3d(!state.cut3d));
+  $("tagBtn").setAttribute("aria-pressed", String(state.tags));
+  $("tagBtn").addEventListener("click", () => setTags(!state.tags));
+  $("labBtn").setAttribute("aria-pressed", String(state.labs));
+  $("labBtn").addEventListener("click", () => setLabs(!state.labs));
+  $("kgBtn").addEventListener("click", () => setKg(!state.kg));
+  $("heatBtn").addEventListener("click", () => setHeat(!state.heat));
+  kgBtns();
+  $("play").addEventListener("click", () => state.playing ? stopPlay() : startPlay());
+  $("resetBtn").addEventListener("click", resetMod);
+  $("showAll").addEventListener("click", () => { hidden.clear(); update(); });
+  buildTools();
+  addEventListener("keydown", (e) => {
+    if (document.querySelector("dialog[open]")) return; // 對話框自己處理 Esc
+    if (e.target.closest?.("input") || e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (e.key === "?") { e.preventDefault(); openHelp(); return; }
+    if (e.key === "/") { e.preventDefault(); $("find").focus(); $("find").select(); return; }
+    if (e.key === "Escape") { if (!$("findList").hidden) $("findList").hidden = true; else if (state.sel) select(null); return; }
+    if (k === "h") hideSel();
+    if (k === "r") resetMod();
+    if (k === "c") setCut3d(!state.cut3d);
+    if (k === "n") setLabs(!state.labs);
+    if (k === "l") setTags(!state.tags);
+    if (k === "k") setKg(!state.kg);
+    if (k === "g") setHeat(!state.heat);
+    const tg = (mod.toggles || []).find((x) => x.key === k); if (tg) toggleFlag(tg.id);
+    if (e.key === " ") { e.preventDefault(); state.playing ? stopPlay() : startPlay(); }
+    if (e.key === "ArrowRight") { stopPlay(); setDay(Math.floor(state.day + 1.0001)); }
+    if (e.key === "ArrowLeft") { stopPlay(); setDay(Math.ceil(state.day - 1.0001)); }
+  });
+}
+let lastT = 0;
+function startPlay() { if (state.day >= mod.range[1] - .05) state.day = mod.range[0]; state.playing = true; setPlayPR(true); $("play").textContent = "❚❚"; $("play").setAttribute("aria-label", "暫停"); lastT = performance.now(); }
+function stopPlay() { state.playing = false; setPlayPR(false); $("play").textContent = "▶"; $("play").setAttribute("aria-label", "播放"); saveHash(); }
+
+/* ---------- 鏡頭 ---------- */
+const view = (id) => mod.views.find((v) => v.id === id) || mod.views[0];
+let fly = null;
+function fitDist(v, near) { // 窄畫面時沿視線往後拉；near（視角設 near: true）不套 autoFit
+  if (mod.autoFit && !near) return autoFit(v);
+  const k = Math.max(1, (1.05 / Math.max(.3, camera.aspect)) ** 1.6);
+  const p = new THREE.Vector3(...v.p), t = new THREE.Vector3(...v.t);
+  return { p: p.sub(t).multiplyScalar(k).add(t).toArray(), t: v.t };
+}
+const fitCam = new THREE.PerspectiveCamera(), fitV = new THREE.Vector3();
+function autoFit(v, fill = .78) { // 沿視線調距離，讓目前看得到的構造佔畫面約 fill（切面框除外）
+  const t = new THREE.Vector3(...v.t), d = new THREE.Vector3(...v.p).sub(t);
+  for (let it = 0; it < 2; it++) {
+    fitCam.copy(camera); fitCam.position.copy(t).add(d); fitCam.lookAt(t); fitCam.updateMatrixWorld();
+    let mx = 0, my = 0;
+    mod.group.traverseVisible((o) => {
+      if (!o.isMesh || o.material.isMeshBasicMaterial) return;
+      const a = o.geometry.attributes.position; o.updateMatrixWorld();
+      for (let i = 0; i < a.count; i += 3) { fitV.fromBufferAttribute(a, i).applyMatrix4(o.matrixWorld).project(fitCam); mx = Math.max(mx, Math.abs(fitV.x)); my = Math.max(my, Math.abs(fitV.y)); }
+    });
+    if (!mx) break;
+    d.multiplyScalar(Math.max(mx, my) / fill);
+  }
+  return { p: d.add(t).toArray(), t: v.t };
+}
+function flyTo(id) {
+  const V = view(id), v = fitDist(V.v(), V.near);
+  if (V.cut && !state.cut3d) setCut3d(true);
+  fly = { p0: camera.position.clone(), t0: controls.target.clone(), p1: new THREE.Vector3(...v.p), t1: new THREE.Vector3(...v.t), s: performance.now() };
+}
+
+/* ---------- 點選 ---------- */
+const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2(); let down = null;
+renderer.domElement.addEventListener("pointerdown", (e) => { down = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener("pointerup", (e) => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  select(mod.pick(ray));
+});
+
+/* ---------- 迴圈 ---------- */
+let needsRender = true;
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); needsRender = true; labDirty = true; labJob = null;
+}
+new ResizeObserver(resize).observe(stage);
+controls.addEventListener("change", () => { needsRender = true; lastMove = performance.now(); labDirty = true; labJob = null; });
+function loop(now) {
+  requestAnimationFrame(loop);
+  if (state.playing) {
+    const dt = Math.min(.1, (now - lastT) / 1000); lastT = now;
+    const b = mod.range[1];
+    state.day = Math.min(b, state.day + dt * mod.speed); dayIn.value = state.day; update();
+    if (state.day >= b) { if (mod.next) { const n = MODS.find((x) => x.id === mod.next); setMod(mod.next, true, state.day >= n.range[1] ? n.range[0] : undefined); } else stopPlay(); }
+  }
+  if (fly) {
+    const k = sm(0, 1, (now - fly.s) / 700);
+    camera.position.lerpVectors(fly.p0, fly.p1, k); controls.target.lerpVectors(fly.t0, fly.t1, k);
+    if (k >= 1) fly = null; needsRender = true;
+  }
+  controls.update();
+  if (needsRender) { renderer.render(scene, camera); renderTags(); placeLabs(); needsRender = false; }
+  if (state.labs) {
+    if (state.playing) { if (labs.length) clearLabs(); }
+    else if (!fly && labDirty && now - lastMove > 220) { labDirty = false; labStart(); }
+    if (labJob && !state.playing && labRun(6)) labFinish();
+  }
+}
+function onTheme() { for (const m of THEMED) m.color.set(css(m.userData.css)); for (const v in COLOR) COLOR[v].set(heatVar ? heatVar(v) : css(v)); themeGen++; for (const m of MODS) m.onTheme?.(); update(); cardEl.querySelectorAll("canvas.fig").forEach(drawFig); }
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", onTheme);
+new MutationObserver(onTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+/* ---------- 隱藏構造（H）：用 three.js layers 藏，相機與 raycaster 只看 layer 0，不動模組自己設的 visible ---------- */
+const hidden = new Set();
+function applyHidden() {
+  mod.group.traverse((o) => { const s = o.userData.struct; if (s) o.layers.set(hidden.has(s) ? 1 : 0); });
+  $("showAll").hidden = !hidden.size; $("showAll").textContent = `全部顯示（${hidden.size}）`;
+}
+function hideable(s) { let ok = false; mod.group.traverse((o) => { if (o.userData.struct === s) ok = true; }); return ok; }
+function hideSel() { // 管壁上的分區（例如中腦、翼板）跟整條管壁是同一個網格，不能單獨藏
+  const s = state.sel; if (!s) return;
+  if (!hideable(s)) { flashTip(`「${nameOf(s)}」是管壁的一段，不能單獨隱藏`); return; }
+  hidden.add(s); select(null); update();
+}
+
+/* ---------- 回到預設：鏡頭、切面、開關、圖層、2D 方向；天數不動 ---------- */
+const DEF = {};
+function snapDefaults() { for (const m of MODS) if (!m.soon) DEF[m.id] = JSON.stringify({ cut: m.cut, flags: m.flags, layers: m.layers, secMode: m.secMode }); }
+function resetMod() {
+  stopPlay(); const d = JSON.parse(DEF[mod.id]);
+  mod.cut = d.cut; cutIn.value = d.cut;
+  if (d.flags) Object.assign(mod.flags, d.flags);
+  if (d.layers) Object.assign(mod.layers, d.layers);
+  if (d.secMode) mod.secMode = d.secMode;
+  hidden.clear(); state.sel = null; state.cut3d = false; $("cut3d").setAttribute("aria-pressed", "false");
+  renderSecMode(); renderLegend(); showCard(null); update(); flyTo(mod.defaultView);
+}
+
+/* ---------- 網址 hash 記狀態：m 模組、d 天、s 選取、c 切面、x 3D 切開、sec 2D 方向、f 開著的開關、off 關掉的胚層、h 隱藏 ---------- */
+const HASH0 = location.hash;
+let booted = false, hashT = 0;
+function hashStr() {
+  const p = new URLSearchParams();
+  p.set("m", mod.id); p.set("d", +state.day.toFixed(2));
+  if (state.sel) p.set("s", state.sel);
+  p.set("c", +(+mod.cut).toFixed(3));
+  if (state.cut3d) p.set("x", 1);
+  if (mod.secModes) p.set("sec", mod.secMode);
+  if (mod.flags) p.set("f", Object.keys(mod.flags).filter((k) => mod.flags[k]).join("."));
+  if (mod.layers) { const off = Object.keys(mod.layers).filter((k) => !mod.layers[k]); if (off.length) p.set("off", off.join(".")); }
+  if (hidden.size) p.set("h", [...hidden].join("."));
+  return "#" + p;
+}
+function writeHash() { clearTimeout(hashT); const h = hashStr(); if (h !== location.hash) try { history.replaceState(null, "", h); } catch (e) {} }
+function saveHash() { if (!booted || state.playing) return; clearTimeout(hashT); hashT = setTimeout(writeHash, 250); }
+function applyHash(h) {
+  const p = new URLSearchParams(h.replace(/^#/, "")), m = MODS.find((x) => x.id === p.get("m") && !x.soon); if (!m) return;
+  const num = (k) => { const v = parseFloat(p.get(k)); return Number.isFinite(v) ? v : undefined; };
+  booted = false;
+  setMod(m.id, false, num("d"));
+  if (num("c") !== undefined) { mod.cut = clamp(num("c"), mod.cutRange[0], mod.cutRange[1]); cutIn.value = mod.cut; }
+  if (p.has("f") && mod.flags) { const on = new Set(p.get("f").split(".")); for (const k in mod.flags) mod.flags[k] = on.has(k); }
+  if (mod.layers) { const off = new Set((p.get("off") || "").split(".")); for (const k in mod.layers) mod.layers[k] = !off.has(k); }
+  if (mod.secModes?.some((o) => o.id === p.get("sec"))) mod.secMode = p.get("sec");
+  state.cut3d = p.get("x") === "1"; $("cut3d").setAttribute("aria-pressed", String(state.cut3d));
+  for (const s of (p.get("h") || "").split(".")) if (mod.struct[s]) hidden.add(s);
+  renderSecMode(); renderLegend(); update();
+  const s = p.get("s"); if (s && mod.struct[s]) select(s);
+  booted = true; saveHash();
+}
+addEventListener("hashchange", () => applyHash(location.hash)); // replaceState 不會觸發，只有使用者改網址或貼連結
+
+/* ---------- 名稱提示（滑鼠停在構造上）---------- */
+const stripTags = (h) => String(h ?? "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+const escH = (x) => String(x).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+function nameOf(s, m = mod, st) { const C = m.struct?.[s]; if (!C) return s; try { return stripTags(C.name(st ?? m.cardState(s))); } catch (e) { return s; } }
+const tipEl = $("tip"); let tipQ = null, overCv = false, flashT = 0;
+function showTip(txt, x, y) {
+  clearTimeout(flashT); tipEl.textContent = txt; tipEl.hidden = false;
+  tipEl.style.left = clamp(x + 12, 4, innerWidth - tipEl.offsetWidth - 4) + "px"; tipEl.style.top = clamp(y + 18, 4, innerHeight - tipEl.offsetHeight - 4) + "px";
+}
+const hideTip = () => { tipEl.hidden = true; };
+function flashTip(msg) {
+  const r = stage.getBoundingClientRect(); showTip(msg, 0, 0);
+  tipEl.style.left = clamp(r.left + (r.width - tipEl.offsetWidth) / 2, 4, innerWidth - tipEl.offsetWidth - 4) + "px"; tipEl.style.top = (r.top + 12) + "px";
+  flashT = setTimeout(hideTip, 2200);
+}
+function hoverAt(el, s, x, y) { el.style.cursor = s ? "pointer" : ""; if (s) showTip(nameOf(s), x, y); else hideTip(); }
+renderer.domElement.addEventListener("pointermove", (e) => {
+  if (e.pointerType !== "mouse" || e.buttons) { if (e.buttons) hideTip(); return; }
+  overCv = true; const pending = tipQ; tipQ = [e.clientX, e.clientY]; if (pending) return;
+  requestAnimationFrame(() => {
+    const [x, y] = tipQ; tipQ = null; if (!overCv) return;
+    const r = renderer.domElement.getBoundingClientRect();
+    ndc.set((x - r.left) / r.width * 2 - 1, -(y - r.top) / r.height * 2 + 1); ray.setFromCamera(ndc, camera);
+    hoverAt(renderer.domElement, mod.pick(ray), x, y);
+  });
+});
+renderer.domElement.addEventListener("pointerleave", () => { overCv = false; hideTip(); });
+secCv.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") hoverAt(secCv, hitSection(e), e.clientX, e.clientY); });
+secCv.addEventListener("pointerleave", hideTip);
+
+/* ---------- 搜尋（跨模組）、分享、說明、來源 ---------- */
+let findIdx = null, findRes = [], findSel = 0;
+function buildIndex() { // 名稱會隨天數變（例如菱唇／小腦板），取目前、最早、最晚三種狀態的名稱
+  findIdx = [];
+  for (const m of MODS) {
+    if (m.soon || !m.struct) continue;
+    for (const s in m.struct) {
+      const C = m.struct[s], names = new Set();
+      let st = {}; try { st = m.cardState(s) || {}; } catch (e) {}
+      for (const x of [st, { ...st, t: m.range[0] }, { ...st, t: m.range[1], hemi: true }]) try { names.add(stripTags(C.name(x))); } catch (e) {}
+      let en = ""; try { en = stripTags(typeof C.en === "function" ? C.en(st) : C.en); } catch (e) {}
+      const nm = [...names].filter(Boolean);
+      findIdx.push({ m, s, names: nm, en, hay: [...nm, en, s].join(" ").toLowerCase() });
+    }
+  }
+}
+function findMatches(q) {
+  if (!findIdx) buildIndex();
+  const r = [];
+  for (const e of findIdx) {
+    if (!e.hay.includes(q)) continue;
+    const pre = e.names.some((n) => n.toLowerCase().startsWith(q)) || e.en.toLowerCase().startsWith(q);
+    r.push([e, (pre ? 0 : 2) + (e.m === mod ? 0 : 1)]);
+  }
+  return r.sort((a, b) => a[1] - b[1]).slice(0, 12).map((x) => x[0]);
+}
+function renderFind() {
+  const q = $("find").value.trim().toLowerCase(), ul = $("findList");
+  if (!q) { ul.hidden = true; findRes = []; return; }
+  findRes = findMatches(q); findSel = Math.min(findSel, Math.max(0, findRes.length - 1));
+  ul.innerHTML = findRes.length ? findRes.map((e, i) => `<li><button type="button" tabindex="-1" data-i="${i}" class="${i === findSel ? "on" : ""}">${escH(e.names.join("／"))}${kgTag(kgOf(e.m, e.s))}<small>${MODS.indexOf(e.m) + 1}. ${escH(e.m.name)}${e.en ? "　" + escH(e.en) : ""}</small></button></li>`).join("")
+    : `<li class="none">找不到「${escH($("find").value.trim())}」</li>`;
+  ul.hidden = false;
+  ul.querySelector("button.on")?.scrollIntoView({ block: "nearest" });
+}
+function pickFind(e) {
+  $("find").value = ""; $("findList").hidden = true; $("find").blur();
+  if (e.m !== mod) setMod(e.m.id);
+  select(e.s);
+}
+function keyRows() {
+  const rows = [["空白", "播放／暫停"], ["← →", "前一天／後一天"], ["C", "3D 切開"], ["N", "圖上名稱（標出看得到的構造）"], ["L", "地標名稱（區域、地標的固定名稱）"], ["K", "國考標記（考過幾題、卡片的國考題）"], ["G", "國考上色（依考過題數上色）"]];
+  MODS.forEach((m, i) => (m.toggles || []).forEach((tg) => rows.push([tg.key.toUpperCase(), `${tg.label}（模組 ${i + 1} ${m.name}）`])));
+  rows.push(["H", "隱藏選取的構造（按「全部顯示」還原）"], ["R", "回到預設（天數不變）"], ["Esc", "關搜尋清單；取消選取"], ["/", "搜尋構造"], ["?", "這個說明"]);
+  return rows.map(([k, v]) => `<tr><td>${k.split(" ").map((x) => `<kbd>${x}</kbd>`).join(" ")}</td><td>${v}</td></tr>`).join("");
+}
+function openHelp() { $("keyTbl").innerHTML = keyRows(); $("helpDlg").showModal(); }
+function buildTools() {
+  const f = $("find"), ul = $("findList");
+  f.addEventListener("input", () => { findSel = 0; renderFind(); });
+  f.addEventListener("focus", renderFind);
+  f.addEventListener("blur", () => { ul.hidden = true; });
+  f.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (!findRes.length) return; findSel = (findSel + (e.key === "ArrowDown" ? 1 : -1) + findRes.length) % findRes.length; renderFind(); }
+    else if (e.key === "Enter") { e.preventDefault(); if (findRes[findSel]) pickFind(findRes[findSel]); }
+    else if (e.key === "Escape") { e.preventDefault(); if (f.value) { f.value = ""; renderFind(); } else f.blur(); }
+  });
+  ul.addEventListener("mousedown", (e) => e.preventDefault()); // 點清單時輸入框不失焦
+  ul.addEventListener("click", (e) => { const b = e.target.closest("button[data-i]"); if (b) pickFind(findRes[+b.dataset.i]); });
+  const sb = $("shareBtn");
+  if (window.top !== window) sb.hidden = true; // 嵌在別的頁面裡（例如 Artifact）時，這頁的網址不是使用者看到的網址
+  sb.addEventListener("click", async () => {
+    writeHash();
+    try { await navigator.clipboard.writeText(location.href); sb.textContent = "已複製"; }
+    catch (e) { prompt("複製這個連結", location.href); }
+    setTimeout(() => { sb.textContent = "分享"; }, 1600);
+  });
+  $("helpBtn").addEventListener("click", openHelp);
+  $("srcBtn").addEventListener("click", () => $("srcDlg").showModal());
+  for (const d of document.querySelectorAll("dialog")) d.addEventListener("click", (e) => { // 點對話框外面（backdrop）關閉
+    const r = d.getBoundingClientRect();
+    if (e.target === d && (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)) d.close();
+  });
+}
+
+buildUi(); resize(); snapDefaults(); setMod(mod.id);
+if (HASH0) applyHash(HASH0);
+booted = true; saveHash();
+requestAnimationFrame(loop);
+window.__emb = { hidden, resetMod, applyHash, hashStr, findMatches, nameOf, goEvent, THREE, scene, camera, controls, state, setDay, setMod, update, select, flyTo, MODS, M1, get mod() { return mod; } };
+</script>
+</html>
