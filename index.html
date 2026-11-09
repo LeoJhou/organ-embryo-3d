@@ -556,7 +556,7 @@ for (const e of EVENTS) if (e.cut != null && !e.sec) e.sec = "tube";
 const SRC_T = `<p class="src">胚胎段 → 成人構造：Langman 15th 第 13 章；靜脈竇左角另見 Moore 11th p.279。</p>`;
 const SEG_TABLE = `<details class="fold"><summary>心管 5 段 → 成人構造</summary><table class="cmp"><tr><th>胚胎段</th><th>成人構造</th></tr>`
   + `<tr><th>動脈幹 truncus arteriosus</th><td>升主動脈與肺動脈幹的根部與近端</td></tr>`
-  + `<tr><th>心球中段 conus cordis</th><td>兩心室的流出道</td></tr>`
+  + `<tr><th>心球中段 conus cordis</th><td>兩心室的流出道（右心室漏斗部、左心室主動脈前庭）</td></tr>`
   + `<tr><th>心球近端 1/3</th><td>右心室小樑部</td></tr>`
   + `<tr><th>原始心室</th><td>左心室小樑部</td></tr>`
   + `<tr><th>原始心房</th><td>左右心耳（小樑化、有梳狀肌）</td></tr>`
@@ -575,7 +575,7 @@ const STRUCT = {
     trap: `兩書都把動脈幹算在心球裡：Langman 分近端 1/3、中段 conus cordis、遠端 truncus arteriosus；Moore 11th p.268 列 truncus arteriosus、conus arteriosus、conus cordis。模型為了配色把它分開畫。`,
     more: SEG_TABLE },
   bc: { name: (st) => (st.t < 28 ? "心球" : "心球（右心室、流出道）"), en: "bulbus cordis", meta: "動脈端（次級心區）",
-    body: `<p>Langman 15th 第 13 章把心球分三段：</p><ul><li><b>近端 1/3</b> → 右心室小樑部（彎曲時小樑化、變大，Fig. 13.9）</li><li><b>中段 conus cordis</b> → 兩心室的流出道</li><li><b>遠端 truncus arteriosus</b> → 主動脈與肺動脈的根部與近端（另見動脈幹）</li></ul><p>彎曲後心球移到右側；心球與原始心室交界外面的凹溝是 bulboventricular sulcus，裡面的狹窄處就是原始室間孔。</p>`,
+    body: `<p>Langman 15th 第 13 章把心球分三段：</p><ul><li><b>近端 1/3</b> → 右心室小樑部（彎曲時小樑化、變大，Fig. 13.9）</li><li><b>中段 conus cordis</b> → 兩心室的流出道：右心室漏斗部（conus arteriosus，肺動脈幹起點）、左心室主動脈前庭（aortic vestibule，主動脈瓣下方）（Moore 11th 第 13 章）</li><li><b>遠端 truncus arteriosus</b> → 主動脈與肺動脈的根部與近端（另見動脈幹）</li></ul><p>彎曲後心球移到右側；心球與原始心室交界外面的凹溝是 bulboventricular sulcus，裡面的狹窄處就是原始室間孔。</p>`,
     trap: `右心室小樑部來自心球，不是原始心室。`, more: SEG_TABLE },
   pv: { name: (st) => (st.t < 28 ? "原始心室" : st.t < 42 ? "原始左心室" : "左心室（原始心室）"), en: "primitive ventricle", meta: "初級心區",
     body: `<p>心管最粗的一段，彎曲時往腹側、尾側移，最後落在左側。成人：<b>左心室小樑部</b>（Langman 15th 第 13 章；初級心區形成整個左心室，Fig. 13.1）。彎曲時小樑化、變大，成為原始左心室（Langman 15th Fig. 13.9）。</p><p>往頭側經原始室間孔接心球；往尾側經房室管接原始心房，房室管之後由心內膜墊分隔（模組 2）。</p>`,
@@ -1137,7 +1137,7 @@ M.pick = function (ray) {
   }
   return null;
 };
-Object.assign(M, { pos, radius, sep, mMin, mMax });
+Object.assign(M, { pos, radius, sep, mMin, mMax, TUBE, midAt, archPts });
 return M;
 })();
 
@@ -1313,7 +1313,7 @@ const STRUCT = {
     body: `<p>在第一中隔右側長出的新月形隔，從心房頂往下長、蓋住第二孔，但始終不完整，留下的開口＝<b>卵圓孔</b>（Langman 15th Fig. 13.16D–F；Moore 11th p.277）。</p>`,
     trap: `卵圓孔在第二中隔上；從左側蓋住卵圓孔的瓣是第一中隔。` },
   fo: { name: "卵圓孔", en: "oval foramen（Langman）／foramen ovale（Moore）", meta: "第二中隔留下的開口",
-    body: `<p>第二中隔沒長完整留下的開口。右心房的血經卵圓孔、再經第二孔進左心房；第一中隔剩下的部分從左側蓋住卵圓孔，當<b>卵圓孔瓣</b>（Langman 15th Fig. 13.16D–F；Moore 11th p.277）。</p><p>出生後左心房壓力上升，卵圓孔瓣貼住第二中隔而關閉（Moore 11th p.278、309；模組 5）；約 20% 融合不完全（probe patency）（Langman 15th 第 13 章）。</p>`,
+    body: `<p>第二中隔沒長完整留下的開口。右心房的血經卵圓孔、再經第二孔進左心房；第一中隔剩下的部分從左側蓋住卵圓孔，當<b>卵圓孔瓣</b>（Langman 15th Fig. 13.16D–F；Moore 11th p.277）。</p><p>出生後左心房壓力上升，卵圓孔瓣貼住第二中隔而關閉（Moore 11th p.278、309；模組 5）；約 20% 融合不完全（probe patency）（Langman 15th 第 13 章）；Moore 11th 第 13 章寫最多 25%。</p>`,
     trap: `108-1-20：卵圓孔溝通右心房與左心房。`, kg: ["108-1-醫學一-20"], more: NAME_TABLE },
   ec: { name: "心內膜墊", en: "endocardial cushions（房室管）", meta: "第 4 週末・背、腹、左右側四塊",
     body: `<p>房室管的心膠質局部隆起成 4 個心內膜墊：背側（上）、腹側（下）與左右側（Langman 15th Fig. 13.19；Moore 11th p.273、275）。</p><ul><li>背側與腹側兩塊相向長、融合，把房室管分成左右房室口（Langman 15th Fig. 13.16C、13.19）</li><li>第一中隔下緣與融合的心內膜墊接合 → 第一孔關閉</li><li>腹側（前）心內膜墊參與膜性心室間隔（Langman 15th Fig. 13.29）</li><li>房室口周圍的組織挖空成房室瓣（Langman 15th Fig. 13.21）</li></ul>`,
@@ -1367,7 +1367,7 @@ const STRUCT = {
   tatr: { name: "三尖瓣閉鎖", en: "tricuspid atresia", meta: "先天心臟病・開關 8（延伸）",
     body: `<p>右房室口閉塞（Langman 15th Fig. 13.25）。一定合併：卵圓孔開放、VSD、右心室發育不良、左心室肥大。</p><p>模型：右房室口封住；右心室縮小。血流箭頭：右心房 → 卵圓孔 → 左心房；左心室 → VSD → 右心室。</p>` },
   slv: { name: "半月瓣狹窄或閉鎖", en: "valvular stenosis／atresia（aortic、pulmonary）", meta: "先天心臟病・開關 9（延伸）",
-    body: `<p>半月瓣的瓣葉融合，開口變窄（狹窄）或完全閉合（閉鎖）（Langman 15th Fig. 13.37；Moore 11th p.296）。</p><ul><li>主動脈瓣閉鎖：左心室與升主動脈發育不良，要靠開放的動脈導管把血送進主動脈</li><li>肺動脈瓣閉鎖：右心室發育不良，肺循環靠動脈導管</li></ul><p>模型畫主動脈瓣閉鎖：主動脈瓣三片融合封住開口、升主動脈變細。</p>`,
+    body: `<p>半月瓣的瓣葉融合，開口變窄（狹窄）或完全閉合（閉鎖）（Langman 15th 第 13 章；Moore 11th p.296）。</p><ul><li>主動脈瓣閉鎖：左心室與升主動脈發育不良，要靠開放的動脈導管把血送進主動脈</li><li>肺動脈瓣閉鎖：右心室發育不良，肺循環靠動脈導管</li></ul><p>模型畫主動脈瓣閉鎖：主動脈瓣三片融合封住開口、升主動脈變細。</p>`,
     trap: `108-2-83（病理科）：主動脈閉鎖出生後必須保持動脈導管開放。`, kg: ["108-2-醫學二-83"] },
 };
 for (const s in STRUCT) { STRUCT[s].name = fn(STRUCT[s].name); STRUCT[s].body = fn(STRUCT[s].body); }
@@ -1771,7 +1771,7 @@ M.events = [
   { d: 28, lbl: "第 4 週末", tick: "4 週末", sec: "cor", cut: .42, t: "第一中隔、心內膜墊", s: "共同心房頂長出鐮刀形的第一中隔；房室管出現心內膜墊；兩心室之間開始長肌性心室間隔（Langman 15th Fig. 13.16A、13.19；Moore 11th p.275：約 28 天）。這個模組是示意剖面，看內部分隔；同一天的外觀在模組 1。對應關係：共同心房→左右心房、原始心室→左心室小樑部、心球近端→右心室小樑部、圓錐與動脈幹→流出道。" },
   { d: 32, lbl: "約第 32 天", tick: "32 天", sec: "cor", cut: .42, t: "第二孔", s: "第一中隔上部穿孔，合成第二孔（Langman 15th Fig. 13.16B；Moore 11th p.275：約 32 天穿孔、約 35 天見第二孔）。" },
   { d: 35, lbl: "第 5 週", tick: "5 週", sec: "ot", cut: .7, t: "圓錐動脈幹嵴", s: "流出道壁上出現兩對相對的膨大，往遠端螺旋相向長（Langman 15th Fig. 13.27；Moore 11th p.280–285）。" },
-  { d: 37, lbl: "第 5–6 週", tick: "5–6 週", sec: "cor", cut: .42, t: "第一孔關閉", s: "背腹心內膜墊融合，房室管分成左右；第一中隔與融合的心內膜墊接合，第一孔關閉（Langman 15th Fig. 13.16C；111-2 國考）。" },
+  { d: 37, lbl: "第 5–6 週", tick: "5–6 週", sec: "cor", cut: .42, t: "第一孔關閉", s: "背腹心內膜墊融合，房室管分成左右；第一中隔與融合的心內膜墊接合，第一孔關閉（Langman 15th Fig. 13.16C；Moore 11th 第 13 章：第 5 週心內膜墊融合；111-2 國考）。" },
   { d: 40, lbl: "第 6 週", tick: "6 週", sec: "cor", cut: .42, t: "第二中隔、卵圓孔", s: "第一中隔右側長出第二中隔，留下卵圓孔；第一中隔剩下的部分成卵圓孔瓣（Langman 15th Fig. 13.16D–F；Moore 11th p.277）。" },
   { d: 46, lbl: "第 7 週", tick: "7 週", sec: "ot", cut: S_SL, t: "瓣膜", s: "動脈幹膨大上的小結節挖空成半月瓣（Langman 15th Fig. 13.32）；房室口周圍的心內膜墊組織挖空成房室瓣（Fig. 13.21）。" },
   { d: 49, lbl: "第 7 週末", tick: "7 週末", sec: "cor", cut: .42, t: "室間孔關閉", s: "圓錐膨大與腹側心內膜墊長合成膜性心室間隔，關閉室間孔（Langman 15th Fig. 13.29；Moore 11th p.280）。" },
