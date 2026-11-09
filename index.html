@@ -11,7 +11,7 @@
   --accent: #3d6fb0; --accent-ink: #ffffff; --chip: #e8ece6; --kg: #f3e3a6; --kg-ink: #5a4710; --warn: #a3541b;
   --c-tr: #8a5cc4; --c-bc: #3d82c8; --c-pv: #c8453b; --c-pa: #e8923c; --c-sv: #3fa35c; /* 原始心管 5 段：動脈幹、心球、原始心室、原始心房、靜脈竇（一路帶到成人） */
   --c-phf: #e7a196; --c-shf: #a48fd6; --c-endoc: #f0c84a; --c-jelly: #d7e6dc; --c-peri: #9fc7e8; --c-dm: #9a8f7c;
-  --c-gut: #d8c9a3; --c-ao: #b8383f; --c-vit: #c9962e; --c-umb: #2e9e8f; --c-card: #5f6fc0; --c-ref: #b9bfb8;
+  --c-gut: #d8c9a3; --c-ao: #b8383f; --c-vit: #c9962e; --c-umb: #2e9e8f; --c-card: #5f6fc0; --c-ref: #b9bfb8; --c-pulv: #a8405e;
   --c-ra: #e6a39a; --c-la: #e9b98c; --c-rv: #9cb8e0; --c-lv: #b7a6dc; --c-sp1: #d0661f; --c-ss2: #2f8a8a; --c-ec: #e0b830; --c-ivm: #a1473b; --c-ivmem: #5a9a3a;
   --c-ot: #9a8ab8; --c-trs: #7a4bb0; --c-cos: #3b7fc4; --c-aps: #4a3a8a; --c-aor: #c23a3a; --c-pt: #3a62b8; --c-tv: #d68a3c; --c-mv: #b0569a; --c-slv0: #e0c060; --c-chord: #8a7a64; --c-pap: #a8574a; --c-hole: #e04a8a; --c-flow: #1f9a6a;
   --f-display: "Noto Serif TC", "Songti TC", serif;
@@ -23,7 +23,7 @@
   --accent: #7aa6e6; --accent-ink: #0b1a2e; --chip: #222a25; --kg: #5a4a14; --kg-ink: #f6dd8a; --warn: #e0965a;
   --c-tr: #a98ae6; --c-bc: #5f9fe0; --c-pv: #e0625a; --c-pa: #f2a65a; --c-sv: #5cc479;
   --c-phf: #e8968a; --c-shf: #b3a0ea; --c-endoc: #f2d16b; --c-jelly: #3c4a42; --c-peri: #4f7896; --c-dm: #8c8676;
-  --c-gut: #b8a882; --c-ao: #e0626a; --c-vit: #e0b24a; --c-umb: #45c1b0; --c-card: #8293e6; --c-ref: #6c746e;
+  --c-gut: #b8a882; --c-ao: #e0626a; --c-vit: #e0b24a; --c-umb: #45c1b0; --c-card: #8293e6; --c-ref: #6c746e; --c-pulv: #e07896;
   --c-ra: #c97a72; --c-la: #cf9a6c; --c-rv: #7895c4; --c-lv: #9886c8; --c-sp1: #ee8a45; --c-ss2: #4fb6b6; --c-ec: #efcd52; --c-ivm: #d0685c; --c-ivmem: #7cc45a;
   --c-ot: #8c7eb0; --c-trs: #a57ae0; --c-cos: #63a3e6; --c-aps: #8d7ae0; --c-aor: #e86060; --c-pt: #6a90e6; --c-tv: #eaa85e; --c-mv: #d47ac0; --c-slv0: #f0d47a; --c-chord: #b0a088; --c-pap: #cc7a6c; --c-hole: #f27aac; --c-flow: #4fd09a;
   color-scheme: dark; } }
@@ -32,7 +32,7 @@
   --accent: #7aa6e6; --accent-ink: #0b1a2e; --chip: #222a25; --kg: #5a4a14; --kg-ink: #f6dd8a; --warn: #e0965a;
   --c-tr: #a98ae6; --c-bc: #5f9fe0; --c-pv: #e0625a; --c-pa: #f2a65a; --c-sv: #5cc479;
   --c-phf: #e8968a; --c-shf: #b3a0ea; --c-endoc: #f2d16b; --c-jelly: #3c4a42; --c-peri: #4f7896; --c-dm: #8c8676;
-  --c-gut: #b8a882; --c-ao: #e0626a; --c-vit: #e0b24a; --c-umb: #45c1b0; --c-card: #8293e6; --c-ref: #6c746e;
+  --c-gut: #b8a882; --c-ao: #e0626a; --c-vit: #e0b24a; --c-umb: #45c1b0; --c-card: #8293e6; --c-ref: #6c746e; --c-pulv: #e07896;
   --c-ra: #c97a72; --c-la: #cf9a6c; --c-rv: #7895c4; --c-lv: #9886c8; --c-sp1: #ee8a45; --c-ss2: #4fb6b6; --c-ec: #efcd52; --c-ivm: #d0685c; --c-ivmem: #7cc45a;
   --c-ot: #8c7eb0; --c-trs: #a57ae0; --c-cos: #63a3e6; --c-aps: #8d7ae0; --c-aor: #e86060; --c-pt: #6a90e6; --c-tv: #eaa85e; --c-mv: #d47ac0; --c-slv0: #f0d47a; --c-chord: #b0a088; --c-pap: #cc7a6c; --c-hole: #f27aac; --c-flow: #4fd09a;
   color-scheme: dark; }
@@ -48,9 +48,26 @@ header h1 { font: 600 18px/1.2 var(--f-display); margin: 0; letter-spacing: .02e
 .tab[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .tab:disabled { opacity: .55; cursor: default; }
 .tab small { font-size: 11px; opacity: .8; margin-left: 4px; }
-main { min-height: 0; display: grid; grid-template-columns: 300px minmax(0, 1fr) 360px; }
+main { --lw: 300px; --rw: 360px; min-height: 0; display: grid; grid-template-columns: var(--lw) minmax(0, 1fr) var(--rw); }
+main.noL { --lw: 0px; } main.noR { --rw: 0px; }
+#notes { grid-column: 1; } #center { grid-column: 2; } #bench { grid-column: 3; }
+main.noL #notes, main.noR #bench { display: none; }
+/* 面板開關：3D 左右邊緣中間的小箭頭（≤860px 不顯示） */
+.edge { position: absolute; top: 50%; z-index: 5; transform: translateY(-50%); width: 16px; height: 46px; padding: 0; border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 90%, transparent); color: var(--mute); font-size: 15px; line-height: 1; cursor: pointer; }
+.edge:hover { color: var(--accent); background: var(--panel); }
+#edgeL { left: 0; border-left: 0; border-radius: 0 6px 6px 0; }
+#edgeR { right: 0; border-right: 0; border-radius: 6px 0 0 6px; }
 aside { min-height: 0; overflow: auto; background: var(--panel); padding: 12px 14px; }
-#notes { border-right: 1px solid var(--line); }
+#notes { border-right: 1px solid var(--line); display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; }
+#notes > * { flex: none; }
+#modNote { margin: 6px 0 0; cursor: pointer; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+#modNote.open { display: block; }
+#ltabs { display: flex; gap: 2px; margin-top: 12px; border-bottom: 1px solid var(--line); }
+#ltabs button { border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; padding: 4px 12px; font-size: 13px; color: var(--mute); cursor: pointer; }
+#ltabs button[aria-selected="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--accent); }
+.lpane { flex: 1 1 auto !important; min-height: 0; overflow: auto; padding: 8px 2px 12px; margin: 0 -2px; }
+.lpane[hidden] { display: none; }
+.lpane > .lbl:first-child { margin-top: 0; }
 #bench { border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
 #center { min-width: 0; min-height: 0; display: grid; grid-template-rows: 1fr auto; }
 #stage { position: relative; min-height: 0; background: var(--stage); overflow: hidden; }
@@ -67,7 +84,8 @@ aside { min-height: 0; overflow: auto; background: var(--panel); padding: 12px 1
 #heatLg { position: absolute; left: 10px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11.5px; padding: 3px 8px; border-radius: 6px; background: color-mix(in srgb, var(--panel) 85%, transparent); color: var(--ink); pointer-events: none; }
 #heatLg[hidden] { display: none; }
 #heatLg i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
-#views { position: absolute; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+#views { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; }
+#views > * { pointer-events: auto; }
 .btn { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 3px 10px; font-size: 13px; cursor: pointer; }
 .btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .btn[data-toggle], .chip.tog { border-width: 2px; font-weight: 700; } /* 模組開關（腦室、透視核柱）：只加粗，不改顏色 */
@@ -102,9 +120,20 @@ ol.ev .s { display: block; font-weight: 400; color: var(--mute); font-size: 12.5
 .chip i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
 .chip[aria-pressed="false"] { opacity: .45; }
 .chip[aria-pressed="false"] i { background: transparent !important; outline: 1px solid var(--mute); }
-#card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); }
-#card h2 { font: 600 15px/1.3 var(--f-display); margin: 0 0 2px; }
-#card .en { color: var(--mute); font-size: 12.5px; margin-bottom: 2px; }
+/* 構造說明小卡：浮在 3D 上該構造的名稱旁；「完整說明」在卡內展開（內部捲動）；≤860px 改成從底部滑出 */
+#pop { position: absolute; z-index: 6; width: 290px; max-width: calc(100% - 16px); box-sizing: border-box; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); box-shadow: 0 6px 22px rgba(0, 0, 0, .2); }
+#pop:not(.show) { display: none; }
+#pop.full { width: 390px; }
+#popX { position: absolute; top: 6px; right: 6px; z-index: 1; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 5px; background: none; color: var(--mute); font-size: 14px; cursor: pointer; }
+#popX:hover { background: var(--chip); color: var(--ink); }
+#card { padding: 10px 12px 4px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+#popMore { flex: none; border: 0; border-top: 1px solid var(--line); background: none; padding: 5px 12px 6px; text-align: left; font-size: 12.5px; color: var(--accent); cursor: pointer; border-radius: 0 0 10px 10px; }
+#popMore:hover { background: var(--chip); }
+#pop:not(.full) #card > :not(h2):not(.en):not(.cbody) { display: none; }
+#pop:not(.full) .cbody { max-height: 4.9em; overflow: hidden; -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
+#pop:not(.full) .cbody :is(table, canvas, details, .wide) { display: none; }
+#card h2 { font: 600 15px/1.3 var(--f-display); margin: 0 26px 2px 0; }
+#card .en { color: var(--mute); font-size: 12.5px; margin-bottom: 4px; }
 #card .meta { font-size: 12px; color: var(--mute); margin-bottom: 6px; }
 #card p { margin: 0 0 6px; font-size: 13.5px; }
 #card ul { margin: 0; padding-left: 18px; font-size: 13px; }
@@ -113,7 +142,7 @@ ol.ev .s { display: block; font-weight: 400; color: var(--mute); font-size: 12.5
 #card .cmp th, #card .cmp td { border: 1px solid var(--line); padding: 3px 5px; text-align: left; vertical-align: top; }
 #card .cmp th { color: var(--mute); font-weight: 600; }
 #card .wide { overflow-x: auto; }
-#card.empty { color: var(--mute); font-size: 13px; }
+#card > :last-child { margin-bottom: 6px; }
 details.fold > summary { cursor: pointer; font-size: 13px; color: var(--accent); margin-top: 4px; }
 .kgN { font-size: 11px; background: var(--kg); color: var(--kg-ink); border-radius: 4px; padding: 0 5px; margin-left: 6px; font-weight: 700; white-space: nowrap; }
 .tag3d .kgN { font-size: 10px; padding: 0 3px; margin-left: 4px; font-style: normal; }
@@ -145,6 +174,9 @@ details.fold > summary { cursor: pointer; font-size: 13px; color: var(--accent);
 .row2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--mute); }
 .note { font-size: 12px; color: var(--mute); margin: 0; }
 #tools { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+#moreMenu { display: contents; }
+#moreBtn, #findIco { display: none; }
+#findIco svg { width: 15px; height: 15px; display: block; }
 /* 作者署名：桌面在最右；手機排到標題同一行的右邊 */
 #author { display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; line-height: 1.25; color: var(--ink); font-weight: 600; letter-spacing: .02em; white-space: nowrap; }
 #author small { font-size: 10.5px; font-weight: 400; color: var(--mute); }
@@ -169,18 +201,55 @@ dialog ul { padding-left: 18px; margin: 0; font-size: 13px; }
 dialog li { margin-bottom: 3px; }
 dialog form { float: right; }
 kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--bg); }
-@media (max-width: 1100px) { main { grid-template-columns: 260px minmax(0, 1fr) 300px; } }
+@media (min-width: 1400px) { main { --rw: 400px; } } /* 右欄有空：切面圖放大 */
+@media (max-width: 1100px) { main { --lw: 260px; --rw: 300px; } }
 @media (max-width: 860px) {
   body { overflow: auto; }
   #app { height: auto; grid-template-rows: auto auto; }
   main { display: flex; flex-direction: column; }
+  main.noL #notes, main.noR #bench { display: block; }
   #center { order: 1; } #bench { order: 2; } #notes { order: 3; }
   #stage { height: 56vh; min-height: 300px; }
   aside { overflow: visible; border: 0 !important; border-top: 1px solid var(--line) !important; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  #notes { display: block; padding-bottom: 12px; }
+  .lpane { overflow: visible; }
+  .edge { display: none; }
   #scrub { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  /* 3D 上方按鈕：單行橫向捲動，底色不透明，不蓋到模型（模型預設置中、留邊） */
+  #views { top: 0; left: 0; right: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 6px 10px; background: color-mix(in srgb, var(--panel) 92%, transparent); border-bottom: 1px solid var(--line); pointer-events: auto; }
+  #views::-webkit-scrollbar { display: none; }
+  #views > * { flex: none; white-space: nowrap; }
+  /* 小卡：從底部滑出；「完整說明」變高的抽屜 */
+  #pop { position: fixed; left: 0; right: 0; bottom: 0; top: auto !important; width: auto !important; max-width: none; max-height: 46vh; border-radius: 14px 14px 0 0; border-bottom: 0; padding-bottom: env(safe-area-inset-bottom, 0px); transform: translateY(105%); transition: transform .22s ease; visibility: hidden; }
+  #pop:not(.show) { display: flex; }
+  #pop.show { transform: none; visibility: visible; }
+  #pop.full { max-height: 82vh; }
+  #pop::before { content: ""; align-self: center; flex: none; width: 36px; height: 4px; border-radius: 2px; background: var(--line); margin-top: 6px; }
+  #card { padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: max(14px, env(safe-area-inset-right, 0px)); }
+  #popMore { border-radius: 0; padding-left: max(14px, env(safe-area-inset-left, 0px)); }
 }
-@media (max-width: 560px) { header h1 { order: -2; } #author { order: -1; margin-left: auto; } #tools { width: 100%; } #findBox { flex: 1; } #find { width: 100%; } }
-@media (max-width: 560px) { #scrub { grid-template-columns: minmax(0, 1fr); } #dayBox { grid-row: auto; } }
+@media (max-width: 560px) {
+  /* 標題列壓成一行：標題＋作者疊兩小行｜模組分頁橫向捲動｜搜尋圖示｜⋯ 選單 */
+  header { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 10px; row-gap: 0; padding-block: 6px; }
+  header h1 { grid-area: 1 / 1; font-size: 15px; align-self: end; }
+  #author { grid-area: 2 / 1; flex-direction: row; align-items: baseline; gap: 4px; font-size: 10px; font-weight: 500; color: var(--mute); }
+  #author small { font-size: 9.5px; }
+  #mods { grid-area: 1 / 2 / 3 / 3; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; align-self: center; }
+  #mods::-webkit-scrollbar { display: none; }
+  #mods .tab { flex: none; }
+  #tools { grid-area: 1 / 3 / 3 / 4; margin: 0; gap: 4px; }
+  #findIco, #moreBtn { display: inline-block; padding: 4px 8px; }
+  #find { display: none; }
+  #findBox.open { position: absolute; left: 8px; right: 8px; top: 50%; transform: translateY(-50%); z-index: 21; }
+  #findBox.open #find { display: block; width: 100%; padding: 6px 10px; font-size: 16px; }
+  #findBox.open #findIco { display: none; }
+  #findBox.open #findList { left: 0; right: 0; max-width: none; }
+  #moreMenu { display: none; position: absolute; right: 8px; top: calc(100% + 4px); z-index: 22; flex-direction: column; align-items: stretch; gap: 4px; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 20px rgba(0, 0, 0, .18); }
+  #moreMenu.open { display: flex; }
+  #moreMenu .btn { text-align: left; padding: 6px 14px; }
+  #helpBtn::after { content: "　說明與快捷鍵"; }
+  #scrub { grid-template-columns: minmax(0, 1fr); } #dayBox { grid-row: auto; }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
@@ -189,10 +258,13 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
     <h1>器官發育 3D</h1>
     <nav id="mods" aria-label="模組"></nav>
     <div id="tools">
-      <div id="findBox"><input id="find" type="search" placeholder="搜尋構造（/）" aria-label="搜尋構造" autocomplete="off" spellcheck="false"><ul id="findList" hidden></ul></div>
-      <button class="btn" id="shareBtn" title="複製目前畫面的連結">分享</button>
-      <button class="btn" id="srcBtn" title="資料來源">來源</button>
-      <button class="btn" id="helpBtn" aria-label="說明與快捷鍵" title="說明與快捷鍵（?）">?</button>
+      <div id="findBox"><button class="btn" id="findIco" aria-label="搜尋構造" title="搜尋構造"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3 14 14"/></svg></button><input id="find" type="search" placeholder="搜尋構造（/）" aria-label="搜尋構造" autocomplete="off" spellcheck="false"><ul id="findList" hidden></ul></div>
+      <button class="btn" id="moreBtn" aria-label="更多" aria-expanded="false" aria-controls="moreMenu">⋯</button>
+      <div id="moreMenu">
+        <button class="btn" id="shareBtn" title="複製目前畫面的連結">分享</button>
+        <button class="btn" id="srcBtn" title="資料來源">來源</button>
+        <button class="btn" id="helpBtn" aria-label="說明與快捷鍵" title="說明與快捷鍵（?）">?</button>
+      </div>
     </div>
     <div id="author"><small>作者</small>INMU_KING_2026</div>
   </header>
@@ -201,10 +273,19 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
       <div class="lbl">模組</div>
       <h2 id="modTitle"></h2>
       <p id="modSub"></p>
-      <div class="lbl" id="evLbl"></div>
-      <ol class="ev" id="events"></ol>
-      <div class="lbl" id="kgLbl"></div>
-      <ul id="kgList"></ul>
+      <p class="note" id="modNote" title="點一下展開／收起"></p>
+      <div id="ltabs" role="tablist" aria-label="左欄">
+        <button role="tab" id="tabEv" aria-controls="paneEv" aria-selected="true">事件</button>
+        <button role="tab" id="tabKg" aria-controls="paneKg" aria-selected="false">國考</button>
+      </div>
+      <div class="lpane" id="paneEv" role="tabpanel" aria-labelledby="tabEv">
+        <div class="lbl" id="evLbl"></div>
+        <ol class="ev" id="events"></ol>
+      </div>
+      <div class="lpane" id="paneKg" role="tabpanel" aria-labelledby="tabKg" hidden>
+        <div class="lbl" id="kgLbl"></div>
+        <ul id="kgList"></ul>
+      </div>
     </aside>
     <div id="center">
       <div id="stage">
@@ -220,6 +301,13 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
           <button class="btn" id="showAll" hidden title="把 H 隱藏的構造全部顯示"></button>
         </div>
         <div id="labels"></div>
+        <button class="edge" id="edgeL" aria-label="收起左欄" title="收起左欄（[）">‹</button>
+        <button class="edge" id="edgeR" aria-label="收起右欄" title="收起右欄（]）">›</button>
+        <div id="pop" role="dialog" aria-label="構造說明">
+          <button id="popX" aria-label="關閉說明" title="關閉（Esc）">✕</button>
+          <div id="card"></div>
+          <button id="popMore" aria-expanded="false">完整說明 ▾</button>
+        </div>
         <div id="heatLg" hidden><span><i style="background:#f7e7a6"></i>1 題</span><span><i style="background:#f3c977"></i>2 題</span><span><i style="background:#f0a54a"></i>3–4 題</span><span><i style="background:#c8331b"></i>5 題以上</span><span><i style="background:#9aa3a8"></i>沒考過</span></div>
       </div>
       <div id="scrub">
@@ -240,9 +328,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
       <div id="legend"></div>
       <div class="lbl" id="togLbl" hidden></div>
       <div id="togs" hidden></div>
-      <div class="lbl">構造</div>
-      <div id="card" class="empty">點 3D 或下方切面上的構造看說明。</div>
-      <p class="note" id="note"></p>
+      <p class="note" id="selHint">點 3D 或切面上的構造，說明會浮在 3D 上的名稱旁。</p>
     </aside>
   </main>
 </div>
@@ -254,7 +340,9 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
   <h3>操作</h3>
   <table>
     <tr><td>旋轉／平移／縮放</td><td>拖曳 3D；右鍵拖曳或兩指拖曳平移；滾輪或捏合縮放</td></tr>
-    <tr><td>看構造說明</td><td>點 3D 或右欄切面上的構造；滑鼠停在構造上會顯示名稱</td></tr>
+    <tr><td>看構造說明</td><td>點 3D 或右欄切面上的構造（搜尋、國考清單也可以），說明小卡會浮在 3D 上該構造的名稱旁，轉動時跟著走；按「完整說明」在卡內展開（表格、示意圖、國考題）；✕ 或 Esc 關閉。滑鼠停在構造上會顯示名稱。手機版小卡從底部滑出。</td></tr>
+    <tr><td>收起左右欄</td><td>點 3D 左右邊緣的 ‹ › 小箭頭（快捷鍵 <kbd>[</kbd> <kbd>]</kbd>），3D 會變寬；會記住上次的狀態</td></tr>
+    <tr><td>左欄</td><td>「事件」「國考」兩個分頁，各自捲動；國考清單點題目會跳到對應模組、天數與構造</td></tr>
     <tr><td>換天數</td><td>拖下方天數滑桿，或點左欄事件、滑桿下的刻度（事件會連切面一起跳）</td></tr>
     <tr><td>換切面位置</td><td>拖右欄切面下方的滑桿</td></tr>
     <tr><td>找構造</td><td>右上搜尋框，各模組一起找，中英文都可以</td></tr>
@@ -396,7 +484,7 @@ const PINCH_GAIN = 2.6;
 stage.addEventListener("pointerdown", (e) => { controls.zoomSpeed = e.pointerType === "touch" ? PINCH_GAIN : 1; }, true);
 // 觸控板捏合是 ctrl+wheel；OrbitControls 每個事件固定縮 5%，不管手指動多少 → 改照實際 deltaY 縮放。
 stage.addEventListener("wheel", (e) => {
-  if (!e.ctrlKey) return;
+  if (!e.ctrlKey || e.target.closest?.("#pop")) return;
   e.preventDefault(); e.stopPropagation(); fly = null;
   const off = camera.position.clone().sub(controls.target);
   const d = THREE.MathUtils.clamp(off.length() * Math.exp(e.deltaY * .025), controls.minDistance, controls.maxDistance);
@@ -412,11 +500,12 @@ const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(3, 8, -4
 const fill = new THREE.DirectionalLight(0xffffff, .5); fill.position.set(-4, 2, 6); scene.add(fill);
 
 /* ---------- 狀態 ---------- */
-const state = { mod: "m1", day: 22, cut3d: false, tags: true, labs: true, kg: true, heat: false, sel: null, playing: false };
-try { const s = JSON.parse(localStorage.getItem("heartembryo.ui") || "{}"); if (typeof s.tags === "boolean") state.tags = s.tags; if (typeof s.labs === "boolean") state.labs = s.labs; if (typeof s.kg === "boolean") state.kg = s.kg; if (typeof s.mod === "string") state.mod = s.mod; } catch (e) {}
-const saveUi = () => { try { localStorage.setItem("heartembryo.ui", JSON.stringify({ tags: state.tags, labs: state.labs, kg: state.kg, mod: state.mod })); } catch (e) {} };
+const state = { mod: "m1", day: 22, cut3d: false, tags: true, labs: true, kg: true, heat: false, sel: null, playing: false, pl: true, pr: true, ltab: "ev" };
+// 記在這台電腦的介面偏好（不進網址）：名稱開關、國考、模組、左右欄開關（pl／pr）、左欄分頁（ltab）
+try { const s = JSON.parse(localStorage.getItem("heartembryo.ui") || "{}"); for (const k of ["tags", "labs", "kg", "pl", "pr"]) if (typeof s[k] === "boolean") state[k] = s[k]; if (typeof s.mod === "string") state.mod = s.mod; if (s.ltab === "ev" || s.ltab === "kg") state.ltab = s.ltab; } catch (e) {}
+const saveUi = () => { try { localStorage.setItem("heartembryo.ui", JSON.stringify({ tags: state.tags, labs: state.labs, kg: state.kg, mod: state.mod, pl: state.pl, pr: state.pr, ltab: state.ltab })); } catch (e) {} };
 
-/* ===== 模組 1：心管的形成與彎曲（第 17–28 天；Langman 15th 為主、Moore 11th 補充） ===== */
+/* ===== 模組 1：心管的形成、彎曲與外形（第 17–56 天；Langman 15th 為主、Moore 11th 補充） ===== */
 const M1 = (() => {
 const V3 = THREE.Vector3;
 /* 心管材料座標 m：-1 靜脈端 → 1.5 動脈端；5 段的範圍與半徑（示意比例） */
@@ -431,6 +520,17 @@ const SEGN = { sv: "靜脈竇", pa: "原始心房", pv: "原始心室", bc: "心
 const segOf = (m) => (SEGS.find((s) => m < s.b) || SEGS[4]).id;
 const segAt = (m, t) => (t < 21.5 && m <= .52 ? "phf" : segOf(m));
 const mOfCut = (c) => lerp(-1, 1.5, c);
+// 第 4 週末以後（外形）：心房左右分開鼓出、流出道分成主動脈與肺動脈幹、靜脈竇右角併入右心房
+const atrK = (t) => sm(30, 40, t), splitK = (t) => sm(39, 44, t), svInc = (t) => sm(36, 50, t);
+const OUT0 = 1.04; // 流出道從這裡往遠端分成兩條（動脈幹）
+// 同一段的左右兩管分屬不同構造時（心房、主動脈／肺動脈幹），依管別回傳
+function pickSeg(m, σ, t) {
+  if (m > OUT0 + .04 && splitK(t) > .5) return σ < 0 ? "aoA" : "pt";
+  if (m > -.6 && m < -.08 && t >= 35) return σ < 0 ? "ra" : "la";
+  return segAt(m, t);
+}
+const CSS_OF = { aoA: "--c-aor", pt: "--c-pt", ra: "--c-pa", la: "--c-pa" };
+const cssOf = (id) => CSS_OF[id] || "--c-" + id;
 // 看得到的範圍：第 21.5 天起動脈端（心球、動脈幹）與靜脈端（靜脈竇）陸續加入
 const mMin = (t) => lerp(-.6, -1, sm(21.5, 24, t));
 const mMax = (t) => lerp(.5, 1.5, sm(21.5, 25, t));
@@ -443,8 +543,15 @@ const EVENTS = [
   { d: 22, cut: .55, t: "單一心管", s: "左右兩管由頭往尾融合成一條，尾端（心房）還分開。內層心內膜、外層心肌，中間夾心膠質；背側心繫膜把心管吊在心包腔背壁。第一對主動脈弓接到背主動脈（Langman 15th Fig. 13.5、13.7A）。" },
   { d: 23, cut: .5, t: "開始彎曲", s: "頭端（心球）往腹側、尾側、右側彎；心房端往背側、頭側、左側移（Langman 15th Fig. 13.7）。Moore 11th p.268–269 稱 D-loop。" },
   { d: 24, cut: .1, t: "靜脈竇", s: "靜脈竇左右兩角各收三條靜脈：卵黃靜脈、臍靜脈、總主靜脈（Langman 15th Fig. 13.11A；112-2 國考）。" },
-  { d: 28, cut: .5, t: "彎曲完成", s: "第 23–28 天完成彎曲：原始心房成共同心房、移到背側頭側；心球在右、原始心室在左。彎曲同時心管各處出現局部膨大：共同心房往左右鼓出，在心球兩側都看得到；原始心室與心球近端小樑化、變大，兩者之間的球室溝保持窄（原始室間孔）；房室交界也保持窄，成為房室管（Langman 15th Fig. 13.8、13.9）。接下來是分隔（模組 2）。" },
+  { d: 28, cut: .5, t: "彎曲完成", s: "第 23–28 天完成彎曲：原始心房成共同心房、移到背側頭側；心球在右、原始心室在左。彎曲同時心管各處出現局部膨大：共同心房往左右鼓出，在心球兩側都看得到；原始心室與心球近端小樑化、變大，兩者之間的球室溝保持窄（原始室間孔）；房室交界也保持窄，成為房室管（Langman 15th Fig. 13.8、13.9）。往後看外形變化；同一天的內部分隔在模組 2。" },
+  { d: 30, sec: "av", t: "房室管只通左心室", s: "房室管起初只通原始左心室，和心球之間隔著球室緣（bulboventricular flange）；兩心室之間是原始室間孔（Langman 15th Fig. 13.9）。看 2D「房室管」示意圖。" },
+  { d: 33, lbl: "第 5 週", tick: "5 週", sec: "tube", cut: .1, t: "靜脈竇左右不對稱、肺靜脈", s: "右臍靜脈與左卵黃靜脈閉鎖，左角迅速失去重要性；右角與相連的靜脈變大（Langman 15th Fig. 13.11B）。肺靜脈從左心房背側壁、第一中隔左邊長出（Langman 15th Fig. 13.17A；Moore 11th p.280）。" },
+  { d: 35, sec: "av", t: "房室管右移", s: "房室管往右移，左右心室都直接收到心房的血（Langman 15th Fig. 13.20）。兩心室並排，心尖朝左（Moore 11th p.268）。" },
+  { d: 42, lbl: "第 6 週", tick: "6 週", sec: "tube", cut: .9, t: "主動脈與肺動脈幹", s: "第 5 週動脈幹出現一對相對的嵴，螺旋相向長、融合，流出道分成主動脈與肺動脈幹，兩條互相纏繞（Langman 15th Fig. 13.27；Moore 11th p.280–285）。模型的分開時間配合模組 2（約第 6 週）。" },
+  { d: 48, lbl: "第 7 週", tick: "7 週", sec: "tube", cut: .1, t: "右角併入右心房", s: "靜脈竇右角併入右心房，成為平滑的 sinus venarum；右總主靜脈成為上腔靜脈，右卵黃靜脈末端成為下腔靜脈的肝上段（Langman 15th Fig. 13.12、13.18A）。Moore 11th p.267：第 7 週右角變大。心耳來自原始心房（Moore 11th p.279–280）。" },
+  { d: 56, lbl: "第 8 週", tick: "8 週", sec: "tube", cut: .2, t: "外形接近成人", s: "肺靜脈併入左心房，變成四個開口，左心房平滑壁來自肺靜脈（Langman 15th Fig. 13.17D、13.18B；Moore 11th p.280）。靜脈竇左角要到第 10 週左總主靜脈閉鎖後，才只剩冠狀竇與左心房斜靜脈（Langman 15th Fig. 13.12）。第 4–7 週分成四腔（Moore 11th p.313），內部分隔看模組 2。" },
 ];
+for (const e of EVENTS) if (e.cut != null && !e.sec) e.sec = "tube";
 
 const SRC_T = `<p class="src">胚胎段 → 成人構造：Langman 15th 第 13 章；靜脈竇左角另見 Moore 11th p.279。</p>`;
 const SEG_TABLE = `<details class="fold"><summary>心管 5 段 → 成人構造</summary><table class="cmp"><tr><th>胚胎段</th><th>成人構造</th></tr>`
@@ -463,20 +570,20 @@ const STRUCT = {
   shf: { name: "次級心區", en: "second heart field (SHF)", meta: "咽部背側的臟壁中胚層",
     body: `<p>位在初級心區內側，比初級心區晚一步加入心管，接在動脈端，形成<b>右心室與流出道</b>（圓錐、動脈幹）（Langman 15th Fig. 13.2）。Moore 11th p.268：心肌細胞持續從背壁中胚層加入心管。</p><p>背側心繫膜也來自次級心區。</p>`,
     trap: `流出道沒能正常延長，和 DORV、VSD、TOF 等流出道缺損有關（Langman 15th 第 13 章）。` },
-  tr: { name: "動脈幹", en: "truncus arteriosus", meta: "心球遠端・動脈端",
+  tr: { name: (st) => (st.t < 41 ? "動脈幹" : "動脈幹（已分成主動脈與肺動脈幹）"), en: "truncus arteriosus", meta: "心球遠端・動脈端",
     body: `<p>心管最頭端，血從這裡出心臟，經主動脈弓進背主動脈。</p><p>成人：<b>升主動脈與肺動脈幹的根部與近端</b>。之後由螺旋走向的動脈幹嵴分隔成兩條（模組 2）。</p>`,
     trap: `兩書都把動脈幹算在心球裡：Langman 分近端 1/3、中段 conus cordis、遠端 truncus arteriosus；Moore 11th p.268 列 truncus arteriosus、conus arteriosus、conus cordis。模型為了配色把它分開畫。`,
     more: SEG_TABLE },
-  bc: { name: "心球", en: "bulbus cordis", meta: "動脈端（次級心區）",
+  bc: { name: (st) => (st.t < 28 ? "心球" : "心球（右心室、流出道）"), en: "bulbus cordis", meta: "動脈端（次級心區）",
     body: `<p>Langman 15th 第 13 章把心球分三段：</p><ul><li><b>近端 1/3</b> → 右心室小樑部（彎曲時小樑化、變大，Fig. 13.9）</li><li><b>中段 conus cordis</b> → 兩心室的流出道</li><li><b>遠端 truncus arteriosus</b> → 主動脈與肺動脈的根部與近端（另見動脈幹）</li></ul><p>彎曲後心球移到右側；心球與原始心室交界外面的凹溝是 bulboventricular sulcus，裡面的狹窄處就是原始室間孔。</p>`,
     trap: `右心室小樑部來自心球，不是原始心室。`, more: SEG_TABLE },
-  pv: { name: "原始心室", en: "primitive ventricle", meta: "初級心區",
+  pv: { name: (st) => (st.t < 28 ? "原始心室" : st.t < 42 ? "原始左心室" : "左心室（原始心室）"), en: "primitive ventricle", meta: "初級心區",
     body: `<p>心管最粗的一段，彎曲時往腹側、尾側移，最後落在左側。成人：<b>左心室小樑部</b>（Langman 15th 第 13 章；初級心區形成整個左心室，Fig. 13.1）。彎曲時小樑化、變大，成為原始左心室（Langman 15th Fig. 13.9）。</p><p>往頭側經原始室間孔接心球；往尾側經房室管接原始心房，房室管之後由心內膜墊分隔（模組 2）。</p>`,
     trap: `原始心室 → 左心室；右心室小樑部來自心球近端。`, more: SEG_TABLE },
   pa: { name: "原始心房", en: "primitive atrium", meta: "初級心區",
     body: `<p>一開始左右分開，第 4 週融合成共同心房；彎曲時往背側、頭側、左側移，最後位在心球與原始心室的背側頭側（Langman 15th Fig. 13.7、13.8）。彎曲後期往左右兩側鼓出，在心球兩側都看得到（Langman 15th Fig. 13.8B、13.9）；與原始心室的交界保持窄，成為房室管。</p><p>成人（Langman 15th 第 13 章）：</p><ul><li>原始右心房 → 小樑化的右心耳，有梳狀肌</li><li>原始左心房 → 只剩小樑化的左心耳；平滑壁來自肺靜脈併入</li></ul>`,
     trap: `右心房的平滑部（sinus venarum）來自靜脈竇右角，不是原始心房（Langman 15th Fig. 13.18A）。`, more: SEG_TABLE },
-  sv: { name: "靜脈竇", en: "sinus venosus", meta: "靜脈端・第 4 週",
+  sv: { name: (st) => (st.t < 33 ? "靜脈竇" : "靜脈竇（右角→右心房、左角→冠狀竇）"), en: "sinus venosus", meta: "靜脈端・第 4 週",
     body: `<p>心管最尾端，左右兩角各收三條靜脈（Langman 15th Fig. 13.11A）：</p><ul><li><b>卵黃靜脈</b>（vitelline／omphalomesenteric vein）：卵黃囊</li><li><b>臍靜脈</b>（umbilical vein）：胎盤</li><li><b>總主靜脈</b>（common cardinal vein）：胚體</li></ul><p>之後血流轉往右側，左角萎縮（模組 4）：</p><ul><li>右角 → 併入右心房，成為平滑的 sinus venarum（Langman 15th Fig. 13.18A）</li><li>左角 → 左總主靜脈第 10 週閉鎖後，只剩<b>冠狀竇</b>與<b>左心房斜靜脈</b>（Langman 15th 第 13 章；Moore 11th p.279）</li></ul>`,
     trap: `112-2-35：第 4 週注入胎兒心臟的是卵黃、臍、總主三對靜脈；子宮內膜靜脈是母體的，不注入胎兒心臟。`,
     kg: ["112-2-醫學一-35"], more: SEG_TABLE },
@@ -498,8 +605,35 @@ const STRUCT = {
     body: `<p>把卵黃囊的血帶回靜脈竇（Langman 15th Fig. 13.11A）。之後參與肝內血管與門脈系統（模組 4）。</p>`, kg: ["112-2-醫學一-35"] },
   umb: { name: "臍靜脈", en: "umbilical vein", meta: "注入靜脈竇・第 4 週",
     body: `<p>把胎盤的含氧血帶回靜脈竇（Langman 15th Fig. 13.11A）。之後的變化見模組 4、5。</p>`, kg: ["112-2-醫學一-35"] },
-  card: { name: "總主靜脈", en: "common cardinal vein", meta: "注入靜脈竇・第 4 週",
+  card: { name: (st) => (st.t < 40 ? "總主靜脈" : "總主靜脈（左側變細）"), en: "common cardinal vein", meta: "注入靜脈竇・第 4 週",
     body: `<p>前主靜脈（頭部）與後主靜脈（身體尾側）在這裡會合，再注入靜脈竇角（Langman 15th Fig. 13.11A）。</p><p>左總主靜脈第 10 週閉鎖，左角只剩冠狀竇與左心房斜靜脈（Langman 15th 第 13 章）。</p>`, kg: ["112-2-醫學一-35"] },
+  ra: { name: "右心房", en: "right atrium", meta: "第 5 週起・外形",
+    body: `<p>共同心房往左右鼓出後，右半成為右心房（內部的心房中隔看模組 2）。</p><ul><li>小樑部（右心耳，有梳狀肌）← 原始心房</li><li>平滑部 sinus venarum ← 靜脈竇右角併入（Langman 15th Fig. 13.18A；Moore 11th p.279）</li></ul><p>右角併入使原始右心房變大（Langman 15th 第 13 章）。</p>`,
+    trap: `右心房平滑部來自靜脈竇右角，不是原始心房。`, more: SEG_TABLE },
+  la: { name: "左心房", en: "left atrium", meta: "第 5 週起・外形",
+    body: `<p>共同心房的左半。肺靜脈併入時，原始左心房同時擴大（Langman 15th 第 13 章）。</p><ul><li>小樑部（左心耳）← 原始心房（Moore 11th p.280）</li><li>平滑壁 ← 肺靜脈併入（Langman 15th Fig. 13.18B）</li></ul>`,
+    trap: `左心房大部分平滑壁來自肺靜脈；原始左心房只剩左心耳。`, more: SEG_TABLE },
+  aur: { name: "心耳", en: "auricle", meta: "原始心房的小樑部",
+    body: `<p>原始心房留下來的部分，壁上有梳狀肌（Langman 15th 第 13 章；Moore 11th p.279–280）。模型在第 5 週後畫在流出道兩側，書上沒寫出現的天數。</p><ul><li>右心耳 ← 原始右心房</li><li>左心耳 ← 原始左心房</li></ul>`, more: SEG_TABLE },
+  aoA: { name: "主動脈", en: "aorta", meta: "動脈幹分隔後",
+    body: `<p>動脈幹嵴螺旋相向長、融合成主肺動脈隔後，流出道分成主動脈與肺動脈幹，兩條互相纏繞（Langman 15th Fig. 13.27；Moore 11th p.280–285）。</p><p>根部與近端來自動脈幹；主動脈弓來自左第 4 主動脈弓（模組 3）。主動脈接左心室要看模組 2 的內部示意。</p>`,
+    trap: `主肺動脈隔沒有螺旋：大動脈轉位（TGA）；分隔不均：法洛氏四重症（模組 2）。` },
+  pt: { name: "肺動脈幹", en: "pulmonary trunk", meta: "動脈幹分隔後",
+    body: `<p>和主動脈一起由動脈幹分出：根部在前、往遠端繞到主動脈左後方，接右心室（Langman 15th Fig. 13.27）。左右肺動脈來自第 6 主動脈弓（模組 3）。</p>` },
+  pulv: { name: "肺靜脈", en: "pulmonary veins", meta: "第 5 週起",
+    body: `<p>從左心房背側壁、第一中隔左邊長出（Moore 11th p.280）；長在背側心繫膜的間質裡，隨背側間質突起被帶到左心房後壁（Langman 15th Fig. 13.17）。</p><ul><li>起初只有一條主幹進入左心房</li><li>心房擴張時，主幹與分支併入，變成四個開口（Langman 15th Fig. 13.17D、13.18）</li><li>左心房平滑壁來自肺靜脈</li></ul><p>書上沒寫併入完成的天數；模型約第 8 週畫成四條。</p>`,
+    trap: `肺靜脈異位回流：肺靜脈接到右心房或體靜脈（Langman 15th 第 13 章）。` },
+  ivc: { name: "下腔靜脈（肝上段）", en: "inferior vena cava", meta: "右卵黃靜脈末端",
+    body: `<p>右卵黃靜脈靠心臟的一段變大，成為下腔靜脈的肝上段，注入右角（之後的右心房）（Langman 15th Fig. 13.11B）。下腔靜脈其他段的來源見模組 4。</p>` },
+  svc: { name: "上腔靜脈", en: "superior vena cava", meta: "右總主靜脈＋右前主靜脈近端",
+    body: `<p>右總主靜脈與右前主靜脈近端變大，成為上腔靜脈，注入右心房（Langman 15th 第 13 章、Fig. 13.12）。</p><p>左總主靜脈第 10 週閉鎖，左角只剩冠狀竇與左心房斜靜脈。</p>`,
+    trap: `左上腔靜脈殘留：左前主靜脈與左總主靜脈沒閉鎖，經冠狀竇注入右心房（Langman 15th 第 13 章）。` },
+  avc: { name: "房室管", en: "atrioventricular canal", meta: "心房與原始左心室的交界",
+    body: `<p>彎曲後心房與原始心室的交界保持窄，成為房室管（Langman 15th Fig. 13.9）。</p><ul><li>第 30 天：只通原始左心室</li><li>第 35 天：往右移，左右心室都直接收到心房的血（Langman 15th Fig. 13.20）</li></ul><p>之後心內膜墊把它分成左右房室口（模組 2）。</p>` },
+  flange: { name: "球室緣", en: "bulboventricular flange", meta: "心球與原始左心室之間",
+    body: `<p>房室管起初只通原始左心室，和心球（右心室）之間隔著球室緣（Langman 15th Fig. 13.9、第 13 章）。房室管右移時球室緣變小。</p>` },
+  ivf: { name: "原始室間孔", en: "primary interventricular foramen", meta: "兩心室之間",
+    body: `<p>心球近端（原始右心室）與原始心室（原始左心室）之間的球室溝保持窄，裡面就是原始室間孔（Langman 15th Fig. 13.9）。第 30 天時，進原始左心室的血經這裡到右心室。</p><p>之後由肌性心室間隔與膜性心室間隔關閉（模組 2）。</p>` },
   dextro: { name: "右位心", en: "dextrocardia", meta: "先天異常・開關 D",
     body: `<p>心管往<b>左</b>彎（正常往右），心臟落在胸腔右側（Langman 15th 第 13 章）。左右不對稱在原腸化時建立，右位心可在原腸化或彎曲時被誘發。</p><ul><li>合併所有器官左右顛倒：全內臟反位（situs inversus）</li><li>只有部分器官顛倒：heterotaxy，常合併心臟缺損</li></ul><p>相關基因見 Langman 15th Table 13.1、13.2。Moore 11th p.268–269：正常往右彎稱 D-loop。</p>`,
     trap: `右位心＝心管往「左」彎；正常是往右的 D-loop。` },
@@ -512,17 +646,24 @@ const LEGEND = [
   { id: "shf", name: "次級心區", css: "--c-shf" },
   { id: "peri", name: "心包腔", css: "--c-peri", toggle: true },
   { id: "ref", name: "前腸與主動脈", css: "--c-ref", toggle: true },
+  { id: "aoA", name: "主動脈", css: "--c-aor" },
+  { id: "pt", name: "肺動脈幹", css: "--c-pt" },
+  { id: "pulv", name: "肺靜脈", css: "--c-pulv" },
   { id: "vein", name: "靜脈", css: "--c-card", toggle: true },
 ];
 const flags = { dextro: false };
 
 const M = {
-  id: "m1", name: "心管與彎曲", title: "心管的形成與彎曲", sub: "第 3–4 週：心區 → 成對心管 → 單一心管 → 彎曲（cardiac looping）。",
-  range: [17, 28], speed: 1, events: EVENTS, evLbl: "時間軸（Langman）",
+  id: "m1", name: "心管與彎曲", title: "心管的形成、彎曲與外形", sub: "第 3–8 週：心區 → 成對心管 → 單一心管 → 彎曲 → 外形長成四腔（內部分隔看模組 2）。",
+  range: [17, 56], get speed() { return state.day < 28 ? 1 : 2.5; }, events: EVENTS, evLbl: "時間軸（Langman 為主）",
   legendLbl: "心管分段（點一下看說明）・開關", legend: LEGEND, layers: { peri: true, ref: true, vein: true },
   flags, toggles: [{ id: "dextro", label: "右位心", title: "右位心（D）：心管往左彎", key: "d" }],
+  secModes: [
+    { id: "tube", label: "心管", title: "心管切面（垂直心管）", ends: ["靜脈端", "動脈端"] },
+    { id: "av", label: "房室管", title: "房室管（冠狀・示意）", fixed: true, hint: "固定示意圖，隨天數變（第 28 天起）" },
+  ], secMode: "tube",
   secTitle: "心管切面（垂直心管）", secEnds: ["靜脈端", "動脈端"], cutRange: [.02, .98, .005], cut: .5,
-  note: "示意模型：沒畫胚體摺疊，心管比例放大；顏色是心管 5 段，一路帶到成人構造。來源：Langman 15th 為主、Moore 11th 補充，兩書不同處並列。",
+  note: "示意模型：沒畫胚體摺疊，心管比例放大；顏色是心管 5 段，一路帶到成人構造。第 4 週末以後看外形，同一天的內部分隔在模組 2。來源：Langman 15th 為主、Moore 11th 補充，兩書不同處並列。",
   struct: STRUCT, group: new THREE.Group(), autoFit: true,
 };
 M.legendClick = (l) => { if (l.toggle) M.layers[l.id] = !M.layers[l.id]; else select(l.id); };
@@ -537,7 +678,9 @@ function radius(m, t) {
   else if (m >= RK[4][0]) r = RK[4][1];
   else { let i = 0; while (m > RK[i + 1][0]) i++; r = lerp(RK[i][1], RK[i + 1][1], sm(RK[i][0], RK[i + 1][0], m)); }
   const k = sm(21.5, 23, t); // 段與段之間的凹溝（竇房、房室管、心球心室溝）
-  for (const b of [-.6, -.05, .5]) r *= 1 - .16 * k * Math.exp(-(((m - b) / .07) ** 2));
+  const k2 = sm(28, 35, t);
+  for (const b of [-.6, -.05, .5]) r *= 1 - .16 * k * (b === .5 ? 1 - .7 * k2 : 1) * Math.exp(-(((m - b) / .07) ** 2));
+  r *= 1 - .32 * splitK(t) * sm(OUT0, OUT0 + .1, m); // 分成兩條後各自變細
   return r * lerp(.55, 1, sm(19, 22, t)) * lerp(1, .8, sm(23, 27, t)) * (1 + swell(m, t)); // 彎曲後變細，避免第 28 天像甜甜圈
 }
 // 彎曲後半段（第 25–28 天）局部膨大（Langman 15th 第 13 章：彎曲時心管各處出現局部膨大；Fig. 13.8）
@@ -547,17 +690,23 @@ const wPA = (m) => sm(-.62, -.45, m) * (1 - sm(-.25, -.08, m));
 function swell(m, t) {
   const k = swK(t); if (!k) return 0;
   const wV = sm(0, .12, m) * (1 - sm(.36, .48, m)), wR = sm(.52, .6, m) * (1 - sm(.72, .84, m));
-  return k * (.4 * wV + .35 * wR + .25 * wPA(m));
+  // 第 28–35 天兩心室繼續長大，右心室追上左心室（Langman 15th Fig. 13.20）
+  const k2 = sm(28, 35, t), wR2 = sm(.52, .6, m) * (1 - sm(.8, .92, m));
+  return k * (.4 * wV + .35 * wR + .25 * wPA(m)) + k2 * (.3 * wV + .45 * wR2);
 }
+// 靜脈竇左角變細（→冠狀竇）、右角變大（Langman 15th Fig. 13.11B）：每一管自己的倍數
+const hornS = (m, σ, t) => { const w = sm(-.62, -.75, m); return w ? lerp(1, σ > 0 ? lerp(1, .5, sm(31, 45, t)) : lerp(1, 1.3, sm(32, 42, t)), w) : 1; };
 // 共同心房往左右橫向鼓出，在心球兩側都看得到（Langman 15th Fig. 13.8B、13.9）：世界座標 x 方向拉長的倍數
-const xStretch = (m, t) => 1 + 3 * swK(t) * wPA(m);
+const xStretch = (m, t) => 1 + 3 * swK(t) * wPA(m) * (1 - .55 * atrK(t)); // 第 30 天後改成左右兩管分開鼓出
 // 左右兩管的半間距：心室區第 21–22 天由頭往尾融合；心房第 24–26.5 天融合；靜脈竇兩角不融合
 function sep(m, t) {
   const tf = m >= .5 ? 21 : lerp(21, 22, clamp((.5 - m) / .55, 0, 1));
-  const sV = .35 * (1 - sm(tf - .5, tf + .3, t)), sA = .35 * (1 - sm(24, 26.5, t));
+  const sV = .35 * (1 - sm(tf - .5, tf + .3, t)), sA = .35 * (1 - sm(24, 26.5, t)) + .3 * atrK(t);
   const s = lerp(sA, sV, sm(-.25, -.02, m)), horn = .35 + .44 * clamp((-.6 - m) / .4, 0, 1);
   return lerp(s, horn, sm(-.55, -.8, m));
 }
+// 流出道分開的半間距（方向另外轉）
+const sepOut = (m, t) => .19 * splitK(t) * sm(OUT0, OUT0 + .12, m);
 // 馬蹄形心區（第 17–19 天）
 function horse(m, σ, A = .9) {
   const s = clamp((m + .6) / 1.1, 0, 1);
@@ -568,18 +717,32 @@ function horse(m, σ, A = .9) {
 // 彎曲完成（第 28 天）的中心線：非均勻 Catmull-Rom（Hermite）；+x＝病人左、+y 頭、+z 腹
 const LK = [[-1, [0, .2, -.3]], [-.6, [0, .5, -.2]], [-.35, [-.3, .85, .1]], [-.05, [.6, .3, .6]], [.22, [.45, -.45, 1.4]],
   [.5, [-.3, -.5, 1.6]], [.75, [-.75, .1, 1.5]], [1.05, [-.55, .9, 1.3]], [1.5, [0, 1.7, .9]]];
-const LT = LK.map((k, i) => { const a = LK[Math.max(0, i - 1)], b = LK[Math.min(LK.length - 1, i + 1)]; return [0, 1, 2].map((j) => (b[1][j] - a[1][j]) / (b[0] - a[0])); });
-function loopC(m) {
-  m = clamp(m, -1, 1.5); let i = 0; while (i < LK.length - 2 && m > LK[i + 1][0]) i++;
-  const h = LK[i + 1][0] - LK[i][0], u = (m - LK[i][0]) / h, u2 = u * u, u3 = u2 * u;
+// 第 35 天：兩心室並排、心尖朝左下（Moore 11th p.268）；房室管移到中線（Langman 15th Fig. 13.20）
+const LK35 = [[-1, [0, .2, -.35]], [-.6, [0, .5, -.3]], [-.35, [.05, .8, -.05]], [-.05, [.15, .2, .5]], [.15, [.72, -.2, .9]], [.3, [.6, -.95, 1.25]],
+  [.5, [-.1, -.8, 1.55]], [.72, [-.62, -.35, 1.6]], [.9, [-.45, .4, 1.6]], [1.05, [-.15, .85, 1.45]], [1.5, [.1, 1.7, 1]]];
+const tangents = (K) => K.map((k, i) => { const a = K[Math.max(0, i - 1)], b = K[Math.min(K.length - 1, i + 1)]; return [0, 1, 2].map((j) => (b[1][j] - a[1][j]) / (b[0] - a[0])); });
+const LT = tangents(LK), LT35 = tangents(LK35);
+function herm(K, T, m) {
+  m = clamp(m, -1, 1.5); let i = 0; while (i < K.length - 2 && m > K[i + 1][0]) i++;
+  const h = K[i + 1][0] - K[i][0], u = (m - K[i][0]) / h, u2 = u * u, u3 = u2 * u;
   const h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u, h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
-  return [0, 1, 2].map((j) => h00 * LK[i][1][j] + h10 * h * LT[i][j] + h01 * LK[i + 1][1][j] + h11 * h * LT[i + 1][j]);
+  return [0, 1, 2].map((j) => h00 * K[i][1][j] + h10 * h * T[i][j] + h01 * K[i + 1][1][j] + h11 * h * T[i + 1][j]);
+}
+function loopC(m, t) {
+  const c = herm(LK, LT, m), L2 = sm(28, 35, t); if (!L2) return c;
+  const c2 = herm(LK35, LT35, m); return c.map((v, j) => lerp(v, c2[j], L2));
 }
 // 某一管（σ = -1 病人右、+1 病人左）在 m 的中心
 function pos(m, σ, t, out) {
+  if (σ < 0 && m < -.6) m = lerp(m, -.6 + (m + .6) * .35, svInc(t)); // 右角併入右心房：右角變短
   const b = sm(19, 21.5, t), L = sm(23, 28, t), s = sep(m, t), h = horse(m, σ);
   let x = lerp(h[0], σ * s, b), y = lerp(h[1], -.2 + 1.3 * m, b), z = lerp(h[2], .6, b);
-  if (L > 0) { const c = loopC(m); x = lerp(x, (flags.dextro ? -c[0] : c[0]) + σ * s, L); y = lerp(y, c[1], L); z = lerp(z, c[2], L); }
+  if (L > 0) {
+    const c = loopC(m, t), so = sepOut(m, t), dx = flags.dextro ? -1 : 1;
+    // 肺動脈幹（σ=+1）根部在左前、往遠端繞到左後；主動脈（σ=-1）相反，兩條互相纏繞
+    const φ = lerp(1, -1.1, sm(OUT0, 1.5, m));
+    x = lerp(x, dx * c[0] + σ * s + dx * σ * so * Math.cos(φ), L); y = lerp(y, c[1], L); z = lerp(z, c[2] + σ * so * Math.sin(φ), L);
+  }
   return out.set(x, y, z);
 }
 const _a = new V3(), _b = new V3();
@@ -592,14 +755,16 @@ function segW(m) {
   const w = SEGS.map((s, i) => (i ? sm(s.a - .04, s.a + .04, m) : 1) * (i < 4 ? 1 - sm(s.b - .04, s.b + .04, m) : 1));
   const tot = w.reduce((a, b) => a + b, 0) || 1; return w.map((x) => x / tot);
 }
-function tubeColor(m, t) {
+function tubeColor(m, t, σ = 1) {
   const w = segW(m); _col.setRGB(0, 0, 0);
   SEGS.forEach((s, i) => { if (w[i]) { const c = colOf("--c-" + s.id); _col.r += c.r * w[i]; _col.g += c.g * w[i]; _col.b += c.b * w[i]; } });
   const fP = (1 - sm(20.5, 22.5, t)) * (1 - sm(.45, .6, m)); if (fP) _col.lerp(colOf("--c-phf"), fP);
   const fS = (1 - sm(24, 26.5, t)) * sm(.45, .6, m); if (fS) _col.lerp(colOf("--c-shf"), fS);
+  const fO = splitK(t) * sm(OUT0, OUT0 + .1, m); if (fO) _col.lerp(colOf(σ < 0 ? "--c-aor" : "--c-pt"), .8 * fO);
   const si = SEGS.findIndex((s) => s.id === state.sel);
   if (si >= 0 && w[si]) _col.lerp(WHITE, .35 * w[si]);
   else if (state.sel === "phf" && fP) _col.lerp(WHITE, .35 * fP);
+  else if (state.sel && pickSeg(m, σ, t) === state.sel) _col.lerp(WHITE, .35);
   return _col;
 }
 
@@ -612,6 +777,7 @@ function mkTube(material, struct) {
   M.group.add(o); return o;
 }
 const tubes = [mkTube(tubeMat), mkTube(tubeMat)], endos = [mkTube(endoMat, "endoc"), mkTube(endoMat, "endoc")];
+tubes[0].userData.σ = -1; tubes[1].userData.σ = 1;
 const CEN = Array.from({ length: NM }, () => new V3()), TAN = Array.from({ length: NM }, () => new V3()), LEN = new Float32Array(NM);
 const _N = new V3(), _B = new V3();
 function fillTube(mesh, σ, lo, hi, t, rk, openStart, colored) {
@@ -619,7 +785,7 @@ function fillTube(mesh, σ, lo, hi, t, rk, openStart, colored) {
   for (let i = 0; i < NM; i++) { pos(lerp(lo, hi, i / (NM - 1)), σ, t, CEN[i]); LEN[i] = i ? LEN[i - 1] + CEN[i].distanceTo(CEN[i - 1]) : 0; }
   for (let i = 0; i < NM; i++) TAN[i].subVectors(CEN[Math.min(NM - 1, i + 1)], CEN[Math.max(0, i - 1)]).normalize();
   _N.set(1, 0, 0); if (Math.abs(_N.dot(TAN[0])) > .9) _N.set(0, 0, 1);
-  const r0 = radius(lo, t) * rk, r1 = radius(hi, t) * rk, Ltot = LEN[NM - 1];
+  const r0 = radius(lo, t) * rk * hornS(lo, σ, t), r1 = radius(hi, t) * rk, Ltot = LEN[NM - 1];
   for (let i = 0; i < NM; i++) {
     const T = TAN[i]; _N.addScaledVector(T, -_N.dot(T)).normalize(); _B.crossVectors(T, _N);
     const m = lerp(lo, hi, i / (NM - 1));
@@ -627,7 +793,7 @@ function fillTube(mesh, σ, lo, hi, t, rk, openStart, colored) {
     let tp = 1;
     if (!openStart && LEN[i] < r0) { const u = 1 - LEN[i] / r0; tp = Math.sqrt(Math.max(0, 1 - u * u)); }
     if (Ltot - LEN[i] < r1) { const u = 1 - (Ltot - LEN[i]) / r1; tp = Math.min(tp, Math.sqrt(Math.max(0, 1 - u * u))); }
-    const r = radius(m, t) * rk * tp, col = C ? tubeColor(m, t) : null, xs = xStretch(m, t);
+    const r = radius(m, t) * rk * tp * hornS(m, σ, t), col = C ? tubeColor(m, t, σ) : null, xs = xStretch(m, t);
     for (let k = 0; k < NR; k++) {
       const a = k / NR * Math.PI * 2, ca = Math.cos(a) * r, sa = Math.sin(a) * r, o = (i * NR + k) * 3;
       P[o] = CEN[i].x + (ca * _N.x + sa * _B.x) * xs; P[o + 1] = CEN[i].y + ca * _N.y + sa * _B.y; P[o + 2] = CEN[i].z + ca * _N.z + sa * _B.z;
@@ -666,6 +832,22 @@ const arches = [-1, 1].map(() => { const o = new THREE.Mesh(new THREE.BufferGeom
 // 靜脈：每邊卵黃、臍、總主（加前、後主靜脈）
 const VEINS = [["vit", "--c-vit"], ["umb", "--c-umb"], ["card", "--c-card"], ["card", "--c-card"], ["card", "--c-card"]];
 const veins = [-1, 1].map(() => VEINS.map(([s, v]) => { const o = new THREE.Mesh(new THREE.BufferGeometry(), mat(v)); o.userData.struct = s; M.group.add(o); return o; }));
+// 第 5 週起：肺靜脈（主幹 1、分支 2、末端 4）、心耳、主動脈弓與左右肺動脈
+const PULV = Array.from({ length: 7 }, () => { const o = new THREE.Mesh(new THREE.BufferGeometry(), mat("--c-pulv")); o.userData.struct = "pulv"; M.group.add(o); return o; });
+const AUR = [-1, 1].map((σ) => { const o = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14), mat("--c-pa")); o.userData.struct = "aur"; o.userData.σ = σ; M.group.add(o); return o; });
+const aoArch = new THREE.Mesh(new THREE.BufferGeometry(), mat("--c-aor")); aoArch.userData.struct = "aoA"; M.group.add(aoArch);
+const ptBr = [-1, 1].map(() => { const o = new THREE.Mesh(new THREE.BufferGeometry(), mat("--c-pt")); o.userData.struct = "pt"; M.group.add(o); return o; });
+const pulvK = (t) => sm(31, 37, t), pulvInc = (t) => sm(42, 54, t), aurK = (t) => sm(34, 46, t), archK = (t) => sm(41, 47, t);
+// 肺靜脈：從左心房背側壁長出，主幹與分支逐步併入，最後四個開口（Langman 15th Fig. 13.17、13.18）
+function pulvPts(t) {
+  const g = pulvK(t), q = pulvInc(t), c = pos(-.3, 1, t, new V3()), r = radius(-.3, t);
+  const B = [c.x - .08, c.y - .05, c.z - r * .85], a = .4 * g * (1 - q), P1 = [B[0], B[1], B[2] - a];
+  const lat = lerp(.3, .2, q) * g, bk = lerp(.2, .02, q) * g;
+  const Q = [-1, 1].map((u) => [P1[0] + u * lat, P1[1], P1[2] - bk]), out = [[B, P1, a]];
+  Q.forEach((Qp) => out.push([P1, Qp, 1 - q]));
+  Q.forEach((Qp, i) => { const u = i ? 1 : -1; for (const v of [-1, 1]) { const S = [Qp[0], Qp[1] + v * .12 * q, Qp[2]]; out.push([S, [S[0] + u * .25 * g, S[1] + v * .25 * g, S[2] - .3 * g], [S[0] + u * .45 * g, S[1] + v * .4 * g, S[2] - .55 * g], 1]); } });
+  return out;
+}
 // 次級心區細胞（小球）
 const NS = 40, shf = new THREE.InstancedMesh(new THREE.SphereGeometry(.06, 10, 8), mat("--c-shf"), NS);
 shf.userData.struct = "shf"; M.group.add(shf);
@@ -693,6 +875,15 @@ const veinPts = (σ, t) => {
   ];
 };
 
+// 第 5 週起各條靜脈的粗細倍數（Langman 15th Fig. 13.11B、13.12）
+function veinF(σ, j, t) {
+  if (σ < 0 && j === 1) return 1 - sm(30, 35, t); // 右臍靜脈閉鎖
+  if (σ > 0 && j === 0) return 1 - sm(30, 35, t); // 左卵黃靜脈閉鎖
+  if (σ > 0 && j === 1) return 1 - sm(32, 37, t); // 左臍靜脈改經肝內的靜脈導管（模組 4）
+  if (σ > 0) return lerp(1, .55, sm(33, 48, t)); // 左總主靜脈變細，第 10 週閉鎖
+  return j === 4 ? 1 : lerp(1, 1.7, sm(33, 48, t)); // 右側變大 → 下腔靜脈、上腔靜脈
+}
+
 /* ---------- 每次更新 ---------- */
 let prevD = null;
 const TUBE = { lo: -.6, hi: .5 };
@@ -702,34 +893,36 @@ M.update = function () {
   const t = state.day, lo0 = mMin(t), hi = mMax(t), mc = mOfCut(M.cut);
   let lo = lo0, open = false, show = true;
   if (state.cut3d) { if (mc > hi) show = false; else if (mc > lo0) { lo = mc; open = true; } }
-  TUBE.lo = lo; TUBE.hi = hi;
+  TUBE.lo = lo; TUBE.hi = hi; TUBE.hiP = hi - .1 * splitK(t); // 肺動脈幹比主動脈短，分叉在主動脈弓下
   [-1, 1].forEach((σ, i) => {
-    tubes[i].visible = show; if (show) fillTube(tubes[i], σ, lo, hi, t, 1, open, true);
-    endos[i].visible = show && state.cut3d; if (endos[i].visible) fillTube(endos[i], σ, lo, hi, t, .46, open, false);
+    const h = σ > 0 ? TUBE.hiP : hi;
+    tubes[i].visible = show; if (show) fillTube(tubes[i], σ, lo, h, t, 1, open, true);
+    endos[i].visible = show && state.cut3d; if (endos[i].visible) fillTube(endos[i], σ, lo, h, t, .46, open, false);
   });
   // 切口與切面框
   const r = radius(mc, t), inR = mc >= lo0 - 1e-3 && mc <= hi + 1e-3, T = tanAt(mc, t), q = new THREE.Quaternion().setFromUnitVectors(new V3(0, 0, 1), T);
-  const pL = pos(mc, -1, t, new V3()), pR = pos(mc, 1, t, new V3()), two = pL.distanceTo(pR) > .6 * r, seg = segAt(mc, t);
+  const pL = pos(mc, -1, t, new V3()), pR = pos(mc, 1, t, new V3()), two = pL.distanceTo(pR) > .6 * r;
   for (const g of CAPS) {
-    const σ = g.userData.σ; g.visible = state.cut3d && open && (σ === 1 || two);
+    const σ = g.userData.σ, seg = pickSeg(mc, σ, t); g.visible = state.cut3d && open && (σ === 1 || two);
     if (!g.visible) continue;
     g.position.copy(σ === 1 ? pR : pL); g.quaternion.copy(q); g.scale.setScalar(r);
     g.updateMatrix(); const xs = xStretch(mc, t); if (xs > 1.001) g.matrix.premultiply(_SX.makeTranslation(-g.position.x, -g.position.y, -g.position.z)).premultiply(_SY.makeScale(xs, 1, 1)).premultiply(_SX.makeTranslation(g.position.x, g.position.y, g.position.z));
-    const myo = g.children[0]; myo.material = capMat("--c-" + seg); myo.userData.struct = seg;
+    const myo = g.children[0]; myo.material = capMat(cssOf(seg)); myo.userData.struct = seg;
   }
-  frameG.visible = !state.cut3d && inR;
+  frameG.visible = !state.cut3d && inR && M.secMode === "tube";
   if (frameG.visible) { frameG.position.copy(pL).add(pR).multiplyScalar(.5); frameG.quaternion.copy(q); frameG.scale.setScalar(pL.distanceTo(pR) + 2 * r + .5); }
   // 心包腔：直管期 → 彎曲期
-  const L = sm(23, 28, t), pk = sm(19, 21, t);
+  const L = sm(23, 28, t), L2 = sm(28, 35, t), pk = sm(19, 21, t);
   peri.visible = M.layers.peri && !state.cut3d && pk > .02; peri.material.opacity = .14 * pk;
-  peri.position.set(0, lerp(.15, .6, L), lerp(.55, .65, L)); peri.scale.set(lerp(1.15, 1.5, L), lerp(1.85, 1.55, L), lerp(.78, 1.15, L));
+  peri.position.set(0, lerp(lerp(.15, .6, L), .45, L2), lerp(lerp(.55, .65, L), .7, L2));
+  peri.scale.set(lerp(lerp(1.15, 1.5, L), 1.6, L2), lerp(lerp(1.85, 1.55, L), 1.75, L2), lerp(lerp(.78, 1.15, L), 1.3, L2));
   // 背側心繫膜（直管期）
   const dk = dmK(t); dm.visible = dk > .03; dm.material.opacity = .85 * dk;
   if (dm.visible) { const y0 = pos(-.6, 1, t, _a).y, y1 = pos(.5, 1, t, _b).y, z0 = .6 - radius(.2, t) * .9, z1 = GUT_Z + .24; dm.position.set(0, (y0 + y1) / 2, (z0 + z1) / 2); dm.scale.set(.05, Math.abs(y1 - y0), Math.abs(z0 - z1)); }
   // 參考構造
   const gk = sm(20, 22, t), ref = M.layers.ref && gk > .02;
   gut.visible = ref; gut.material.opacity = gk;
-  const archR = .07 * sm(21.8, 22.6, t);
+  const archR = .07 * sm(21.8, 22.6, t) * (1 - sm(29, 33, t)); // 第一主動脈弓之後大部分消失（模組 3）
   [-1, 1].forEach((σ, i) => {
     const A = archPts(σ, t), yTop = A[3][1];
     aortae[i].visible = ref; aortae[i].position.set(σ * AO_X, (yTop - 1.9) / 2, AO_Z); aortae[i].scale.set(.08, yTop + 1.9, .08);
@@ -738,7 +931,26 @@ M.update = function () {
   aoMat.transparent = gk < .99; aoMat.opacity = gk;
   // 靜脈（第 22.5–24 天長出）
   const vk = sm(22.5, 24, t), vs = M.layers.vein && vk > .02;
-  [-1, 1].forEach((σ, i) => { const VP = vs ? veinPts(σ, t) : null; veins[i].forEach((o, j) => { if (vs) tubeGeo(o, VP[j], .055 * vk); else o.visible = false; }); });
+  [-1, 1].forEach((σ, i) => { const VP = vs ? veinPts(σ, t) : null; veins[i].forEach((o, j) => {
+    if (σ < 0) o.userData.struct = t >= 40 && j === 0 ? "ivc" : t >= 40 && (j === 2 || j === 3) ? "svc" : VEINS[j][0];
+    if (vs) tubeGeo(o, VP[j], .055 * vk * veinF(σ, j, t)); else o.visible = false;
+  }); });
+  // 肺靜脈
+  const PP = M.layers.vein && pulvK(t) > .02 ? pulvPts(t) : null;
+  PULV.forEach((o, j) => { if (PP) tubeGeo(o, PP[j].slice(0, -1), [.065, .05, .05, .04, .04, .04, .04][j] * pulvK(t) * Math.min(1, PP[j][PP[j].length - 1] * 3)); else o.visible = false; });
+  // 心耳
+  const ak = aurK(t);
+  AUR.forEach((o) => { const σ = o.userData.σ; o.visible = ak > .03 && !(state.cut3d && mc > -.32); if (!o.visible) return;
+    const c = pos(-.3, σ, t, _a), r = radius(-.3, t), xs = xStretch(-.3, t);
+    o.position.set(c.x + σ * r * xs * .5, c.y + .14, c.z + r * .8); o.scale.set(.26 * ak, .16 * ak, .2 * ak); });
+  // 主動脈弓（接左背主動脈）與左右肺動脈
+  const kA = archK(t);
+  if (kA > .02 && show) {
+    const E = pos(hi - .01, -1, t, new V3()), rA = radius(hi, t), yT = E.y + .35;
+    tubeGeo(aoArch, [E.toArray(), [E.x + .03, E.y + .28, E.z - .1], [AO_X * .55, yT + .05, (E.z + AO_Z) / 2], [AO_X, yT - .2, AO_Z], [AO_X, yT - .6, AO_Z]], rA * .95 * kA);
+    const F = pos(TUBE.hiP - .01, 1, t, new V3());
+    ptBr.forEach((o, i) => { const u = i ? 1 : -1; tubeGeo(o, [F.toArray(), [F.x + u * .15, F.y + .06, F.z - .2], [F.x + u * .45, F.y - .06, F.z - .5]], .055 * kA); });
+  } else { aoArch.visible = false; ptBr.forEach((o) => { o.visible = false; }); }
   // 次級心區
   const sk = shfK(t), b = sm(19, 21.5, t); shf.visible = sk > .01;
   if (shf.visible) {
@@ -760,10 +972,15 @@ M.update = function () {
 // 選到還沒出現或被關掉的構造：打開圖層、跳到看得到的天數
 M.reveal = (s) => {
   let ch = false; const t = state.day;
-  const lay = { peri: "peri", gut: "ref", ao: "ref", vit: "vein", umb: "vein", card: "vein" }[s];
+  const lay = { peri: "peri", gut: "ref", ao: "ref", vit: "vein", umb: "vein", card: "vein", ivc: "vein", svc: "vein", pulv: "vein" }[s];
   if (lay && !M.layers[lay]) { M.layers[lay] = true; ch = true; }
-  const need = { vit: 24, umb: 24, card: 24, sv: 24, bc: 23, tr: 24, ao: 22.5, dm: 22, gut: 22, endoc: 20, jelly: 20 }[s];
+  const need = { vit: 24, umb: 24, card: 24, sv: 24, bc: 23, tr: 24, ao: 22.5, dm: 22, gut: 22, endoc: 20, jelly: 20,
+    ra: 35, la: 35, aur: 42, aoA: 44, pt: 44, pulv: 37, ivc: 42, svc: 42, avc: 28, flange: 30, ivf: 28 }[s];
   if (need && t < need - .3) { state.day = need; ch = true; }
+  if ((s === "umb" || s === "ao") && t > 33) { state.day = 28; ch = true; }
+  if (s === "flange" && t > 34) { state.day = 30; ch = true; }
+  const sec = { avc: "av", flange: "av", ivf: "av" }[s] || (M.secMode === "av" && !["pv", "bc", "pa", "tr", "ra", "la"].includes(s) ? "tube" : null);
+  if (sec && M.secMode !== sec) { M.secMode = sec; renderSecMode(); ch = true; }
   if ((s === "phf" && t > 21.5) || (s === "shf" && t > 25)) { state.day = s === "phf" ? 19 : 21; ch = true; }
   if (s === "dm" && t > 23.5) { state.day = 22; ch = true; }
   return ch;
@@ -776,22 +993,31 @@ M.tagAnchors = function () {
   if (t < 21.5) { const p = pos(.25, 1, t, v); push("初級心區", .25, [p.x + .25, p.y, p.z + .1], "phf"); }
   else for (const s of SEGS) {
     const a = Math.max(s.a, lo), b = Math.min(s.b, hi); if (b - a < .12) continue;
-    const m = (a + b) / 2, p = s.id === "sv" ? pos(m, 1, t, v) : midAt(m, t, v);
-    push(SEGN[s.id], m, [p.x, p.y, p.z + radius(m, t)], s.id);
+    const m = (a + b) / 2;
+    if (s.id === "pa" && t >= 35) { for (const σ of [-1, 1]) { const p = pos(m, σ, t, v); push(σ < 0 ? "右心房" : "左心房", m, [p.x + σ * radius(m, t) * xStretch(m, t), p.y, p.z], σ < 0 ? "ra" : "la"); } continue; }
+    if (s.id === "tr" && splitK(t) > .5) { const p = pos(m, -1, t, v); push("主動脈", m, [p.x - .1, p.y + .1, p.z + radius(m, t)], "aoA"); const q = pos(m - .08, 1, t, v); push("肺動脈幹", m, [q.x + .1, q.y, q.z + radius(m, t)], "pt"); continue; }
+    if (s.id === "sv" && t >= 33) { const m2 = -.82; for (const σ of [-1, 1]) { if (σ < 0 && t >= 46) continue; const p = pos(m2, σ, t, v); push(σ < 0 ? "右角" : "左角", m2, [p.x, p.y, p.z], "sv"); } continue; }
+    const nm = { pv: t < 28 ? "原始心室" : t < 42 ? "原始左心室" : "左心室", bc: t < 30 ? "心球" : "心球（右心室）" }[s.id] || SEGN[s.id];
+    const p = s.id === "sv" ? pos(m, 1, t, v) : midAt(m, t, v);
+    push(nm, m, [p.x, p.y, p.z + radius(m, t)], s.id);
   }
   if (shf.visible && shfK(t) > .4) { const c = new V3(); SHF_P.forEach((p) => c.add(p)); c.multiplyScalar(1 / NS); push("次級心區", null, c.toArray(), "shf"); }
   if (dm.visible && dmK(t) > .4) push("背側心繫膜", null, [0, dm.position.y, dm.position.z], "dm");
-  if (M.layers.ref && t >= 22.3) push("第一主動脈弓", null, archPts(1, t)[2], "ao");
+  if (M.layers.ref && t >= 22.3 && t < 31) push("第一主動脈弓", null, archPts(1, t)[2], "ao");
   if (M.layers.ref && sm(20, 22, t) > .5) push("前腸", null, [0, -1.5, GUT_Z + .22], "gut");
-  if (M.layers.vein && sm(22.5, 24, t) > .6) {
-    const VP = veinPts(1, t); push("卵黃靜脈", null, VP[0][2], "vit"); push("臍靜脈", null, VP[1][2], "umb"); push("總主靜脈", null, VP[2][2], "card");
+  if (M.layers.vein && sm(22.5, 24, t) > .6 && t < 40) {
+    const VP = veinPts(1, t); if (t < 31) push("卵黃靜脈", null, VP[0][2], "vit"); if (t < 33) push("臍靜脈", null, VP[1][2], "umb"); push("總主靜脈", null, VP[2][2], "card");
   }
+  if (M.layers.vein && t >= 40) { const VP = veinPts(-1, t); push("下腔靜脈", null, VP[0][2], "ivc"); push("上腔靜脈", null, VP[2][2], "svc"); }
+  if (M.layers.vein && pulvK(t) > .6) { const PP = pulvPts(t); push("肺靜脈", null, PP[3][PP[3].length - 2], "pulv"); }
+  if (aurK(t) > .6 && AUR[0].visible) push("心耳", null, AUR[0].position.toArray(), "aur");
   return A;
 };
 M.tagShown = () => true;
 
 /* ---------- 2D 切面（垂直心管；背側在上，畫面右＝病人左） ---------- */
 M.drawSection = function (ctx, W, H, dpr) {
+  if (M.secMode === "av") return drawAV(ctx, W, H, dpr);
   const t = state.day, mc = mOfCut(M.cut), Ly = M.layers, hits = [], labs = [];
   // 範圍取第 17–28 天各段最大值（半寬 rx ≤ 1.38、管半徑 ≤ .36），切面拖動時比例尺不變
   const X0 = -1.45, X1 = 1.45, Y0 = -.75, Y1 = 1.45, pad = W * .03, top = H * .07;
@@ -805,21 +1031,31 @@ M.drawSection = function (ctx, W, H, dpr) {
   }
   const r = radius(mc, t), pL = pos(mc, -1, t, new V3()), pR = pos(mc, 1, t, new V3()), half = pL.distanceTo(pR) / 2;
   const two = half > .3 * r, xs = two ? [-half, half] : [0], seg = segAt(mc, t), xw = xStretch(mc, t);
-  const rx = half + r * xw + .3, ry = r + .3, gutY = ry + .45;
+  const hS = (x) => (two ? hornS(mc, x < 0 ? -1 : 1, t) : 1), rx = half + r * xw * Math.max(hS(-1), hS(1)) + .3, ry = r * Math.max(hS(-1), hS(1)) + .3, gutY = ry + .45;
   const add = (pts, color, s) => { const q = pts.map(P); fillPoly(ctx, q, color, s); if (s) hits.push([s, q]); };
   if (Ly.peri && sm(19, 21, t) > .3) { add(ellipse(0, 0, rx, ry, 64), css("--c-peri"), "peri"); labs.push(["心包腔", [-rx + .12, -.1], "L", "peri"]); }
   if (dmK(t) > .3 && mc > -.62 && mc < .55) { add([[-.05, r * .9], [.05, r * .9], [.05, ry], [-.05, ry]], css("--c-dm"), "dm"); labs.push(["背側心繫膜", [.05, (r + ry) / 2], "R", "dm"]); }
-  const segCol = "#" + tubeColor(mc, t).getHexString();
+  // 每一管自己的顏色與構造（心房分左右、流出道分主動脈／肺動脈幹、靜脈竇兩角粗細不同）
+  const sideSeg = (x) => (two ? pickSeg(mc, x < 0 ? -1 : 1, t) : seg);
+  const nameOf = (id) => ({ phf: "初級心區", ra: "右心房", la: "左心房", aoA: "主動脈", pt: "肺動脈幹" }[id] || SEGN[id]);
   for (const x of xs) {
-    add(ellipse(x, 0, r * xw, r, 48), segCol, seg);
-    add(ellipse(x, 0, r * .78 * xw, r * .78, 48), css("--c-jelly"), "jelly");
-    add(ellipse(x, 0, r * .5 * xw, r * .5, 40), css("--c-endoc"), "endoc");
-    add(ellipse(x, 0, r * .42 * xw, r * .42, 40), css("--bg"), null);
+    const k = hS(x), rr = r * k, sg = sideSeg(x), col = "#" + tubeColor(mc, t, x < 0 ? -1 : 1).getHexString();
+    add(ellipse(x, 0, rr * xw, rr, 48), col, sg);
+    add(ellipse(x, 0, rr * .78 * xw, rr * .78, 48), css("--c-jelly"), "jelly");
+    add(ellipse(x, 0, rr * .5 * xw, rr * .5, 40), css("--c-endoc"), "endoc");
+    add(ellipse(x, 0, rr * .42 * xw, rr * .42, 40), css("--bg"), null);
   }
-  const xl = xs[0], xr = xs[xs.length - 1], segName = seg === "phf" ? "初級心區" : SEGN[seg];
-  labs.push([`心肌層（${segName}）`, [xl - r * .89 * xw, .05], "L", seg]);
-  labs.push(["心膠質", [xr + r * .64 * xw, .08], "R", "jelly"]);
-  labs.push(["心內膜", [xr + r * .46 * .7 * xw, -r * .46 * .7], "R", "endoc"]);
+  const xl = xs[0], xr = xs[xs.length - 1], sL = sideSeg(xl), sR = sideSeg(xr), segName = nameOf(seg);
+  if (two && sL !== sR) {
+    labs.push([`心肌層（${nameOf(sL)}）`, [xl - r * hS(xl) * .89 * xw, .05], "L", sL]);
+    labs.push([`心肌層（${nameOf(sR)}）`, [xr + r * hS(xr) * .89 * xw, .05], "R", sR]);
+    labs.push(["心膠質", [xr + r * hS(xr) * .64 * xw, .32 * r], "R", "jelly"]);
+    labs.push(["心內膜", [xl - r * hS(xl) * .46 * .7 * xw, -r * hS(xl) * .46 * .7], "L", "endoc"]);
+  } else {
+    labs.push([`心肌層（${segName}${seg === "sv" && t >= 33 ? "：右角大、左角小" : ""}）`, [xl - r * hS(xl) * .89 * xw, .05], "L", seg]);
+    labs.push(["心膠質", [xr + r * hS(xr) * .64 * xw, .08], "R", "jelly"]);
+    labs.push(["心內膜", [xr + r * hS(xr) * .46 * .7 * xw, -r * hS(xr) * .46 * .7], "R", "endoc"]);
+  }
   if (Ly.ref && sm(20, 22, t) > .3) {
     add(ellipse(0, gutY, .22, .22, 32), css("--c-gut"), "gut"); labs.push(["前腸", [-.22, gutY], "L", "gut"]);
     for (const σ of [-1, 1]) add(ellipse(σ * .45, gutY + .12, .08, .08, 20), css("--c-ao"), "ao");
@@ -827,13 +1063,59 @@ M.drawSection = function (ctx, W, H, dpr) {
   }
   drawLeaders(ctx, labs.map(([txt, p, side, s]) => [txt, P(p), side, s]), W, H, dpr);
   dirText(ctx, W, H, dpr, "背側", "腹側（畫面右＝病人左）");
-  const where = `${segName}・${seg === "sv" ? "左右兩角" : two ? "左右兩管" : "單一心管"}`;
+  const where = two && sL !== sR ? `${nameOf(sL)}／${nameOf(sR)}` : `${segName}・${seg === "sv" ? "左右兩角" : two ? "左右兩管" : "單一心管"}`;
   return { hits, where };
 };
 
+/* ---------- 2D 房室管（冠狀・示意；Langman 15th Fig. 13.9、13.20） ---------- */
+function drawAV(ctx, W, H, dpr) {
+  const t = state.day, hits = [], labs = [];
+  if (t < 28) {
+    ctx.fillStyle = css("--mute"); ctx.font = `400 ${Math.round(13 * dpr)}px ${css("--f-body")}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("第 28 天以後才看得到房室管，往後拖時間軸", W / 2, H / 2);
+    return { hits, where: "第 28 天起" };
+  }
+  const X0 = -1.25, X1 = 1.25, Y0 = -.95, Y1 = 1.4, pad = W * .03, top = H * .06;
+  const sc = Math.min((W - 2 * pad) / (X1 - X0), (H - 2 * top) / (Y1 - Y0)), ox = W / 2, oy = top + Y1 * sc;
+  const P = ([x, y]) => [ox + x * sc, oy - y * sc];
+  const add = (pts, color, s) => { const q = pts.map(P); fillPoly(ctx, q, color, s); if (s) hits.push([s, q]); };
+  const k = sm(31, 35, t), rv = lerp(.42, .56, sm(28, 35, t)), ax = lerp(.42, .02, k); // 房室管：第 30 天在原始左心室上方，第 35 天移到中線
+  // 先畫心肌（外形），再挖管腔，腔室相通處自然留白。畫面左＝病人右（右心室＝心球）、畫面右＝病人左（左心室）
+  const LV = [.5, -.25], RV = [-.5, -.2], ivfTop = lerp(-.12, .14, k), myo = (sg) => css("--c-" + sg);
+  add(ellipse(0, .95, .95, .34, 48), myo("pa"), "pa");
+  add([[ax - .18, .7], [ax + .18, .7], [ax + .16, .22], [ax - .16, .22]], myo("pa"), "avc");
+  add(ellipse(LV[0], LV[1], .6, .62, 48), myo("pv"), "pv");
+  add(ellipse(RV[0], RV[1], rv, rv * 1.1, 48), myo("bc"), "bc");
+  add([[-.98, .02], [-.64, .1], [-.68, .64], [-1, .58]], myo("tr"), "tr");
+  const bg = css("--bg"), cav = (pts) => { const q = pts.map(P); ctx.beginPath(); q.forEach((p, i) => (i ? ctx.lineTo(...p) : ctx.moveTo(...p))); ctx.closePath(); ctx.fillStyle = bg; ctx.fill(); };
+  cav(ellipse(0, .95, .84, .23, 40));
+  cav(ellipse(LV[0], LV[1], .48, .5, 40));
+  cav(ellipse(RV[0], RV[1], rv - .12, rv * 1.1 - .12, 40));
+  cav([[-.84, -.1], [-.64, -.04], [-.73, .62], [-.92, .57]]);
+  cav([[-.3, -.45], [.15, -.45], [.15, ivfTop], [-.3, ivfTop]]); // 原始室間孔
+  const fx = RV[0] + rv - .12; // 球室緣：兩心室之間、原始室間孔上方的壁，房室管右移時變窄變短
+  add([[fx, ivfTop], [.02, ivfTop], [.02, .42], [fx, .42]], myo("bc"), "flange");
+  cav([[ax - .085, .8], [ax + .085, .8], [ax + .08, .05], [ax - .08, .05]]);
+  hits.push(["ivf", [[-.3, -.45], [.15, -.45], [.15, ivfTop], [-.3, ivfTop]].map(P)]);
+  // 血流箭頭
+  ctx.strokeStyle = css("--c-flow"); ctx.fillStyle = css("--c-flow"); ctx.lineWidth = 2.2 * dpr; ctx.lineCap = ctx.lineJoin = "round";
+  const arrow = (pts) => { const q = pts.map(P); ctx.beginPath(); ctx.moveTo(...q[0]); for (const p of q.slice(1)) ctx.lineTo(...p); ctx.stroke();
+    const [a, b] = q.slice(-2), ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = 8 * dpr; ctx.beginPath(); ctx.moveTo(...b);
+    ctx.lineTo(b[0] - L * Math.cos(ang - .45), b[1] - L * Math.sin(ang - .45)); ctx.lineTo(b[0] - L * Math.cos(ang + .45), b[1] - L * Math.sin(ang + .45)); ctx.fill(); };
+  if (k < .5) arrow([[ax, .95], [ax, .0], [.3, -.3], [-.05, -.32], [-.42, -.28], [-.66, .05], [-.8, .5]]);
+  else { arrow([[ax + .04, .95], [ax + .04, .02], [.45, -.25]]); arrow([[ax - .04, .95], [ax - .04, .02], [-.4, -.25], [-.66, .05], [-.8, .5]]); }
+  labs.push(["原始心房", [-.9, .95], "L", "pa"], ["房室管", [ax + .18, .5], "R", "avc"], ["流出道", [-.99, .5], "L", "tr"],
+    [k < .5 ? "心球（原始右心室）" : "右心室（心球）", [RV[0] - rv, -.45], "L", "bc"], [t < 42 ? "原始左心室" : "左心室", [LV[0] + .6, -.45], "R", "pv"],
+    ["原始室間孔", [.15, -.4], "R", "ivf"], [k < .5 ? "球室緣" : "球室緣（變小）", [fx, (ivfTop + .42) / 2], "L", "flange"]);
+  drawLeaders(ctx, labs.map(([txt, p, side, s]) => [txt, P(p), side, s]), W, H, dpr);
+  dirText(ctx, W, H, dpr, "上（頭側）", "畫面右＝病人左");
+  return { hits, where: k < .5 ? "房室管只通左心室（約第 30 天）" : "房室管移到中線（約第 35 天）" };
+}
+
 /* ---------- 卡片、天數、鏡頭、點選 ---------- */
 M.cardState = () => ({ t: state.day });
-M.dayInfo = (t) => (t < 19 ? "心區" : t < 21.5 ? "成對心管" : t < 23 ? "單一心管" : t < 27.8 ? "彎曲中" : "彎曲完成");
+M.dayInfo = (t) => (t < 19 ? "心區" : t < 21.5 ? "成對心管" : t < 23 ? "單一心管" : t < 27.8 ? "彎曲中" : t < 29 ? "彎曲完成" :
+  t < 33 ? "兩心室成形" : t < 40 ? "靜脈竇右移・肺靜脈" : t < 45 ? "主動脈與肺動脈幹分開" : t < 52 ? "心耳・肺靜脈併入" : "外形接近成人");
 M.views = [
   { id: "front", label: "正面", v: () => ({ p: [0, .4, 9], t: [0, .3, .4] }) },
   { id: "left", label: "左側", v: () => ({ p: [9, .4, .4], t: [0, .3, .4] }) },
@@ -850,17 +1132,12 @@ M.pick = function (ray) {
   M.group.traverse((o) => { if (o.isMesh && o !== peri && (o.userData.struct || o.userData.tube) && visible(o) && (o.material.opacity ?? 1) > .15) objs.push(o); });
   for (const h of ray.intersectObjects(objs, false)) {
     const o = h.object;
-    if (o.userData.tube) { const i = Math.floor(h.face.a / NR); return segAt(lerp(TUBE.lo, TUBE.hi, i / (NM - 1)), state.day); }
+    if (o.userData.tube) { const σ = o.userData.σ ?? 1, i = Math.floor(h.face.a / NR); return pickSeg(lerp(TUBE.lo, σ > 0 ? TUBE.hiP ?? TUBE.hi : TUBE.hi, i / (NM - 1)), σ, state.day); }
     return o.userData.struct;
   }
   return null;
 };
 Object.assign(M, { pos, radius, sep, mMin, mMax });
-// 給模組 2 銜接用：第 t 天整條心管外形（不切開、未選取）
-M.ghostGeo = function (t) {
-  const o = mkTube(tubeMat); M.group.remove(o); const sel = state.sel, dx = flags.dextro; state.sel = null; flags.dextro = false;
-  fillTube(o, 1, mMin(t), mMax(t), t, 1, false, true); state.sel = sel; flags.dextro = dx; return o.geometry;
-};
 return M;
 })();
 
@@ -1111,7 +1388,7 @@ const cuts = { cor: .42, ot: .5 }; // 兩種切面各記各的位置
 const ZC = () => lerp(-.8, .9, cuts.cor);
 
 const M = {
-  id: "m2", name: "分隔", title: "心臟的分隔", sub: "第 4 週末–第 8 週：心房中隔、房室管、心室間隔、流出道依序分隔；下方 9 個先天心臟病開關。",
+  id: "m2", name: "分隔", title: "心臟的分隔", sub: "示意剖面・第 4 週末–第 8 週：心房中隔、房室管、心室間隔、流出道依序分隔；下方 9 個先天心臟病開關。",
   range: [28, 56], speed: 2.5, evLbl: "時間軸（Langman 為主）",
   legendLbl: "構造（點一下看說明）・開關", legend: LEGEND, layers: { flow: true },
   flags, exclusive: true, togLbl: "先天心臟病（一次開一個，數字鍵 1–9）",
@@ -1121,7 +1398,8 @@ const M = {
     { id: "ot", label: "流出道", title: "流出道橫切面（從腳往頭看）", ends: ["近端（心室）", "遠端（動脈）"] },
   ],
   secMode: "cor", secTitle: "冠狀切面", secEnds: ["背側", "腹側"], cutRange: [0, 1, .005],
-  note: "示意模型：四腔、中隔的比例與天數都是示意；開關一次只開一個，打開時跳到第 8 週。來源：Langman 15th 為主、Moore 11th 補充，兩書不同處並列。",
+  beforeMsg: (d) => `第 ${Math.floor(d)} 天還沒開始分隔，跳到第 28 天`,
+  note: "示意剖面，看內部分隔（同一天的外觀在模組 1）：四腔、中隔的比例與天數都是示意；開關一次只開一個，打開時跳到第 8 週。來源：Langman 15th 為主、Moore 11th 補充，兩書不同處並列。",
   struct: STRUCT, group: new THREE.Group(), autoFit: true, cuts,
 };
 Object.defineProperty(M, "cut", { get: () => cuts[M.secMode], set: (v) => { cuts[M.secMode] = v; }, enumerable: true });
@@ -1152,9 +1430,6 @@ function fillWall(o) {
   }
   o.geometry.attributes.position.needsUpdate = true; o.geometry.computeVertexNormals(); o.geometry.computeBoundingSphere(); o.geometry.computeBoundingBox();
 }
-// 銜接：模組 1 第 28 天的彎曲心管外形，淡色疊在四腔示意上，第 28–31 天淡出（不能點選）
-const ghost = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshStandardMaterial({ vertexColors: true, transparent: true, depthWrite: false, roughness: .6, side: THREE.DoubleSide }));
-ghost.scale.set(1.35, 1.5, 1.35); ghost.position.set(.2, -.32, -1); ghost.renderOrder = 5; M.group.add(ghost);
 // 中隔與開口（開口是半透明的標示色）
 const holeMat = regA(mat("--c-hole", { transparent: true, opacity: .42, depthWrite: false }));
 const PMESH = PLATES.map((pl) => { const o = new THREE.Mesh(new THREE.BufferGeometry(), pl.open ? holeMat : regA(mat("--c-" + pl.id))); o.userData.struct = pl.id; M.group.add(o); return o; });
@@ -1341,8 +1616,6 @@ M.update = function () {
     fillPlate(o, pl, COLS[i]);
   });
   // 心內膜墊
-  const gk = 1 - sm(28, 31, state.day); ghost.visible = gk > .02;
-  if (ghost.visible) { if (!ghost.geometry.attributes.position) ghost.geometry = M1.ghostGeo(28); ghost.material.opacity = .5 * gk; }
   cushions().forEach((c, i) => { CUSH[i].position.set(...c.p); CUSH[i].scale.set(...c.r); });
   // 房室瓣
   const kv = KV, vis = kv > .03;
@@ -1495,7 +1768,7 @@ M.drawSection = function (ctx, W, H, dpr) {
 
 /* ---------- 時間軸、卡片、鏡頭、點選 ---------- */
 M.events = [
-  { d: 28, lbl: "第 4 週末", tick: "4 週末", sec: "cor", cut: .42, t: "第一中隔、心內膜墊", s: "共同心房頂長出鐮刀形的第一中隔；房室管出現心內膜墊；兩心室之間開始長肌性心室間隔（Langman 15th Fig. 13.16A、13.19；Moore 11th p.275：約 28 天）。淡色外形是模組 1 第 28 天的彎曲心管，對應關係：共同心房→左右心房、原始心室→左心室小樑部、心球近端→右心室小樑部、圓錐與動脈幹→流出道；第 31 天前淡出，之後用四腔示意看內部分隔。" },
+  { d: 28, lbl: "第 4 週末", tick: "4 週末", sec: "cor", cut: .42, t: "第一中隔、心內膜墊", s: "共同心房頂長出鐮刀形的第一中隔；房室管出現心內膜墊；兩心室之間開始長肌性心室間隔（Langman 15th Fig. 13.16A、13.19；Moore 11th p.275：約 28 天）。這個模組是示意剖面，看內部分隔；同一天的外觀在模組 1。對應關係：共同心房→左右心房、原始心室→左心室小樑部、心球近端→右心室小樑部、圓錐與動脈幹→流出道。" },
   { d: 32, lbl: "約第 32 天", tick: "32 天", sec: "cor", cut: .42, t: "第二孔", s: "第一中隔上部穿孔，合成第二孔（Langman 15th Fig. 13.16B；Moore 11th p.275：約 32 天穿孔、約 35 天見第二孔）。" },
   { d: 35, lbl: "第 5 週", tick: "5 週", sec: "ot", cut: .7, t: "圓錐動脈幹嵴", s: "流出道壁上出現兩對相對的膨大，往遠端螺旋相向長（Langman 15th Fig. 13.27；Moore 11th p.280–285）。" },
   { d: 37, lbl: "第 5–6 週", tick: "5–6 週", sec: "cor", cut: .42, t: "第一孔關閉", s: "背腹心內膜墊融合，房室管分成左右；第一中隔與融合的心內膜墊接合，第一孔關閉（Langman 15th Fig. 13.16C；111-2 國考）。" },
@@ -1539,7 +1812,6 @@ return M;
 })();
 
 
-M1.next = "m2";
 const MODS = [M1, M2, { id: "m3", name: "動脈弓", soon: true }, { id: "m4", name: "靜脈", soon: true }, { id: "m5", name: "胎兒循環", soon: true }];
 let mod = MODS.find((m) => m.id === state.mod && !m.soon) || M1;
 
@@ -1561,7 +1833,7 @@ function renderTags() {
   for (const [txt, p, struct, cls] of mod.tagAnchors()) {
     if (!mod.tagShown(p) || hidden.has(struct)) continue;
     v3.set(...p).project(camera); if (v3.z > 1) continue;
-    const el = document.createElement("div"); el.className = "tag3d" + (cls ? " " + cls : ""); el.innerHTML = escH(txt) + kgMini(tagKg(txt, struct));
+    const el = document.createElement("div"); el.className = "tag3d" + (cls ? " " + cls : ""); el.innerHTML = escH(txt) + kgMini(tagKg(txt, struct)); el.dataset.s = struct;
     el.style.left = ((v3.x + 1) / 2 * w) + "px"; el.style.top = ((1 - v3.y) / 2 * h - 10) + "px";
     tagBox.appendChild(el);
   }
@@ -1590,14 +1862,15 @@ const labRay = new THREE.Raycaster(), labNdc = new THREE.Vector2();
 function clearLabs() { labBox.replaceChildren(); LAB_EL.clear(); labs = []; labJob = null; }
 const labName = (s) => nameOf(s).replace(/（.*?）/g, "").trim();
 const sameName = (t, name) => name.split("／").some((p) => p && (t.includes(p) || p.includes(t)));
-function labAnchor() { // 射線打到的第一個看得到的點；切開時只算留下的那半（切口在切面上，tagShown 有容差）
-  for (const h of labRay.intersectObject(mod.group, true)) {
-    let o = h.object, ok = o.isMesh && o.material.visible !== false && (o.material.opacity ?? 1) >= .2 && o.layers.test(labRay.layers);
+function firstHit(rc) { // 射線打到的第一個看得到的點；切開時只算留下的那半（切口在切面上，tagShown 有容差）
+  for (const h of rc.intersectObject(mod.group, true)) {
+    let o = h.object, ok = o.isMesh && o.material.visible !== false && (o.material.opacity ?? 1) >= .2 && o.layers.test(rc.layers);
     for (; ok && o; o = o.parent) ok = o.visible;
     if (ok && mod.tagShown(h.point.toArray())) return h.point.clone();
   }
-  return labRay.ray.at(camera.position.distanceTo(controls.target), new THREE.Vector3());
+  return null;
 }
+const labAnchor = () => firstHit(labRay) || labRay.ray.at(camera.position.distanceTo(controls.target), new THREE.Vector3());
 function labStart() {
   const W = stage.clientWidth, H = stage.clientHeight, step = Math.max(14, Math.sqrt(W * H / 700));
   labJob = W && H ? { nx: Math.max(2, Math.round(W / step)), ny: Math.max(2, Math.round(H / step)), i: 0, st: new Map() } : null;
@@ -1615,6 +1888,15 @@ function labRun(budget) { // 跑完回傳 true
 }
 function labFinish() {
   const J = labJob; labJob = null;
+  // 選取中構造的錨點（小卡用）：圖上名稱關掉、或它的名稱被擋住時，小卡貼這個點
+  const me = state.sel && J.st.get(state.sel);
+  if (me) {
+    const cx = me.sx / me.n, cy = me.sy / me.n; let best = me.pts[0], bd = 1e9;
+    for (const p of me.pts) { const d = (p[0] - cx) ** 2 + (p[1] - cy) ** 2; if (d < bd) { bd = d; best = p; } }
+    labNdc.set((best[0] + .5) / J.nx * 2 - 1, 1 - (best[1] + .5) / J.ny * 2); labRay.setFromCamera(labNdc, camera);
+    selAnchor = firstHit(labRay) || selAnchor;
+  }
+  if (!state.labs) { placePop(); return; }
   // 地標名稱已經標了的（同名）不再標
   const fixed = state.tags ? [...tagBox.children].map((e) => (e.firstChild?.textContent || "").replace(/（.*?）/g, "").trim()) : [];
   const cand = [...J.st].map(([s, r]) => ({ s, ...r, m: s === state.sel })).filter((c) => c.m || c.n >= 2)
@@ -1634,7 +1916,7 @@ function labFinish() {
   for (const [k, el] of LAB_EL) if (!keep.has(el)) { el.remove(); LAB_EL.delete(k); }
   for (const L of labs) if (!L.el.parentNode) labBox.append(L.el);
   for (const L of labs) { L.el.style.display = ""; L.ow = L.el.offsetWidth; }
-  placeLabs();
+  placeLabs(); placePop();
 }
 function placeLabs() { // 重疊的藏起來，先放的（選取的、面積大的）留著；也避開地標名稱
   if (!labs.length) return;
@@ -1687,27 +1969,71 @@ function drawFig(cv) {
 }
 
 /* ---------- 卡片 ---------- */
-const cardEl = document.getElementById("card");
-const EMPTY = "點 3D 或下方切面上的構造看說明。";
-function select(s) { // mod.reveal(s)：選到某些構造時模組自己開開關或跳天數，有變就重畫
-  state.sel = s; labDirty = true;
+const cardEl = document.getElementById("card"), popEl = document.getElementById("pop");
+let popFull = false, popSel = null, selPt = null, selAnchor = null;
+function select(s, pt = null) { // mod.reveal(s)：選到某些構造時模組自己開開關或跳天數，有變就重畫；pt＝在 3D 上點到的點（小卡錨點）
+  state.sel = s; labDirty = true; selPt = pt; selAnchor = s ? structPt(s) : null;
   if (mod.reveal?.(s)) { dayIn.value = state.day; renderLegend(); update(); }
   showCard(s); drawSection(); saveHash();
 }
+function structPt(s) { // 構造自己有網格時，先用外框中心當錨點（掃完畫面格點後改用 selAnchor）
+  const box = new THREE.Box3(), b = new THREE.Box3();
+  mod.group.traverseVisible((o) => { if (o.isMesh && o.userData.struct === s && o.layers.test(camera.layers) && o.geometry) { o.updateMatrixWorld(); o.geometry.computeBoundingBox(); box.union(b.copy(o.geometry.boundingBox).applyMatrix4(o.matrixWorld)); } });
+  return box.isEmpty() ? null : box.getCenter(new THREE.Vector3());
+}
+function setPopFull(v) {
+  popFull = v; popEl.classList.toggle("full", v);
+  const b = document.getElementById("popMore"); b.textContent = v ? "收起 ▴" : "完整說明 ▾"; b.setAttribute("aria-expanded", String(v));
+  placePop();
+}
 function showCard(s) { // 內容沒變就不動（摺疊維持開關）；變了也把原本打開的摺疊留著
   const C = s && mod.struct[s];
-  if (!C) { cardEl.className = "empty"; cardEl.innerHTML = EMPTY; cardEl.dataset.sig = ""; return; }
+  if (!C) { popEl.classList.remove("show"); cardEl.innerHTML = ""; cardEl.dataset.sig = ""; popSel = null; return; }
+  if (s !== popSel) { popSel = s; if (popFull) setPopFull(false); }
   const st = mod.cardState(s);
   const kgs = (C.kg || []).filter((id) => KGI[id]);
   const en = typeof C.en === "function" ? C.en(st) : C.en;
-  const html = `<h2>${C.name(st)}${kgTag(kgs.length)}</h2>${en ? `<div class="en">${en}</div>` : ""}<div class="meta">${C.meta}</div>${C.body(st)}${C.trap ? `<div class="trap">${C.trap}</div>` : ""}${C.more || ""}` +
+  const html = `<h2>${C.name(st)}${kgTag(kgs.length)}</h2>${en ? `<div class="en">${en}</div>` : ""}<div class="meta">${C.meta}</div><div class="cbody">${C.body(st)}</div>${C.trap ? `<div class="trap">${C.trap}</div>` : ""}${C.more || ""}` +
     (kgs.length && state.kg ? `<details class="fold"><summary>國考題（${kgs.length}）</summary>${kgs.map(qHtml).join("")}</details>` : "");
   const sig = mod.id + "|" + s + "|" + html;
+  popEl.classList.add("show");
   if (cardEl.dataset.sig === sig) return;
-  const open = cardEl.dataset.sig?.startsWith(mod.id + "|" + s + "|") ? new Set([...cardEl.querySelectorAll("details[open] > summary")].map((x) => x.textContent)) : new Set();
-  cardEl.className = ""; cardEl.innerHTML = html; cardEl.dataset.sig = sig;
+  const same = cardEl.dataset.sig?.startsWith(mod.id + "|" + s + "|");
+  const open = same ? new Set([...cardEl.querySelectorAll("details[open] > summary")].map((x) => x.textContent)) : new Set();
+  cardEl.innerHTML = html; cardEl.dataset.sig = sig; if (!same) cardEl.scrollTop = 0;
   cardEl.querySelectorAll("details > summary").forEach((x) => { if (open.has(x.textContent)) x.parentElement.open = true; });
   figRO.disconnect(); cardEl.querySelectorAll("canvas.fig").forEach((c) => figRO.observe(c));
+  placePop();
+}
+/* 小卡位置：貼在該構造圖上名稱的右邊（放不下翻到左邊），上下夾在 3D 裡、不壓到上方按鈕；
+   沒有名稱（圖上名稱關掉或被擋）時用 3D 點選的點，再來是掃畫面格點得到的點；都沒有就停在右上 */
+const MOBILE = matchMedia("(max-width: 860px)");
+function placePop() {
+  if (!popEl.classList.contains("show")) return;
+  if (MOBILE.matches) { popEl.style.left = popEl.style.top = popEl.style.maxHeight = ""; return; }
+  const W = stage.clientWidth, H = stage.clientHeight, m = 8, side = 20, gap = 14, sr = stage.getBoundingClientRect();
+  let vb = 0, vr = 0;
+  for (const b of document.querySelectorAll("#views .btn")) { const r = b.getBoundingClientRect(); if (r.width) { vb = Math.max(vb, r.bottom - sr.top); vr = Math.max(vr, r.right - sr.left); } }
+  popEl.style.maxHeight = (popFull ? H - 2 * m : Math.min(H - 2 * m, 360)) + "px";
+  const pw = popEl.offsetWidth, ph = popEl.offsetHeight;
+  let ax = null, ay = 0, hw = 0;
+  // 錨點：圖上名稱 → 地標名稱（同名構造只標地標）→ 命中點 → 構造中心
+  const L = labs.find((x) => x.s === state.sel);
+  const lel = L && L.el.isConnected && L.el.style.display !== "none" ? L.el : [...tagBox.children].find((e) => e.dataset.s === state.sel);
+  if (lel) { const r = lel.getBoundingClientRect(); ax = (r.left + r.right) / 2 - sr.left; ay = r.top - sr.top + 22; hw = r.width / 2; }
+  else for (const P of [selPt, selAnchor]) {
+    if (!P) continue; v3.copy(P).project(camera);
+    if (v3.z < 1) { ax = (v3.x + 1) / 2 * W; ay = (1 - v3.y) / 2 * H; hw = 5; break; }
+  }
+  let x, y;
+  if (ax !== null && ax > -40 && ax < W + 40 && ay > -40 && ay < H + 40) {
+    x = ax + hw + gap;
+    if (x + pw > W - side) { const xl = ax - hw - gap - pw; x = xl >= side ? xl : (W - ax > ax ? W - side - pw : side); }
+    x = clamp(x, side, Math.max(side, W - side - pw));
+    y = clamp(ay - 22, m, Math.max(m, H - ph - m));
+    if (x < vr && y < vb + 6) y = Math.min(vb + 6, Math.max(m, H - ph - m));
+  } else { x = Math.max(side, W - side - pw); y = Math.min(vb + 6, Math.max(m, H - ph - m)); }
+  popEl.style.left = Math.round(x) + "px"; popEl.style.top = Math.round(y) + "px";
 }
 
 /* ---------- 國考 ---------- */
@@ -1760,7 +2086,8 @@ function qHtml(id) {
 function renderKg() {
   // 全部模組共用一份清單：本模組在前，其他模組標上模組名，點了先切過去
   const all = window.KG || [], ids = [...all.filter((q) => q.mod === mod.id), ...all.filter((q) => q.mod !== mod.id)];
-  document.getElementById("kgLbl").innerHTML = `國考相關<span class="kgN">${ids.length}</span>`;
+  document.getElementById("kgLbl").textContent = "國考相關（本模組在前；點題目跳到構造）";
+  document.getElementById("tabKg").innerHTML = `國考<span class="kgN">${ids.length}</span>`;
   const ul = document.getElementById("kgList"); ul.innerHTML = "";
   for (const q of ids) {
     const li = document.createElement("li"), other = q.mod !== mod.id;
@@ -1832,6 +2159,7 @@ function thinTicks() {
   }
 }
 addEventListener("resize", thinTicks);
+new ResizeObserver(() => thinTicks()).observe($("ticks")); // 收起左右欄時天數軸變寬
 function renderMod() {
   document.querySelectorAll("#mods .tab").forEach((b, i) => b.setAttribute("aria-current", String(MODS[i] === mod)));
   $("modTitle").textContent = mod.title; $("modSub").textContent = mod.sub; $("evLbl").textContent = mod.evLbl;
@@ -1871,7 +2199,23 @@ function renderMod() {
   }
   const [c0, c1, cs] = mod.cutRange; cutIn.min = c0; cutIn.max = c1; cutIn.step = cs; cutIn.value = mod.cut;
   renderSecMode();
-  $("note").textContent = mod.note;
+  $("modNote").textContent = mod.note; $("modNote").classList.remove("open");
+  const cur = document.querySelector('#mods .tab[aria-current="true"]'), nav = $("mods"); // 手機上模組分頁橫向捲動：捲到目前這個
+  if (cur && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - nav.offsetLeft - 8;
+}
+/* 左右欄開關（記在 localStorage，不進網址）、左欄「事件｜國考」分頁 */
+function setPanels() {
+  const mn = document.querySelector("main"); mn.classList.toggle("noL", !state.pl); mn.classList.toggle("noR", !state.pr);
+  const L = $("edgeL"), R = $("edgeR");
+  L.textContent = state.pl ? "‹" : "›"; L.setAttribute("aria-label", state.pl ? "收起左欄" : "打開左欄"); L.title = (state.pl ? "收起左欄" : "打開左欄") + "（[）";
+  R.textContent = state.pr ? "›" : "‹"; R.setAttribute("aria-label", state.pr ? "收起右欄" : "打開右欄"); R.title = (state.pr ? "收起右欄" : "打開右欄") + "（]）";
+  saveUi();
+}
+const togglePanel = (k) => { if (MOBILE.matches) return; state[k] = !state[k]; setPanels(); };
+function setLtab(t) {
+  state.ltab = t; saveUi();
+  $("tabEv").setAttribute("aria-selected", String(t === "ev")); $("tabKg").setAttribute("aria-selected", String(t === "kg"));
+  $("paneEv").hidden = t !== "ev"; $("paneKg").hidden = t !== "kg";
 }
 // 2D 切面方向（模組有 secModes 才有，例如 m2 矢狀／冠狀）；fixed 的模式是固定示意圖，切面滑桿停用
 function renderSecMode() {
@@ -1888,7 +2232,9 @@ function setMod(id, keepPlaying, day) {
   mod = m; state.mod = id; state.sel = null; hidden.clear(); saveUi(); clearLabs();
   for (const x of MODS) if (x.group) x.group.visible = x === mod;
   renderMod(); renderKg(); showCard(null);
-  state.day = clamp(day ?? state.day, ...mod.range); dayIn.value = state.day;
+  // 各模組共用天數：切換時保留天數；超出這個模組的範圍才夾到起點或終點，並提示
+  const want = day ?? state.day; state.day = clamp(want, ...mod.range); dayIn.value = state.day;
+  if (want < mod.range[0] - .05 && mod.beforeMsg) setTimeout(() => flashTip(mod.beforeMsg(want)), 50);
   update(); // 先建好這一天的幾何，autoFit 才量得到
   if (view(mod.defaultView).cut && !state.cut3d) { state.cut3d = true; $("cut3d").setAttribute("aria-pressed", "true"); update(); }
   fly = null; const v = fitDist(view(mod.defaultView).v()); camera.position.set(...v.p); controls.target.set(...v.t); setZoomLimits();
@@ -1912,13 +2258,24 @@ function buildUi() {
   $("resetBtn").addEventListener("click", resetMod);
   $("showAll").addEventListener("click", () => { hidden.clear(); update(); });
   buildTools();
+  $("edgeL").addEventListener("click", () => togglePanel("pl"));
+  $("edgeR").addEventListener("click", () => togglePanel("pr"));
+  setPanels();
+  $("tabEv").addEventListener("click", () => setLtab("ev"));
+  $("tabKg").addEventListener("click", () => setLtab("kg"));
+  setLtab(state.ltab);
+  $("modNote").addEventListener("click", (e) => e.currentTarget.classList.toggle("open"));
+  $("popX").addEventListener("click", () => select(null));
+  $("popMore").addEventListener("click", () => setPopFull(!popFull));
   addEventListener("keydown", (e) => {
     if (document.querySelector("dialog[open]")) return; // 對話框自己處理 Esc
     if (e.target.closest?.("input") || e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key.toLowerCase();
     if (e.key === "?") { e.preventDefault(); openHelp(); return; }
-    if (e.key === "/") { e.preventDefault(); $("find").focus(); $("find").select(); return; }
-    if (e.key === "Escape") { if (!$("findList").hidden) $("findList").hidden = true; else if (state.sel) select(null); return; }
+    if (e.key === "/") { e.preventDefault(); $("findBox").classList.add("open"); $("find").focus(); $("find").select(); return; }
+    if (e.key === "Escape") { if (!$("findList").hidden) $("findList").hidden = true; else if ($("moreMenu").classList.contains("open")) setMore(false); else if (state.sel) select(null); return; }
+    if (e.key === "[") { togglePanel("pl"); return; }
+    if (e.key === "]") { togglePanel("pr"); return; }
     if (k === "h") hideSel();
     if (k === "r") resetMod();
     if (k === "c") setCut3d(!state.cut3d);
@@ -1976,7 +2333,7 @@ renderer.domElement.addEventListener("pointerup", (e) => {
   const r = renderer.domElement.getBoundingClientRect();
   ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
   ray.setFromCamera(ndc, camera);
-  select(mod.pick(ray));
+  const s = mod.pick(ray); select(s, s ? firstHit(ray) : null);
 });
 
 /* ---------- 迴圈 ---------- */
@@ -1993,7 +2350,7 @@ function loop(now) {
     const dt = Math.min(.1, (now - lastT) / 1000); lastT = now;
     const b = mod.range[1];
     state.day = Math.min(b, state.day + dt * mod.speed); dayIn.value = state.day; update();
-    if (state.day >= b) { if (mod.next) { const n = MODS.find((x) => x.id === mod.next); setMod(mod.next, true, state.day >= n.range[1] ? n.range[0] : undefined); } else stopPlay(); }
+    if (state.day >= b) stopPlay();
   }
   if (fly) {
     const k = sm(0, 1, (now - fly.s) / 700);
@@ -2001,8 +2358,8 @@ function loop(now) {
     if (k >= 1) fly = null; needsRender = true;
   }
   controls.update();
-  if (needsRender) { renderer.render(scene, camera); renderTags(); placeLabs(); needsRender = false; }
-  if (state.labs) {
+  if (needsRender) { renderer.render(scene, camera); renderTags(); placeLabs(); placePop(); needsRender = false; }
+  if (state.labs || state.sel) { // 圖上名稱關掉時，有選取也照樣掃格點，只為了算小卡的錨點
     if (state.playing) { if (labs.length) clearLabs(); }
     else if (!fly && labDirty && now - lastMove > 220) { labDirty = false; labStart(); }
     if (labJob && !state.playing && labRun(6)) labFinish();
@@ -2146,15 +2503,20 @@ function pickFind(e) {
 function keyRows() {
   const rows = [["空白", "播放／暫停"], ["← →", "前一天／後一天"], ["C", "3D 切開"], ["N", "圖上名稱（標出看得到的構造）"], ["L", "地標名稱（區域、地標的固定名稱）"], ["K", "國考標記（考過幾題、卡片的國考題）"], ["G", "國考上色（依考過題數上色）"]];
   MODS.forEach((m, i) => (m.toggles || []).forEach((tg) => rows.push([tg.key.toUpperCase(), `${tg.label}（模組 ${i + 1} ${m.name}）`])));
-  rows.push(["H", "隱藏選取的構造（按「全部顯示」還原）"], ["R", "回到預設（天數不變）"], ["Esc", "關搜尋清單；取消選取"], ["/", "搜尋構造"], ["?", "這個說明"]);
+  rows.push(["H", "隱藏選取的構造（按「全部顯示」還原）"], ["R", "回到預設（天數不變）"], ["[ ]", "收起／打開左欄、右欄"], ["Esc", "關搜尋清單；關說明小卡（取消選取）"], ["/", "搜尋構造"], ["?", "這個說明"]);
   return rows.map(([k, v]) => `<tr><td>${k.split(" ").map((x) => `<kbd>${x}</kbd>`).join(" ")}</td><td>${v}</td></tr>`).join("");
 }
+function setMore(v) { $("moreMenu").classList.toggle("open", v); $("moreBtn").setAttribute("aria-expanded", String(v)); }
 function openHelp() { $("keyTbl").innerHTML = keyRows(); $("helpDlg").showModal(); }
 function buildTools() {
   const f = $("find"), ul = $("findList");
   f.addEventListener("input", () => { findSel = 0; renderFind(); });
   f.addEventListener("focus", renderFind);
-  f.addEventListener("blur", () => { ul.hidden = true; });
+  f.addEventListener("blur", () => { ul.hidden = true; $("findBox").classList.remove("open"); });
+  $("findIco").addEventListener("click", () => { $("findBox").classList.add("open"); f.focus(); });
+  $("moreBtn").addEventListener("click", (e) => { e.stopPropagation(); setMore(!$("moreMenu").classList.contains("open")); });
+  $("moreMenu").addEventListener("click", () => setMore(false));
+  document.addEventListener("click", (e) => { if (!e.target.closest?.("#moreMenu, #moreBtn")) setMore(false); });
   f.addEventListener("keydown", (e) => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (!findRes.length) return; findSel = (findSel + (e.key === "ArrowDown" ? 1 : -1) + findRes.length) % findRes.length; renderFind(); }
     else if (e.key === "Enter") { e.preventDefault(); if (findRes[findSel]) pickFind(findRes[findSel]); }
