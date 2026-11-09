@@ -443,7 +443,7 @@ const EVENTS = [
   { d: 22, cut: .55, t: "單一心管", s: "左右兩管由頭往尾融合成一條，尾端（心房）還分開。內層心內膜、外層心肌，中間夾心膠質；背側心繫膜把心管吊在心包腔背壁。第一對主動脈弓接到背主動脈（Langman 15th Fig. 13.5、13.7A）。" },
   { d: 23, cut: .5, t: "開始彎曲", s: "頭端（心球）往腹側、尾側、右側彎；心房端往背側、頭側、左側移（Langman 15th Fig. 13.7）。Moore 11th p.268–269 稱 D-loop。" },
   { d: 24, cut: .1, t: "靜脈竇", s: "靜脈竇左右兩角各收三條靜脈：卵黃靜脈、臍靜脈、總主靜脈（Langman 15th Fig. 13.11A；112-2 國考）。" },
-  { d: 28, cut: .5, t: "彎曲完成", s: "第 23–28 天完成彎曲：原始心房成共同心房、移到背側頭側；心球在右、原始心室在左（Langman 15th Fig. 13.8）。接下來是分隔（模組 2）。" },
+  { d: 28, cut: .5, t: "彎曲完成", s: "第 23–28 天完成彎曲：原始心房成共同心房、移到背側頭側；心球在右、原始心室在左。彎曲同時心管各處出現局部膨大：共同心房往左右鼓出，在心球兩側都看得到；原始心室與心球近端小樑化、變大，兩者之間的球室溝保持窄（原始室間孔）；房室交界也保持窄，成為房室管（Langman 15th Fig. 13.8、13.9）。接下來是分隔（模組 2）。" },
 ];
 
 const SRC_T = `<p class="src">胚胎段 → 成人構造：Langman 15th 第 13 章；靜脈竇左角另見 Moore 11th p.279。</p>`;
@@ -468,13 +468,13 @@ const STRUCT = {
     trap: `兩書都把動脈幹算在心球裡：Langman 分近端 1/3、中段 conus cordis、遠端 truncus arteriosus；Moore 11th p.268 列 truncus arteriosus、conus arteriosus、conus cordis。模型為了配色把它分開畫。`,
     more: SEG_TABLE },
   bc: { name: "心球", en: "bulbus cordis", meta: "動脈端（次級心區）",
-    body: `<p>Langman 15th 第 13 章把心球分三段：</p><ul><li><b>近端 1/3</b> → 右心室小樑部</li><li><b>中段 conus cordis</b> → 兩心室的流出道</li><li><b>遠端 truncus arteriosus</b> → 主動脈與肺動脈的根部與近端（另見動脈幹）</li></ul><p>彎曲後心球移到右側；心球與原始心室交界外面的凹溝是 bulboventricular sulcus，裡面的狹窄處就是原始室間孔。</p>`,
+    body: `<p>Langman 15th 第 13 章把心球分三段：</p><ul><li><b>近端 1/3</b> → 右心室小樑部（彎曲時小樑化、變大，Fig. 13.9）</li><li><b>中段 conus cordis</b> → 兩心室的流出道</li><li><b>遠端 truncus arteriosus</b> → 主動脈與肺動脈的根部與近端（另見動脈幹）</li></ul><p>彎曲後心球移到右側；心球與原始心室交界外面的凹溝是 bulboventricular sulcus，裡面的狹窄處就是原始室間孔。</p>`,
     trap: `右心室小樑部來自心球，不是原始心室。`, more: SEG_TABLE },
   pv: { name: "原始心室", en: "primitive ventricle", meta: "初級心區",
-    body: `<p>心管最粗的一段，彎曲時往腹側、尾側移，最後落在左側。成人：<b>左心室小樑部</b>（Langman 15th 第 13 章；初級心區形成整個左心室，Fig. 13.1）。</p><p>往頭側經原始室間孔接心球；往尾側經房室管接原始心房，房室管之後由心內膜墊分隔（模組 2）。</p>`,
+    body: `<p>心管最粗的一段，彎曲時往腹側、尾側移，最後落在左側。成人：<b>左心室小樑部</b>（Langman 15th 第 13 章；初級心區形成整個左心室，Fig. 13.1）。彎曲時小樑化、變大，成為原始左心室（Langman 15th Fig. 13.9）。</p><p>往頭側經原始室間孔接心球；往尾側經房室管接原始心房，房室管之後由心內膜墊分隔（模組 2）。</p>`,
     trap: `原始心室 → 左心室；右心室小樑部來自心球近端。`, more: SEG_TABLE },
   pa: { name: "原始心房", en: "primitive atrium", meta: "初級心區",
-    body: `<p>一開始左右分開，第 4 週融合成共同心房；彎曲時往背側、頭側、左側移，最後位在心球與原始心室的背側頭側（Langman 15th Fig. 13.7、13.8）。</p><p>成人（Langman 15th 第 13 章）：</p><ul><li>原始右心房 → 小樑化的右心耳，有梳狀肌</li><li>原始左心房 → 只剩小樑化的左心耳；平滑壁來自肺靜脈併入</li></ul>`,
+    body: `<p>一開始左右分開，第 4 週融合成共同心房；彎曲時往背側、頭側、左側移，最後位在心球與原始心室的背側頭側（Langman 15th Fig. 13.7、13.8）。彎曲後期往左右兩側鼓出，在心球兩側都看得到（Langman 15th Fig. 13.8B、13.9）；與原始心室的交界保持窄，成為房室管。</p><p>成人（Langman 15th 第 13 章）：</p><ul><li>原始右心房 → 小樑化的右心耳，有梳狀肌</li><li>原始左心房 → 只剩小樑化的左心耳；平滑壁來自肺靜脈併入</li></ul>`,
     trap: `右心房的平滑部（sinus venarum）來自靜脈竇右角，不是原始心房（Langman 15th Fig. 13.18A）。`, more: SEG_TABLE },
   sv: { name: "靜脈竇", en: "sinus venosus", meta: "靜脈端・第 4 週",
     body: `<p>心管最尾端，左右兩角各收三條靜脈（Langman 15th Fig. 13.11A）：</p><ul><li><b>卵黃靜脈</b>（vitelline／omphalomesenteric vein）：卵黃囊</li><li><b>臍靜脈</b>（umbilical vein）：胎盤</li><li><b>總主靜脈</b>（common cardinal vein）：胚體</li></ul><p>之後血流轉往右側，左角萎縮（模組 4）：</p><ul><li>右角 → 併入右心房，成為平滑的 sinus venarum（Langman 15th Fig. 13.18A）</li><li>左角 → 左總主靜脈第 10 週閉鎖後，只剩<b>冠狀竇</b>與<b>左心房斜靜脈</b>（Langman 15th 第 13 章；Moore 11th p.279）</li></ul>`,
@@ -538,8 +538,19 @@ function radius(m, t) {
   else { let i = 0; while (m > RK[i + 1][0]) i++; r = lerp(RK[i][1], RK[i + 1][1], sm(RK[i][0], RK[i + 1][0], m)); }
   const k = sm(21.5, 23, t); // 段與段之間的凹溝（竇房、房室管、心球心室溝）
   for (const b of [-.6, -.05, .5]) r *= 1 - .16 * k * Math.exp(-(((m - b) / .07) ** 2));
-  return r * lerp(.55, 1, sm(19, 22, t)) * lerp(1, .8, sm(23, 27, t)); // 彎曲後變細，避免第 28 天像甜甜圈
+  return r * lerp(.55, 1, sm(19, 22, t)) * lerp(1, .8, sm(23, 27, t)) * (1 + swell(m, t)); // 彎曲後變細，避免第 28 天像甜甜圈
 }
+// 彎曲後半段（第 25–28 天）局部膨大（Langman 15th 第 13 章：彎曲時心管各處出現局部膨大；Fig. 13.8）
+// 原始心室（原始左心室）、心球近端（右心室小樑部）變粗；房室管、球室溝維持窄（原始室間孔）
+const swK = (t) => sm(25, 28, t);
+const wPA = (m) => sm(-.62, -.45, m) * (1 - sm(-.25, -.08, m));
+function swell(m, t) {
+  const k = swK(t); if (!k) return 0;
+  const wV = sm(0, .12, m) * (1 - sm(.36, .48, m)), wR = sm(.52, .6, m) * (1 - sm(.72, .84, m));
+  return k * (.4 * wV + .35 * wR + .25 * wPA(m));
+}
+// 共同心房往左右橫向鼓出，在心球兩側都看得到（Langman 15th Fig. 13.8B、13.9）：世界座標 x 方向拉長的倍數
+const xStretch = (m, t) => 1 + 3 * swK(t) * wPA(m);
 // 左右兩管的半間距：心室區第 21–22 天由頭往尾融合；心房第 24–26.5 天融合；靜脈竇兩角不融合
 function sep(m, t) {
   const tf = m >= .5 ? 21 : lerp(21, 22, clamp((.5 - m) / .55, 0, 1));
@@ -555,7 +566,7 @@ function horse(m, σ, A = .9) {
   return [σ * A * Math.cos(th), .72 * Math.sin(th), .3];
 }
 // 彎曲完成（第 28 天）的中心線：非均勻 Catmull-Rom（Hermite）；+x＝病人左、+y 頭、+z 腹
-const LK = [[-1, [0, .2, -.3]], [-.6, [0, .5, -.2]], [-.35, [.15, .8, .2]], [-.05, [.6, .3, .6]], [.22, [.45, -.45, 1.4]],
+const LK = [[-1, [0, .2, -.3]], [-.6, [0, .5, -.2]], [-.35, [-.3, .85, .1]], [-.05, [.6, .3, .6]], [.22, [.45, -.45, 1.4]],
   [.5, [-.3, -.5, 1.6]], [.75, [-.75, .1, 1.5]], [1.05, [-.55, .9, 1.3]], [1.5, [0, 1.7, .9]]];
 const LT = LK.map((k, i) => { const a = LK[Math.max(0, i - 1)], b = LK[Math.min(LK.length - 1, i + 1)]; return [0, 1, 2].map((j) => (b[1][j] - a[1][j]) / (b[0] - a[0])); });
 function loopC(m) {
@@ -616,10 +627,10 @@ function fillTube(mesh, σ, lo, hi, t, rk, openStart, colored) {
     let tp = 1;
     if (!openStart && LEN[i] < r0) { const u = 1 - LEN[i] / r0; tp = Math.sqrt(Math.max(0, 1 - u * u)); }
     if (Ltot - LEN[i] < r1) { const u = 1 - (Ltot - LEN[i]) / r1; tp = Math.min(tp, Math.sqrt(Math.max(0, 1 - u * u))); }
-    const r = radius(m, t) * rk * tp, col = C ? tubeColor(m, t) : null;
+    const r = radius(m, t) * rk * tp, col = C ? tubeColor(m, t) : null, xs = xStretch(m, t);
     for (let k = 0; k < NR; k++) {
       const a = k / NR * Math.PI * 2, ca = Math.cos(a) * r, sa = Math.sin(a) * r, o = (i * NR + k) * 3;
-      P[o] = CEN[i].x + ca * _N.x + sa * _B.x; P[o + 1] = CEN[i].y + ca * _N.y + sa * _B.y; P[o + 2] = CEN[i].z + ca * _N.z + sa * _B.z;
+      P[o] = CEN[i].x + (ca * _N.x + sa * _B.x) * xs; P[o + 1] = CEN[i].y + ca * _N.y + sa * _B.y; P[o + 2] = CEN[i].z + ca * _N.z + sa * _B.z;
       if (C) { C[o] = col.r; C[o + 1] = col.g; C[o + 2] = col.b; }
     }
   }
@@ -630,10 +641,11 @@ function fillTube(mesh, σ, lo, hi, t, rk, openStart, colored) {
 // 3D 切開的切口：三層環（心肌、心膠質、心內膜），中間留管腔
 const CB = {}, capMat = (v) => CB[v] || (CB[v] = themed(new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), v));
 const capG = new THREE.Group(); M.group.add(capG);
+const _SX = new THREE.Matrix4(), _SY = new THREE.Matrix4();
 const CAPS = [-1, 1].map((σ) => {
   const mk = (r0, r1, v, s) => { const o = new THREE.Mesh(new THREE.RingGeometry(r0, r1, 40), capMat(v)); o.userData.struct = s; return o; };
   const g = new THREE.Group(); g.add(mk(.78, 1, "--c-pv", "pv"), mk(.5, .78, "--c-jelly", "jelly"), mk(.42, .5, "--c-endoc", "endoc"));
-  capG.add(g); g.userData.σ = σ; return g;
+  capG.add(g); g.userData.σ = σ; g.matrixAutoUpdate = false; return g;
 });
 // 非切開時的切面標示框
 const frameG = new THREE.Group(); frameG.add(...planeFrame(.16, .7)); M.group.add(frameG);
@@ -702,6 +714,7 @@ M.update = function () {
     const σ = g.userData.σ; g.visible = state.cut3d && open && (σ === 1 || two);
     if (!g.visible) continue;
     g.position.copy(σ === 1 ? pR : pL); g.quaternion.copy(q); g.scale.setScalar(r);
+    g.updateMatrix(); const xs = xStretch(mc, t); if (xs > 1.001) g.matrix.premultiply(_SX.makeTranslation(-g.position.x, -g.position.y, -g.position.z)).premultiply(_SY.makeScale(xs, 1, 1)).premultiply(_SX.makeTranslation(g.position.x, g.position.y, g.position.z));
     const myo = g.children[0]; myo.material = capMat("--c-" + seg); myo.userData.struct = seg;
   }
   frameG.visible = !state.cut3d && inR;
@@ -791,22 +804,22 @@ M.drawSection = function (ctx, W, H, dpr) {
     return { hits, where: "此段尚未加入" };
   }
   const r = radius(mc, t), pL = pos(mc, -1, t, new V3()), pR = pos(mc, 1, t, new V3()), half = pL.distanceTo(pR) / 2;
-  const two = half > .3 * r, xs = two ? [-half, half] : [0], seg = segAt(mc, t);
-  const rx = half + r + .3, ry = r + .3, gutY = ry + .45;
+  const two = half > .3 * r, xs = two ? [-half, half] : [0], seg = segAt(mc, t), xw = xStretch(mc, t);
+  const rx = half + r * xw + .3, ry = r + .3, gutY = ry + .45;
   const add = (pts, color, s) => { const q = pts.map(P); fillPoly(ctx, q, color, s); if (s) hits.push([s, q]); };
   if (Ly.peri && sm(19, 21, t) > .3) { add(ellipse(0, 0, rx, ry, 64), css("--c-peri"), "peri"); labs.push(["心包腔", [-rx + .12, -.1], "L", "peri"]); }
   if (dmK(t) > .3 && mc > -.62 && mc < .55) { add([[-.05, r * .9], [.05, r * .9], [.05, ry], [-.05, ry]], css("--c-dm"), "dm"); labs.push(["背側心繫膜", [.05, (r + ry) / 2], "R", "dm"]); }
   const segCol = "#" + tubeColor(mc, t).getHexString();
   for (const x of xs) {
-    add(ellipse(x, 0, r, r, 48), segCol, seg);
-    add(ellipse(x, 0, r * .78, r * .78, 48), css("--c-jelly"), "jelly");
-    add(ellipse(x, 0, r * .5, r * .5, 40), css("--c-endoc"), "endoc");
-    add(ellipse(x, 0, r * .42, r * .42, 40), css("--bg"), null);
+    add(ellipse(x, 0, r * xw, r, 48), segCol, seg);
+    add(ellipse(x, 0, r * .78 * xw, r * .78, 48), css("--c-jelly"), "jelly");
+    add(ellipse(x, 0, r * .5 * xw, r * .5, 40), css("--c-endoc"), "endoc");
+    add(ellipse(x, 0, r * .42 * xw, r * .42, 40), css("--bg"), null);
   }
   const xl = xs[0], xr = xs[xs.length - 1], segName = seg === "phf" ? "初級心區" : SEGN[seg];
-  labs.push([`心肌層（${segName}）`, [xl - r * .89, .05], "L", seg]);
-  labs.push(["心膠質", [xr + r * .64, .08], "R", "jelly"]);
-  labs.push(["心內膜", [xr + r * .46 * .7, -r * .46 * .7], "R", "endoc"]);
+  labs.push([`心肌層（${segName}）`, [xl - r * .89 * xw, .05], "L", seg]);
+  labs.push(["心膠質", [xr + r * .64 * xw, .08], "R", "jelly"]);
+  labs.push(["心內膜", [xr + r * .46 * .7 * xw, -r * .46 * .7], "R", "endoc"]);
   if (Ly.ref && sm(20, 22, t) > .3) {
     add(ellipse(0, gutY, .22, .22, 32), css("--c-gut"), "gut"); labs.push(["前腸", [-.22, gutY], "L", "gut"]);
     for (const σ of [-1, 1]) add(ellipse(σ * .45, gutY + .12, .08, .08, 20), css("--c-ao"), "ao");
@@ -843,6 +856,11 @@ M.pick = function (ray) {
   return null;
 };
 Object.assign(M, { pos, radius, sep, mMin, mMax });
+// 給模組 2 銜接用：第 t 天整條心管外形（不切開、未選取）
+M.ghostGeo = function (t) {
+  const o = mkTube(tubeMat); M.group.remove(o); const sel = state.sel, dx = flags.dextro; state.sel = null; flags.dextro = false;
+  fillTube(o, 1, mMin(t), mMax(t), t, 1, false, true); state.sel = sel; flags.dextro = dx; return o.geometry;
+};
 return M;
 })();
 
@@ -1134,6 +1152,9 @@ function fillWall(o) {
   }
   o.geometry.attributes.position.needsUpdate = true; o.geometry.computeVertexNormals(); o.geometry.computeBoundingSphere(); o.geometry.computeBoundingBox();
 }
+// 銜接：模組 1 第 28 天的彎曲心管外形，淡色疊在四腔示意上，第 28–31 天淡出（不能點選）
+const ghost = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshStandardMaterial({ vertexColors: true, transparent: true, depthWrite: false, roughness: .6, side: THREE.DoubleSide }));
+ghost.scale.set(1.35, 1.5, 1.35); ghost.position.set(.2, -.32, -1); ghost.renderOrder = 5; M.group.add(ghost);
 // 中隔與開口（開口是半透明的標示色）
 const holeMat = regA(mat("--c-hole", { transparent: true, opacity: .42, depthWrite: false }));
 const PMESH = PLATES.map((pl) => { const o = new THREE.Mesh(new THREE.BufferGeometry(), pl.open ? holeMat : regA(mat("--c-" + pl.id))); o.userData.struct = pl.id; M.group.add(o); return o; });
@@ -1320,6 +1341,8 @@ M.update = function () {
     fillPlate(o, pl, COLS[i]);
   });
   // 心內膜墊
+  const gk = 1 - sm(28, 31, state.day); ghost.visible = gk > .02;
+  if (ghost.visible) { if (!ghost.geometry.attributes.position) ghost.geometry = M1.ghostGeo(28); ghost.material.opacity = .5 * gk; }
   cushions().forEach((c, i) => { CUSH[i].position.set(...c.p); CUSH[i].scale.set(...c.r); });
   // 房室瓣
   const kv = KV, vis = kv > .03;
@@ -1472,7 +1495,7 @@ M.drawSection = function (ctx, W, H, dpr) {
 
 /* ---------- 時間軸、卡片、鏡頭、點選 ---------- */
 M.events = [
-  { d: 28, lbl: "第 4 週末", tick: "4 週末", sec: "cor", cut: .42, t: "第一中隔、心內膜墊", s: "共同心房頂長出鐮刀形的第一中隔；房室管出現心內膜墊；兩心室之間開始長肌性心室間隔（Langman 15th Fig. 13.16A、13.19；Moore 11th p.275：約 28 天）。" },
+  { d: 28, lbl: "第 4 週末", tick: "4 週末", sec: "cor", cut: .42, t: "第一中隔、心內膜墊", s: "共同心房頂長出鐮刀形的第一中隔；房室管出現心內膜墊；兩心室之間開始長肌性心室間隔（Langman 15th Fig. 13.16A、13.19；Moore 11th p.275：約 28 天）。淡色外形是模組 1 第 28 天的彎曲心管，對應關係：共同心房→左右心房、原始心室→左心室小樑部、心球近端→右心室小樑部、圓錐與動脈幹→流出道；第 31 天前淡出，之後用四腔示意看內部分隔。" },
   { d: 32, lbl: "約第 32 天", tick: "32 天", sec: "cor", cut: .42, t: "第二孔", s: "第一中隔上部穿孔，合成第二孔（Langman 15th Fig. 13.16B；Moore 11th p.275：約 32 天穿孔、約 35 天見第二孔）。" },
   { d: 35, lbl: "第 5 週", tick: "5 週", sec: "ot", cut: .7, t: "圓錐動脈幹嵴", s: "流出道壁上出現兩對相對的膨大，往遠端螺旋相向長（Langman 15th Fig. 13.27；Moore 11th p.280–285）。" },
   { d: 37, lbl: "第 5–6 週", tick: "5–6 週", sec: "cor", cut: .42, t: "第一孔關閉", s: "背腹心內膜墊融合，房室管分成左右；第一中隔與融合的心內膜墊接合，第一孔關閉（Langman 15th Fig. 13.16C；111-2 國考）。" },
