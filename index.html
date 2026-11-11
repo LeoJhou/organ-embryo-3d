@@ -43,7 +43,10 @@ button, input { font: inherit; color: inherit; }
 #app { height: 100%; display: grid; grid-template-rows: auto 1fr; }
 header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); background: var(--panel); }
 header h1 { font: 600 18px/1.2 var(--f-display); margin: 0; letter-spacing: .02em; }
-#mods { display: flex; flex-wrap: wrap; gap: 6px; }
+#mods { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+#mods .row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab.org { border-radius: 7px; font-weight: 600; padding: 2px 12px; }
+.tab.org[aria-current="true"] { background: var(--ink); border-color: var(--ink); color: var(--panel); }
 .tab { border: 1px solid var(--line); background: var(--chip); border-radius: 999px; padding: 2px 12px; font-size: 13px; cursor: pointer; }
 .tab[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .tab:disabled { opacity: .55; cursor: default; }
@@ -170,7 +173,7 @@ details.fold > summary { cursor: pointer; font-size: 13px; color: var(--accent);
 #secHead h2 { font: 600 15px/1.3 var(--f-display); margin: 0; }
 #secWhere { font-size: 12px; color: var(--mute); }
 #card canvas.fig { width: 100%; display: block; box-sizing: border-box; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); margin: 6px 0 4px; }
-#sec { width: 100%; aspect-ratio: 720 / 460; max-width: 100%; box-sizing: border-box; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+#sec { touch-action: pan-x pan-y; width: 100%; aspect-ratio: 720 / 460; max-width: 100%; box-sizing: border-box; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
 #cut { width: 100%; margin-inline: 0; accent-color: var(--accent); }
 .row2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--mute); }
 .note { font-size: 12px; color: var(--mute); margin: 0; }
@@ -235,9 +238,10 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
   header h1 { grid-area: 1 / 1; font-size: 15px; align-self: end; }
   #author { grid-area: 2 / 1; flex-direction: row; align-items: baseline; gap: 4px; font-size: 10px; font-weight: 500; color: var(--mute); }
   #author small { font-size: 9.5px; }
-  #mods { grid-area: 1 / 2 / 3 / 3; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; align-self: center; }
-  #mods::-webkit-scrollbar { display: none; }
-  #mods .tab { flex: none; }
+  #mods { grid-area: 1 / 2 / 3 / 3; gap: 3px; align-self: center; }
+  #mods .row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 4px; }
+  #mods .row::-webkit-scrollbar { display: none; }
+  #mods .tab { flex: none; font-size: 12px; padding: 1px 9px; }
   #tools { grid-area: 1 / 3 / 3 / 4; margin: 0; gap: 4px; }
   #findIco, #moreBtn { display: inline-block; padding: 4px 8px; }
   #find { display: none; }
@@ -257,7 +261,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
 <div id="app">
   <header>
     <h1>器官發育 3D</h1>
-    <nav id="mods" aria-label="模組"></nav>
+    <nav id="mods" aria-label="器官與模組"><div class="row" id="orgRow" role="group" aria-label="器官"></div><div class="row" id="modRow" role="group" aria-label="模組"></div></nav>
     <div id="tools">
       <div id="findBox"><button class="btn" id="findIco" aria-label="搜尋構造" title="搜尋構造"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3 14 14"/></svg></button><input id="find" type="search" placeholder="搜尋構造（/）" aria-label="搜尋構造" autocomplete="off" spellcheck="false"><ul id="findList" hidden></ul></div>
       <button class="btn" id="moreBtn" aria-label="更多" aria-expanded="false" aria-controls="moreMenu">⋯</button>
@@ -372,7 +376,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
 } }
 </script>
-<script>window.KG = [{"id": "112-2-醫學一-35", "stem": "胚胎第四週時，下列那一條血管不注入胎兒心臟？", "options": {"A": "卵黃囊靜脈（vitelline vein）", "B": "臍靜脈（umbilical vein）", "C": "總主靜脈（common cardinal vein）", "D": "子宮內膜靜脈（endometrial vein）"}, "answer": "D", "mod": "m1", "day": 26, "sel": "sv"}, {"id": "106-2-醫學一-35", "stem": "心臟傳導系統的蒲金氏纖維（Purkinje fibers）為下列何者特化而成？", "options": {"A": "心肌細胞（cardiac muscle cell）", "B": "神經細胞（nerve cell）", "C": "纖維母細胞（fibroblast）", "D": "內皮細胞（endothelial cell）"}, "answer": "A", "mod": "m1", "day": 22, "sel": "myo"}, {"id": "111-2-醫學一-35", "stem": "在胚胎時期心房間隔（interatrial septum）的發育，其第一孔（foramen primum）之封閉是由於：", "options": {"A": "第一中隔（septum primum）與心內膜墊（endocardial cushion）之融合", "B": "第二中隔（septum secundum）與心內膜墊（endocardial cushion）之融合", "C": "第一中隔（septum primum）之新細胞增生", "D": "第一中隔（septum primum）與第二中隔（septum secundum）之融合"}, "answer": "A", "mod": "m2", "day": 37, "sel": "sp1"}, {"id": "108-1-醫學一-20", "stem": "在胎兒時期，卵圓孔（oval foramen）可溝通下列何者？", "options": {"A": "主動脈與肺動脈", "B": "右心房與右心室", "C": "右心房與左心房", "D": "右心室與左心室"}, "answer": "C", "mod": "m2", "day": 56, "sel": "fo"}, {"id": "111-1-醫學一-35", "stem": "動脈導管（ductus arteriosus）源自下列何構造？", "options": {"A": "左側第六動脈弓（aortic arch）", "B": "左側第五動脈弓（aortic arch）", "C": "右側第五動脈弓（aortic arch）", "D": "左側第四動脈弓（aortic arch）"}, "answer": "A", "mod": "m3", "day": 56, "sel": "da"}, {"id": "110-1-醫學一-34", "stem": "下列何項構造不是源自胚胎咽弓（pharyngeal arch）？", "options": {"A": "動脈導管（ductus arteriosus）", "B": "主動脈弓（aortic arch）", "C": "左側頸總動脈（left common carotid artery）", "D": "升主動脈（ascending aorta）"}, "answer": "D", "mod": "m3", "day": 56, "sel": "aasc"}, {"id": "108-1-醫學一-35", "stem": "有關動脈韌帶（ligamentum arteriosum）的敘述，何者正確？", "options": {"A": "位於主動脈弓（aortic arch）與肺動脈幹（pulmonary trunk）間", "B": "胎兒出生後由臍動脈（umbilical artery）閉鎖形成", "C": "胚胎時期只攜帶缺氧血", "D": "連接肺動脈（pulmonary artery）與肺靜脈（pulmonary vein）"}, "answer": "A", "mod": "m3", "day": 56, "sel": "da"}, {"id": "113-2-醫學一-34", "stem": "下腔靜脈肝臟段（hepatic portion of the inferior vena cava）主要是由下列何者發育而來？", "options": {"A": "卵黃靜脈（vitelline vein）", "B": "臍靜脈（umbilical vein）", "C": "下主靜脈（subcardinal vein）", "D": "上主靜脈（supracardinal vein）"}, "answer": "A", "mod": "m4", "day": 70, "sel": "ivcH"}, {"id": "114-1-醫學一-35", "stem": "胚胎正常發育時，奇靜脈根部（root of azygos vein）的起源是：", "options": {"A": "後主靜脈（posterior cardinal vein）", "B": "總主靜脈（common cardinal vein）", "C": "前主靜脈（anterior cardinal vein）", "D": "下主靜脈（subcardinal vein）"}, "answer": "A", "mod": "m4", "day": 70, "sel": "az"}, {"id": "108-1-醫學一-6", "stem": "下列何者是臍靜脈（umbilical vein）的殘跡？", "options": {"A": "肝鐮韌帶（falciform ligament）", "B": "肝圓韌帶（ligamentum teres）", "C": "冠狀韌帶（coronary ligament）", "D": "正中臍韌帶（median umbilical ligament）"}, "answer": "B", "mod": "m4", "day": 70, "sel": "umb"}, {"id": "111-2-醫學一-20", "stem": "肝圓韌帶（round ligament of liver）是何種結構的遺跡？", "options": {"A": "靜脈導管（ductus venosus）", "B": "臍靜脈（umbilical vein）", "C": "臍動脈（umbilical artery）", "D": "臍尿管（urachus）"}, "answer": "B", "mod": "m4", "day": 70, "sel": "umb"}, {"id": "111-2-醫學一-32", "stem": "下列關於胚胎之胸心包膜（pleuropericardial membrane）的敘述，何項錯誤？", "options": {"A": "形成漿液心包膜的臟層（visceral layer of serous pericardium）", "B": "此膜內包含有總主靜脈（common cardinal vein）", "C": "此膜內包含有膈神經（phrenic nerve）", "D": "此膜所形成之構造分隔胸膜腔與心包腔"}, "answer": "A", "mod": "m4", "day": 24, "sel": "card"}, {"id": "106-1-醫學一-31", "stem": "靜脈血液通常為缺氧血，但是下列何項例外？", "options": {"A": "肝靜脈（hepatic vein）", "B": "門靜脈（portal vein）", "C": "臍靜脈（umbilical vein）", "D": "子宮靜脈（uterine vein）"}, "answer": "C", "mod": "m5", "day": 0, "sel": "uv"}, {"id": "109-2-醫學一-35", "stem": "胎兒循環中，下列何種血管的含氧量最高？", "options": {"A": "主動脈（aorta）", "B": "臍動脈（umbilical artery）", "C": "臍靜脈（umbilical vein）", "D": "肺靜脈（pulmonary vein）"}, "answer": "C", "mod": "m5", "day": 0, "sel": "uv"}, {"id": "109-1-醫學一-35", "stem": "下列何項構造不會在前腹壁上造成腹膜皺襞（peritoneal fold）？", "options": {"A": "靜脈導管（ductus venosus）", "B": "臍尿管（urachus）", "C": "上腹下動脈（inferior epigastric artery）", "D": "臍動脈（umbilical artery）"}, "answer": "A", "mod": "m5", "day": 5, "sel": "dv"}, {"id": "113-1-醫學一-35", "stem": "嬰兒剛出生使用肺部呼吸時，常會伴隨一些現象的改變，下列敘述何者正確？", "options": {"A": "肺部血管阻力顯著增加", "B": "肺部血流量上升", "C": "肺動脈管壁顯著變厚", "D": "右心房壓力高於左心房"}, "answer": "B", "mod": "m5", "day": 1, "sel": "pa"}, {"id": "114-2-醫學一-21", "stem": "前腹壁內面的臍內側韌帶（medial umbilical fold），是因腹膜（peritoneum）包覆下列何種結構所形成？", "options": {"A": "輸精管（vas deferens）", "B": "臍動脈（umbilical artery）", "C": "上腹壁動脈（superior epigastric artery）", "D": "肝靜脈（hepatic vein）"}, "answer": "B", "mod": "m5", "day": 5, "sel": "ua"}, {"id": "114-2-醫學一-35", "stem": "內側臍韌帶（medial umbilical ligament）主要為何構造的遺跡？", "options": {"A": "臍動脈（umbilical artery）", "B": "臍靜脈（umbilical vein）", "C": "靜脈導管（ductus venosus）", "D": "動脈導管（ductus arteriosus）"}, "answer": "A", "mod": "m5", "day": 5, "sel": "ua"}, {"id": "112-2-醫學一-32", "stem": "下列何者在胚胎發育第三週結束時，尚未出現？", "options": {"A": "原條（primitive streak）", "B": "脊索（notochord）", "C": "中胚層（mesoderm）", "D": "咽弓（pharyngeal arch）"}, "answer": "D", "mod": "m6", "day": 22, "sel": "pa1"}, {"id": "113-2-醫學一-32", "stem": "胚胎發育的第三週（第15～21天）期間，下列何者不會出現？", "options": {"A": "原腸胚（gastrula）", "B": "脊索（notochord）", "C": "神經溝（neural groove）", "D": "咽弓（pharyngeal arch）"}, "answer": "D", "mod": "m6", "day": 22, "sel": "pa1"}, {"id": "109-1-醫學一-36", "stem": "關於顱骨（cranium）發育的敘述，何項錯誤？", "options": {"A": "起源於腦組織周圍之間質組織", "B": "部分神經顱（neurocranium）由多塊軟骨癒合形成", "C": "臟顱（viscerocranium）是大腦的主要保護結構", "D": "第一、二對咽弓（pharyngeal arch）參與軟骨性臟顱（cartilaginous viscerocranium）的形成"}, "answer": "C", "mod": "m6", "day": 35, "sel": "cg1"}, {"id": "109-1-醫學一-33", "stem": "胚胎發育時，下列那一咽溝（pharyngeal groove）會持續存在，並且衍生形成外聽道（external acoustic meatus）？", "options": {"A": "第一", "B": "第二", "C": "第三", "D": "第四"}, "answer": "A", "mod": "m6", "day": 56, "sel": "gr1"}, {"id": "106-2-醫學一-33", "stem": "下列有關耳朵（ear）發育之敘述，何者錯誤？", "options": {"A": "外耳道（external acoustic meatus）源自第一對咽溝（pharyngeal groove）", "B": "鼓膜主要來自第一對咽膜（pharyngeal membrane）與咽囊（pharyngeal pouch）及間葉組織（mesenchyme）", "C": "鼓室（tympanic cavity）源自第一對咽囊（pharyngeal pouch）", "D": "第一對咽囊（pharyngeal pouch）向下與第二對咽囊連通形成耳咽管（auditory tube）並開口於鼻咽"}, "answer": "D", "mod": "m6", "day": 35, "sel": "pp1"}, {"id": "109-2-醫學一-36", "stem": "下列何者不參與鼓膜（tympanic membrane）的形成？", "options": {"A": "第一與第二咽弓（pharyngeal arch）之間葉組織（mesenchyme）", "B": "第一咽囊（pharyngeal pouch）之內胚層（endoderm）", "C": "神經外胚層（neuroectoderm）", "D": "第一咽溝（pharyngeal groove）之外胚層（ectoderm）"}, "answer": "C", "mod": "m6", "day": 35, "sel": "pm1"}, {"id": "111-2-醫學一-36", "stem": "下列那一項構造，不包含於鼓膜（tympanic membrane）的發育？", "options": {"A": "第一咽溝（pharyngeal groove）的外胚層（ectoderm）", "B": "第二咽溝（pharyngeal groove）的外胚層（ectoderm）", "C": "第一咽囊（pharyngeal pouch）的內胚層（endoderm）", "D": "第一和第二咽弓（pharyngeal arch）的間葉組織（mesenchyme）"}, "answer": "B", "mod": "m6", "day": 35, "sel": "pm1"}, {"id": "107-1-醫學一-32", "stem": "呼吸器官的原基（respiratory primordium）起源於下列何者的尾端（caudal end）？", "options": {"A": "第一咽囊（pharyngeal pouch）", "B": "第二咽囊（pharyngeal pouch）", "C": "第三咽囊（pharyngeal pouch）", "D": "第四咽囊（pharyngeal pouch）"}, "answer": "D", "mod": "m6", "day": 35, "sel": "ltd"}, {"id": "112-2-醫學一-33", "stem": "下列有關甲狀腺（thyroid gland）發育之敘述，何項錯誤？", "options": {"A": "主要為咽原基（primordial pharynx）內胚層增厚所形成", "B": "甲狀腺憩室（diverticulum）會脫離咽原基（primordial pharynx）在頸部腹側向下方移動", "C": "甲狀腺憩室（diverticulum）脫離咽原基（primordial pharynx）之處，即為門齒窩（incisive fossa）", "D": "甲狀腺內有來自第四咽囊（pharyngeal pouch）之細胞"}, "answer": "C", "mod": "m6", "day": 30, "sel": "fc"}, {"id": "112-1-醫學一-33", "stem": "下列何者為舌頭咽喉部（pharyngeal part of tongue）的胚胎起源？", "options": {"A": "遠端舌芽（distal tongue bud）", "B": "中央舌芽（median tongue bud）", "C": "盲孔（foramen cecum）", "D": "咽下隆起（hypopharyngeal eminence）"}, "answer": "D", "mod": "m6", "day": 30, "sel": "cop"}, {"id": "114-2-醫學一-33", "stem": "舌（tongue）的發育過程中，那一咽弓會形成聯合部（copula），且最後會被擠壓而消失？", "options": {"A": "第一咽弓（first pharyngeal arch）", "B": "第二咽弓（second pharyngeal arch）", "C": "第三咽弓（third pharyngeal arch）", "D": "第四咽弓（fourth pharyngeal arch）"}, "answer": "B", "mod": "m6", "day": 30, "sel": "cop"}, {"id": "114-2-醫學一-32", "stem": "下列何者不是由神經嵴細胞（neural crest cell）衍生而成？", "options": {"A": "黑色素細胞（melanocyte）", "B": "交感節後神經元（postganglionic sympathetic neuron）", "C": "甲狀腺之濾泡細胞（follicular cell of thyroid gland）", "D": "腎上腺髓質之嗜鉻細胞（chromaffin cell of adrenal medulla）"}, "answer": "C", "mod": "m6", "day": 56, "sel": "thyr"}, {"id": "109-1-醫學一-3", "stem": "下列何者支配第一對咽弓（pharyngeal arch）衍生的構造？", "options": {"A": "三叉神經運動核（trigeminal motor nucleus）", "B": "面神經核（facial nucleus）", "C": "動眼神經核（oculomotor nucleus）", "D": "上橄欖核（superior olivary nucleus）"}, "answer": "A", "mod": "m7", "day": 1, "sel": "cn5"}, {"id": "114-1-醫學一-36", "stem": "嚼肌（masseter）主要是源自下列何者？", "options": {"A": "第一咽弓（first pharyngeal arch）", "B": "第二咽弓（second pharyngeal arch）", "C": "第三咽弓（third pharyngeal arch）", "D": "第四及第六咽弓（fourth and sixth pharyngeal arches）"}, "answer": "A", "mod": "m7", "day": 1, "sel": "mass"}, {"id": "113-1-醫學一-33", "stem": "衍生自第二咽弓（second pharyngeal arch）的肌肉，是由下列那一條腦神經支配？", "options": {"A": "三叉神經（trigeminal nerve）", "B": "顏面神經（facial nerve）", "C": "舌咽神經（glossopharyngeal nerve）", "D": "副神經（accessory nerve）"}, "answer": "B", "mod": "m7", "day": 2, "sel": "cn7"}, {"id": "111-2-醫學一-33", "stem": "下列那一項構造衍生自第三咽弓（pharyngeal arch）？", "options": {"A": "莖突舌骨韌帶（stylohyoid ligament）", "B": "舌骨之小角（lesser cornu of hyoid bone）", "C": "舌骨之大角（greater cornu of hyoid bone）", "D": "甲狀軟骨（thyroid cartilage）"}, "answer": "C", "mod": "m7", "day": 3, "sel": "hy3"}, {"id": "110-2-醫學一-34", "stem": "鎚骨（malleus），砧骨（incus），和鐙骨（stapes）是源自：", "options": {"A": "第1和第2咽弓（pharyngeal arch）", "B": "第2和第3咽弓（pharyngeal arch）", "C": "第3和第4咽弓（pharyngeal arch）", "D": "第4和第6咽弓（pharyngeal arch）"}, "answer": "A", "mod": "m7", "day": 0, "sel": "mal"}, {"id": "113-2-醫學一-36", "stem": "聽小骨（auditory ossicle）之砧骨（incus）是源自何處？", "options": {"A": "第一咽弓（first pharyngeal arch）", "B": "第二咽弓（second pharyngeal arch）", "C": "第三咽弓（third pharyngeal arch）", "D": "第四咽弓（fourth pharyngeal arch）"}, "answer": "A", "mod": "m7", "day": 1, "sel": "inc"}, {"id": "109-2-醫學一-33", "stem": "中腸環（midgut loop）的旋轉，以下列何者為軸心？", "options": {"A": "卵黃柄（yolk stalk）", "B": "腹腔動脈（celiac artery）", "C": "腸繫膜上動脈（superior mesenteric artery）", "D": "腸繫膜下動脈（inferior mesenteric artery）"}, "answer": "C", "mod": "m8", "day": 49, "sel": "sma"}, {"id": "110-1-醫學一-33", "stem": "從腹面觀（ventral view），中腸環（midgut loop）的旋轉方式為：", "options": {"A": "順時針方向作180度旋轉", "B": "順時針方向作270度旋轉", "C": "逆時針方向作180度旋轉", "D": "逆時針方向作270度旋轉"}, "answer": "D", "mod": "m8", "day": 72, "sel": "sma"}, {"id": "111-2-醫學一-34", "stem": "在胚胎發育至第幾週時，小腸會由體外返回腹腔內？", "options": {"A": "第四週", "B": "第七週", "C": "第十週", "D": "第十二週"}, "answer": "C", "mod": "m8", "day": 70, "sel": "jej"}, {"id": "112-1-醫學一-34", "stem": "發育正常的胚胎至第幾週時，會發生生理性臍疝（physiological umbilical herniation）？", "options": {"A": "第六週", "B": "第八週", "C": "第十週", "D": "第十二週"}, "answer": "A", "mod": "m8", "day": 44, "sel": "cord"}, {"id": "108-2-醫學一-34", "stem": "下列關於十二指腸（duodenum）發育之敘述，何者正確？", "options": {"A": "全部由前腸（foregut）衍生而來", "B": "十二指腸環（duodenal loop）連接卵黃柄（yolk stalk）", "C": "隨著胃的旋轉，十二指腸環（duodenal loop）會旋轉至左側", "D": "因上皮細胞增生而一度閉鎖（obliteration）"}, "answer": "D", "mod": "m9", "day": 42, "sel": "duoM"}, {"id": "113-1-醫學一-34", "stem": "下列關於十二指腸（duodenum）發育的敘述，何者最適當？", "options": {"A": "由前腸（foregut）與後腸（hindgut）共同發育而來", "B": "血液供應有上腸繫膜動脈（superior mesenteric artery）與下腸繫膜動脈（inferior mesenteric artery）", "C": "因胃（stomach）的旋轉使十二指腸旋轉至右側，並且大部分貼在後腹壁", "D": "發育過程中均呈現中空管狀的結構"}, "answer": "C", "mod": "m9", "day": 56, "sel": "duoF"}, {"id": "114-1-醫學一-34", "stem": "下列關於胰臟（pancreas）發育的敘述，何者正確？", "options": {"A": "由中胚層發育衍生出背胰芽（dorsal pancreatic buds）和腹胰芽（ventral pancreatic buds）", "B": "當十二指腸旋轉至左側時，會使背胰芽（dorsal pancreatic buds）轉至後側和十二指腸前方的腹胰芽（ventral pancreatic buds）癒合，形成胰臟", "C": "腹胰芽（ventral pancreatic buds）主要發育為胰臟的鉤狀突（uncinate process）以及部分的頭端", "D": "環狀胰臟（annular pancreas）為常見的消化道缺陷，主要會造成胃阻塞"}, "answer": "C", "mod": "m9", "day": 44, "sel": "vp"}, {"id": "115-2-醫學一-34", "stem": "下列關於胃（stomach）發育的敘述，何者正確？", "options": {"A": "一開始右側開始膨大，之後左側前方發育快於後方，因而產生胃大彎（greater curvature）", "B": "發育時會逆時針旋轉180度，使頭端移至右下側，而尾端移至左下側", "C": "原始背側胃繫膜（primordial dorsal mesogastrium）因胃旋轉被帶至左側，形成網膜囊（omental bursa）", "D": "胃部發育不正常很普遍，常見於女嬰，且多為幽門閉鎖（pyloric atresia）的症狀"}, "answer": "C", "mod": "m9", "day": 52, "sel": "ob"}, {"id": "107-1-醫學一-33", "stem": "下列何種器官由前腸（foregut）衍生而來？", "options": {"A": "脾臟（spleen）", "B": "膽囊（gallbladder）", "C": "闌尾（appendix）", "D": "空腸（jejunum）"}, "answer": "B", "mod": "m9", "day": 56, "sel": "gb"}, {"id": "110-2-醫學一-33", "stem": "大部分腹側腸繫膜（ventral mesentery）在胚胎發育過程中都會消失，下列何者尾端仍保留此構造？", "options": {"A": "原始咽（primordial pharynx）", "B": "前腸（foregut）", "C": "中腸（midgut）", "D": "後腸（hindgut）"}, "answer": "B", "mod": "m9", "day": 56, "sel": "lom"}, {"id": "106-2-醫學一-34", "stem": "下列有關脾臟（spleen）發育之敘述，何項錯誤？", "options": {"A": "最早出現於背側胃繫膜（dorsal mesogastrium）之間", "B": "源自前腸（foregut）內胚層（endoderm）", "C": "原先位於胃之背側，後來因胃之旋轉而移至左側", "D": "曾為造血器官"}, "answer": "B", "mod": "m9", "day": 56, "sel": "spl"}, {"id": "106-1-醫學一-29", "stem": "胚胎發育至第幾週時，肝細胞（hepatocyte）開始製造膽汁（bile）？", "options": {"A": "第4週", "B": "第8週", "C": "第12週", "D": "第16週"}, "answer": "C", "mod": "m9", "day": 56, "sel": "liv"}, {"id": "114-2-醫學二-82", "stem": "先天性心臟病中，長期處於下列何種狀況最容易造成肺高壓？", "options": {"A": "明顯的心室中隔缺損（ventricular septal defect）", "B": "典型的Fallot氏四合症（classic tetralogy of Fallot）", "C": "成人型導管後主動脈狹窄（adult form postductal coarctation of aorta）", "D": "單獨的肺動脈瓣狹窄（isolated pulmonary stenosis）"}, "answer": "A", "mod": "m2", "day": 56, "sel": "vsd", "subj": "病理科"}, {"id": "108-2-醫學二-83", "stem": "下列何種先天性心臟病必須保持開放的動脈導管（ductus arteriosus），否則嬰兒出生後通常很快致命？", "options": {"A": "心室中隔缺損（ventricular septal defect）", "B": "主動脈縮窄（coarctation of aorta）", "C": "心房中隔缺損（atrial septal defect）", "D": "主動脈閉鎖（aortic atresia）"}, "answer": "D", "mod": "m2", "day": 56, "sel": "slv", "subj": "病理科"}, {"id": "113-1-醫學二-84", "stem": "下列何種疾病最可能藉由抑制前列腺素E2（prostaglandin E2）來治療？", "options": {"A": "開放動脈導管（patent ductus arteriosus）", "B": "心房中膈缺損（atrial septal defect）", "C": "心室中膈缺損（ventricular septal defect）", "D": "主動脈閉鎖（aortic atresia）"}, "answer": "A", "mod": "m3", "day": 56, "sel": "pda", "subj": "病理科"}, {"id": "109-1-醫學二-78", "stem": "下列關於染色體22q11.2缺失症候群（chromosome 22q11.2 deletion syndrome）的敘述，何者正確？", "options": {"A": "免疫系統主要會有B淋巴細胞的功能異常", "B": "內分泌系統主要是腦下腺發育不良的問題", "C": "多數的個案其染色體的缺失或突變是隨機的發生在生殖細胞（精或卵）形成的過程", "D": "必須靠傳統染色體核型分析（karyotyping）才能確診"}, "answer": "C", "mod": "m6", "day": 56, "sel": "dg", "subj": "病理科"}, {"id": "114-1-醫學一-15", "stem": "若病人的主動脈弓（aortic arch）發生動脈瘤（aneurysm），造成聲音沙啞，最可能是因為下列那一條神經功能間接受損？", "options": {"A": "右側迷走神經（right vagus nerve）", "B": "右側交感神經幹（right sympathetic trunk）", "C": "左側交感神經幹（left sympathetic trunk）", "D": "左側喉返神經（left recurrent laryngeal nerve）"}, "answer": "D", "mod": "m3", "day": 56, "sel": "lrln", "subj": "解剖學"}, {"id": "106-2-醫學一-23", "stem": "有關上縱隔（superior mediastinum）內，神經走向之敘述，下列何者正確？", "options": {"A": "右喉返神經（right reccurent laryngeal nerve）繞經右頭臂靜脈（right brachiocephalic vein）向上", "B": "左喉返神經（left reccurent laryngeal nerve）繞經左鎖骨下動脈（left subclavian artery）向上", "C": "右膈神經位於上腔靜脈（superior vena cava）和縱膈肋膜（mediastinal part of parietal pleura）間", "D": "左膈神經沿降主動脈（descendig aorta）下行"}, "answer": "C", "mod": "m3", "day": 56, "sel": "lrln", "subj": "解剖學"}, {"id": "110-1-醫學一-25", "stem": "心臟之靜脈（cardiac veins）主要匯流至：", "options": {"A": "冠狀竇（coronary sinus）", "B": "左心房（left antrium）", "C": "右心室（right ventricle）", "D": "上腔靜脈（superior vena cava）"}, "answer": "A", "mod": "m4", "day": 70, "sel": "cs", "subj": "解剖學"}, {"id": "109-1-醫學一-20", "stem": "動脈韌帶（ligamentum arteriosum），位在那兩條血管之間？", "options": {"A": "主動脈與肺動脈", "B": "肺動脈與上腔靜脈", "C": "主動脈與上腔靜脈", "D": "主動脈與肺靜脈"}, "answer": "A", "mod": "m5", "day": 5, "sel": "da", "subj": "解剖學"}, {"id": "112-1-醫學一-21", "stem": "闌尾最不可能在下列何處出現？", "options": {"A": "盲腸前（prececal）", "B": "迴腸後（postileal）", "C": "骨盆緣（pelvic brim）", "D": "盲腸後（retrocecal）"}, "answer": "A", "mod": "m8", "day": 84, "sel": "app", "subj": "解剖學"}, {"id": "114-2-醫學一-19", "stem": "下列何者不具備腸繫膜（mesentery）的構造？", "options": {"A": "十二指腸下降段（descending part of duodenum）", "B": "闌尾（appendix）", "C": "乙狀結腸（sigmoid colon）", "D": "橫結腸（transverse colon）"}, "answer": "A", "mod": "m8", "day": 84, "sel": "duoM", "subj": "解剖學"}, {"id": "113-1-醫學一-20", "stem": "下列何者是上腸繫膜動脈（superior mesenteric artery）的分支？", "options": {"A": "前上胰十二指腸動脈（anterior superior pancreaticoduodenal artery）", "B": "後上胰十二指腸動脈（posterior superior pancreaticoduodenal artery）", "C": "左結腸動脈（left colic artery）", "D": "下胰十二指腸動脈（inferior pancreaticoduodenal artery）"}, "answer": "D", "mod": "m8", "day": 84, "sel": "sma", "subj": "解剖學"}, {"id": "111-1-醫學一-22", "stem": "下列何者與網膜孔（omental foramen）的關係位置不正確？", "options": {"A": "總膽管在其後方", "B": "肝門靜脈在其前方", "C": "肝臟在其上方", "D": "十二指腸在其下方"}, "answer": "A", "mod": "m9", "day": 56, "sel": "ef", "subj": "解剖學"}, {"id": "115-1-醫學一-72", "stem": "有關妊娠期間母體內分泌調節與胎兒發育，下列敘述何者最為適當？", "options": {"A": "母體血液醛固酮（aldosterone）含量增加，以抗衡胰島素（insulin）的作用", "B": "母體血液濾泡促素（FSH）含量是作為胚體（conceptus）正常狀態的臨床指標", "C": "胎兒循環系統的靜脈導管（ductus venosus）有利於有效提供其全身充氧血液", "D": "母體之血液甲狀腺素（thyroid hormone）含量提升，以調節血鈣提供鈣離子給胎兒成長之需"}, "answer": "C", "mod": "m5", "day": 0, "sel": "dv", "subj": "生理學"}, {"id": "110-1-醫學一-57", "stem": "下列有關母體與胎兒的紅血球與氧氣結合的敘述，何者正確？", "options": {"A": "胎兒與母體的血紅素皆為 α₂-β₂ chain，因此氧氣量相同", "B": "母體的血紅素為α₂-β₂ chain，胎兒的血紅素為 ε₂-ζ₂ chain，因此母體血紅素較易接合氧氣", "C": "母體的血紅素為 α₂-β₂chain，胎兒的血紅素為 α₄ chain，因此胎兒血紅素較易接合氧氣", "D": "母體的血紅素為 α₂-β₂chain，胎兒的血紅素為 α₂-γ₂ chain，因此胎兒血紅素較易接合氧氣"}, "answer": "D", "mod": "m5", "day": 0, "sel": "uv", "subj": "生理學"}, {"id": "107-1-醫學二-57", "stem": "下列何種藥物除了常用於治療痛風外，對新生兒動脈導管閉鎖不全也有促進其關閉的作用？", "options": {"A": "indomethacin", "B": "etodolac", "C": "ketoprofen", "D": "naproxen"}, "answer": "A", "mod": "m5", "day": 5, "sel": "pda", "subj": "藥理學"}, {"id": "109-1-醫學二-57", "stem": "一早產兒發生動脈導管閉鎖不全，可以使用下列何種藥物來使其關閉？", "options": {"A": "diclofenac", "B": "ibuprofen", "C": "rofecoxib", "D": "sulindac"}, "answer": "B", "mod": "m5", "day": 5, "sel": "pda", "subj": "藥理學"}, {"id": "107-1-醫學二-24", "stem": "因為22對染色體部分缺損（22q11.2）而造成的DiGeorge症候群，下列何者不屬於其常見症狀？", "options": {"A": "甲狀腺發育不全", "B": "胸腺發育不全", "C": "先天性心臟病", "D": "臉型異常"}, "answer": "ABCD", "mod": "m6", "day": 56, "sel": "dg", "subj": "微免"}, {"id": "113-1-醫學二-24", "stem": "先天性免疫缺失疾病（primary immunodeficiency diseases）經常是因為與免疫細胞發育或是功能相關的基因缺陷造成。下列疾病與其缺陷基因之配對，何者最不適當？", "options": {"A": "X-linked SCID：IL-2 receptor common gamma chain", "B": "Wiskott-Aldrich syndrome：NF-κB", "C": "Bruton's X-linked agammaglobulinemia：BTK", "D": "DiGeorge syndrome：TBX1"}, "answer": "B", "mod": "m6", "day": 56, "sel": "dg", "subj": "微免"}];</script>
+<script>window.KG = [{"id": "112-2-醫學一-35", "stem": "胚胎第四週時，下列那一條血管不注入胎兒心臟？", "options": {"A": "卵黃囊靜脈（vitelline vein）", "B": "臍靜脈（umbilical vein）", "C": "總主靜脈（common cardinal vein）", "D": "子宮內膜靜脈（endometrial vein）"}, "answer": "D", "mod": "m1", "day": 26, "sel": "sv"}, {"id": "106-2-醫學一-35", "stem": "心臟傳導系統的蒲金氏纖維（Purkinje fibers）為下列何者特化而成？", "options": {"A": "心肌細胞（cardiac muscle cell）", "B": "神經細胞（nerve cell）", "C": "纖維母細胞（fibroblast）", "D": "內皮細胞（endothelial cell）"}, "answer": "A", "mod": "m1", "day": 22, "sel": "myo"}, {"id": "111-2-醫學一-35", "stem": "在胚胎時期心房間隔（interatrial septum）的發育，其第一孔（foramen primum）之封閉是由於：", "options": {"A": "第一中隔（septum primum）與心內膜墊（endocardial cushion）之融合", "B": "第二中隔（septum secundum）與心內膜墊（endocardial cushion）之融合", "C": "第一中隔（septum primum）之新細胞增生", "D": "第一中隔（septum primum）與第二中隔（septum secundum）之融合"}, "answer": "A", "mod": "m2", "day": 37, "sel": "sp1"}, {"id": "108-1-醫學一-20", "stem": "在胎兒時期，卵圓孔（oval foramen）可溝通下列何者？", "options": {"A": "主動脈與肺動脈", "B": "右心房與右心室", "C": "右心房與左心房", "D": "右心室與左心室"}, "answer": "C", "mod": "m2", "day": 56, "sel": "fo"}, {"id": "111-1-醫學一-35", "stem": "動脈導管（ductus arteriosus）源自下列何構造？", "options": {"A": "左側第六動脈弓（aortic arch）", "B": "左側第五動脈弓（aortic arch）", "C": "右側第五動脈弓（aortic arch）", "D": "左側第四動脈弓（aortic arch）"}, "answer": "A", "mod": "m3", "day": 56, "sel": "da"}, {"id": "110-1-醫學一-34", "stem": "下列何項構造不是源自胚胎咽弓（pharyngeal arch）？", "options": {"A": "動脈導管（ductus arteriosus）", "B": "主動脈弓（aortic arch）", "C": "左側頸總動脈（left common carotid artery）", "D": "升主動脈（ascending aorta）"}, "answer": "D", "mod": "m3", "day": 56, "sel": "aasc"}, {"id": "108-1-醫學一-35", "stem": "有關動脈韌帶（ligamentum arteriosum）的敘述，何者正確？", "options": {"A": "位於主動脈弓（aortic arch）與肺動脈幹（pulmonary trunk）間", "B": "胎兒出生後由臍動脈（umbilical artery）閉鎖形成", "C": "胚胎時期只攜帶缺氧血", "D": "連接肺動脈（pulmonary artery）與肺靜脈（pulmonary vein）"}, "answer": "A", "mod": "m3", "day": 56, "sel": "da"}, {"id": "113-2-醫學一-34", "stem": "下腔靜脈肝臟段（hepatic portion of the inferior vena cava）主要是由下列何者發育而來？", "options": {"A": "卵黃靜脈（vitelline vein）", "B": "臍靜脈（umbilical vein）", "C": "下主靜脈（subcardinal vein）", "D": "上主靜脈（supracardinal vein）"}, "answer": "A", "mod": "m4", "day": 70, "sel": "ivcH"}, {"id": "114-1-醫學一-35", "stem": "胚胎正常發育時，奇靜脈根部（root of azygos vein）的起源是：", "options": {"A": "後主靜脈（posterior cardinal vein）", "B": "總主靜脈（common cardinal vein）", "C": "前主靜脈（anterior cardinal vein）", "D": "下主靜脈（subcardinal vein）"}, "answer": "A", "mod": "m4", "day": 70, "sel": "az"}, {"id": "108-1-醫學一-6", "stem": "下列何者是臍靜脈（umbilical vein）的殘跡？", "options": {"A": "肝鐮韌帶（falciform ligament）", "B": "肝圓韌帶（ligamentum teres）", "C": "冠狀韌帶（coronary ligament）", "D": "正中臍韌帶（median umbilical ligament）"}, "answer": "B", "mod": "m4", "day": 70, "sel": "umb"}, {"id": "111-2-醫學一-20", "stem": "肝圓韌帶（round ligament of liver）是何種結構的遺跡？", "options": {"A": "靜脈導管（ductus venosus）", "B": "臍靜脈（umbilical vein）", "C": "臍動脈（umbilical artery）", "D": "臍尿管（urachus）"}, "answer": "B", "mod": "m4", "day": 70, "sel": "umb"}, {"id": "111-2-醫學一-32", "stem": "下列關於胚胎之胸心包膜（pleuropericardial membrane）的敘述，何項錯誤？", "options": {"A": "形成漿液心包膜的臟層（visceral layer of serous pericardium）", "B": "此膜內包含有總主靜脈（common cardinal vein）", "C": "此膜內包含有膈神經（phrenic nerve）", "D": "此膜所形成之構造分隔胸膜腔與心包腔"}, "answer": "A", "mod": "m4", "day": 24, "sel": "card"}, {"id": "106-1-醫學一-31", "stem": "靜脈血液通常為缺氧血，但是下列何項例外？", "options": {"A": "肝靜脈（hepatic vein）", "B": "門靜脈（portal vein）", "C": "臍靜脈（umbilical vein）", "D": "子宮靜脈（uterine vein）"}, "answer": "C", "mod": "m5", "day": 0, "sel": "uv"}, {"id": "109-2-醫學一-35", "stem": "胎兒循環中，下列何種血管的含氧量最高？", "options": {"A": "主動脈（aorta）", "B": "臍動脈（umbilical artery）", "C": "臍靜脈（umbilical vein）", "D": "肺靜脈（pulmonary vein）"}, "answer": "C", "mod": "m5", "day": 0, "sel": "uv"}, {"id": "109-1-醫學一-35", "stem": "下列何項構造不會在前腹壁上造成腹膜皺襞（peritoneal fold）？", "options": {"A": "靜脈導管（ductus venosus）", "B": "臍尿管（urachus）", "C": "上腹下動脈（inferior epigastric artery）", "D": "臍動脈（umbilical artery）"}, "answer": "A", "mod": "m5", "day": 5, "sel": "dv"}, {"id": "113-1-醫學一-35", "stem": "嬰兒剛出生使用肺部呼吸時，常會伴隨一些現象的改變，下列敘述何者正確？", "options": {"A": "肺部血管阻力顯著增加", "B": "肺部血流量上升", "C": "肺動脈管壁顯著變厚", "D": "右心房壓力高於左心房"}, "answer": "B", "mod": "m5", "day": 1, "sel": "pa"}, {"id": "114-2-醫學一-21", "stem": "前腹壁內面的臍內側韌帶（medial umbilical fold），是因腹膜（peritoneum）包覆下列何種結構所形成？", "options": {"A": "輸精管（vas deferens）", "B": "臍動脈（umbilical artery）", "C": "上腹壁動脈（superior epigastric artery）", "D": "肝靜脈（hepatic vein）"}, "answer": "B", "mod": "m5", "day": 5, "sel": "ua"}, {"id": "114-2-醫學一-35", "stem": "內側臍韌帶（medial umbilical ligament）主要為何構造的遺跡？", "options": {"A": "臍動脈（umbilical artery）", "B": "臍靜脈（umbilical vein）", "C": "靜脈導管（ductus venosus）", "D": "動脈導管（ductus arteriosus）"}, "answer": "A", "mod": "m5", "day": 5, "sel": "ua"}, {"id": "112-2-醫學一-32", "stem": "下列何者在胚胎發育第三週結束時，尚未出現？", "options": {"A": "原條（primitive streak）", "B": "脊索（notochord）", "C": "中胚層（mesoderm）", "D": "咽弓（pharyngeal arch）"}, "answer": "D", "mod": "m6", "day": 22, "sel": "pa1"}, {"id": "113-2-醫學一-32", "stem": "胚胎發育的第三週（第15～21天）期間，下列何者不會出現？", "options": {"A": "原腸胚（gastrula）", "B": "脊索（notochord）", "C": "神經溝（neural groove）", "D": "咽弓（pharyngeal arch）"}, "answer": "D", "mod": "m6", "day": 22, "sel": "pa1"}, {"id": "109-1-醫學一-36", "stem": "關於顱骨（cranium）發育的敘述，何項錯誤？", "options": {"A": "起源於腦組織周圍之間質組織", "B": "部分神經顱（neurocranium）由多塊軟骨癒合形成", "C": "臟顱（viscerocranium）是大腦的主要保護結構", "D": "第一、二對咽弓（pharyngeal arch）參與軟骨性臟顱（cartilaginous viscerocranium）的形成"}, "answer": "C", "mod": "m6", "day": 35, "sel": "cg1"}, {"id": "109-1-醫學一-33", "stem": "胚胎發育時，下列那一咽溝（pharyngeal groove）會持續存在，並且衍生形成外聽道（external acoustic meatus）？", "options": {"A": "第一", "B": "第二", "C": "第三", "D": "第四"}, "answer": "A", "mod": "m6", "day": 56, "sel": "gr1"}, {"id": "106-2-醫學一-33", "stem": "下列有關耳朵（ear）發育之敘述，何者錯誤？", "options": {"A": "外耳道（external acoustic meatus）源自第一對咽溝（pharyngeal groove）", "B": "鼓膜主要來自第一對咽膜（pharyngeal membrane）與咽囊（pharyngeal pouch）及間葉組織（mesenchyme）", "C": "鼓室（tympanic cavity）源自第一對咽囊（pharyngeal pouch）", "D": "第一對咽囊（pharyngeal pouch）向下與第二對咽囊連通形成耳咽管（auditory tube）並開口於鼻咽"}, "answer": "D", "mod": "m6", "day": 35, "sel": "pp1"}, {"id": "109-2-醫學一-36", "stem": "下列何者不參與鼓膜（tympanic membrane）的形成？", "options": {"A": "第一與第二咽弓（pharyngeal arch）之間葉組織（mesenchyme）", "B": "第一咽囊（pharyngeal pouch）之內胚層（endoderm）", "C": "神經外胚層（neuroectoderm）", "D": "第一咽溝（pharyngeal groove）之外胚層（ectoderm）"}, "answer": "C", "mod": "m6", "day": 35, "sel": "pm1"}, {"id": "111-2-醫學一-36", "stem": "下列那一項構造，不包含於鼓膜（tympanic membrane）的發育？", "options": {"A": "第一咽溝（pharyngeal groove）的外胚層（ectoderm）", "B": "第二咽溝（pharyngeal groove）的外胚層（ectoderm）", "C": "第一咽囊（pharyngeal pouch）的內胚層（endoderm）", "D": "第一和第二咽弓（pharyngeal arch）的間葉組織（mesenchyme）"}, "answer": "B", "mod": "m6", "day": 35, "sel": "pm1"}, {"id": "107-1-醫學一-32", "stem": "呼吸器官的原基（respiratory primordium）起源於下列何者的尾端（caudal end）？", "options": {"A": "第一咽囊（pharyngeal pouch）", "B": "第二咽囊（pharyngeal pouch）", "C": "第三咽囊（pharyngeal pouch）", "D": "第四咽囊（pharyngeal pouch）"}, "answer": "D", "mod": "m6", "day": 35, "sel": "ltd"}, {"id": "112-2-醫學一-33", "stem": "下列有關甲狀腺（thyroid gland）發育之敘述，何項錯誤？", "options": {"A": "主要為咽原基（primordial pharynx）內胚層增厚所形成", "B": "甲狀腺憩室（diverticulum）會脫離咽原基（primordial pharynx）在頸部腹側向下方移動", "C": "甲狀腺憩室（diverticulum）脫離咽原基（primordial pharynx）之處，即為門齒窩（incisive fossa）", "D": "甲狀腺內有來自第四咽囊（pharyngeal pouch）之細胞"}, "answer": "C", "mod": "m6", "day": 30, "sel": "fc"}, {"id": "112-1-醫學一-33", "stem": "下列何者為舌頭咽喉部（pharyngeal part of tongue）的胚胎起源？", "options": {"A": "遠端舌芽（distal tongue bud）", "B": "中央舌芽（median tongue bud）", "C": "盲孔（foramen cecum）", "D": "咽下隆起（hypopharyngeal eminence）"}, "answer": "D", "mod": "m6", "day": 30, "sel": "cop"}, {"id": "114-2-醫學一-33", "stem": "舌（tongue）的發育過程中，那一咽弓會形成聯合部（copula），且最後會被擠壓而消失？", "options": {"A": "第一咽弓（first pharyngeal arch）", "B": "第二咽弓（second pharyngeal arch）", "C": "第三咽弓（third pharyngeal arch）", "D": "第四咽弓（fourth pharyngeal arch）"}, "answer": "B", "mod": "m6", "day": 30, "sel": "cop"}, {"id": "114-2-醫學一-32", "stem": "下列何者不是由神經嵴細胞（neural crest cell）衍生而成？", "options": {"A": "黑色素細胞（melanocyte）", "B": "交感節後神經元（postganglionic sympathetic neuron）", "C": "甲狀腺之濾泡細胞（follicular cell of thyroid gland）", "D": "腎上腺髓質之嗜鉻細胞（chromaffin cell of adrenal medulla）"}, "answer": "C", "mod": "m6", "day": 56, "sel": "thyr"}, {"id": "109-1-醫學一-3", "stem": "下列何者支配第一對咽弓（pharyngeal arch）衍生的構造？", "options": {"A": "三叉神經運動核（trigeminal motor nucleus）", "B": "面神經核（facial nucleus）", "C": "動眼神經核（oculomotor nucleus）", "D": "上橄欖核（superior olivary nucleus）"}, "answer": "A", "mod": "m7", "day": 1, "sel": "cn5"}, {"id": "114-1-醫學一-36", "stem": "嚼肌（masseter）主要是源自下列何者？", "options": {"A": "第一咽弓（first pharyngeal arch）", "B": "第二咽弓（second pharyngeal arch）", "C": "第三咽弓（third pharyngeal arch）", "D": "第四及第六咽弓（fourth and sixth pharyngeal arches）"}, "answer": "A", "mod": "m7", "day": 1, "sel": "mass"}, {"id": "113-1-醫學一-33", "stem": "衍生自第二咽弓（second pharyngeal arch）的肌肉，是由下列那一條腦神經支配？", "options": {"A": "三叉神經（trigeminal nerve）", "B": "顏面神經（facial nerve）", "C": "舌咽神經（glossopharyngeal nerve）", "D": "副神經（accessory nerve）"}, "answer": "B", "mod": "m7", "day": 2, "sel": "cn7"}, {"id": "111-2-醫學一-33", "stem": "下列那一項構造衍生自第三咽弓（pharyngeal arch）？", "options": {"A": "莖突舌骨韌帶（stylohyoid ligament）", "B": "舌骨之小角（lesser cornu of hyoid bone）", "C": "舌骨之大角（greater cornu of hyoid bone）", "D": "甲狀軟骨（thyroid cartilage）"}, "answer": "C", "mod": "m7", "day": 3, "sel": "hy3"}, {"id": "110-2-醫學一-34", "stem": "鎚骨（malleus），砧骨（incus），和鐙骨（stapes）是源自：", "options": {"A": "第1和第2咽弓（pharyngeal arch）", "B": "第2和第3咽弓（pharyngeal arch）", "C": "第3和第4咽弓（pharyngeal arch）", "D": "第4和第6咽弓（pharyngeal arch）"}, "answer": "A", "mod": "m7", "day": 0, "sel": "mal"}, {"id": "113-2-醫學一-36", "stem": "聽小骨（auditory ossicle）之砧骨（incus）是源自何處？", "options": {"A": "第一咽弓（first pharyngeal arch）", "B": "第二咽弓（second pharyngeal arch）", "C": "第三咽弓（third pharyngeal arch）", "D": "第四咽弓（fourth pharyngeal arch）"}, "answer": "A", "mod": "m7", "day": 1, "sel": "inc"}, {"id": "109-2-醫學一-33", "stem": "中腸環（midgut loop）的旋轉，以下列何者為軸心？", "options": {"A": "卵黃柄（yolk stalk）", "B": "腹腔動脈（celiac artery）", "C": "腸繫膜上動脈（superior mesenteric artery）", "D": "腸繫膜下動脈（inferior mesenteric artery）"}, "answer": "C", "mod": "m8", "day": 49, "sel": "sma"}, {"id": "110-1-醫學一-33", "stem": "從腹面觀（ventral view），中腸環（midgut loop）的旋轉方式為：", "options": {"A": "順時針方向作180度旋轉", "B": "順時針方向作270度旋轉", "C": "逆時針方向作180度旋轉", "D": "逆時針方向作270度旋轉"}, "answer": "D", "mod": "m8", "day": 72, "sel": "sma"}, {"id": "111-2-醫學一-34", "stem": "在胚胎發育至第幾週時，小腸會由體外返回腹腔內？", "options": {"A": "第四週", "B": "第七週", "C": "第十週", "D": "第十二週"}, "answer": "C", "mod": "m8", "day": 70, "sel": "jej"}, {"id": "112-1-醫學一-34", "stem": "發育正常的胚胎至第幾週時，會發生生理性臍疝（physiological umbilical herniation）？", "options": {"A": "第六週", "B": "第八週", "C": "第十週", "D": "第十二週"}, "answer": "A", "mod": "m8", "day": 44, "sel": "cord"}, {"id": "108-2-醫學一-34", "stem": "下列關於十二指腸（duodenum）發育之敘述，何者正確？", "options": {"A": "全部由前腸（foregut）衍生而來", "B": "十二指腸環（duodenal loop）連接卵黃柄（yolk stalk）", "C": "隨著胃的旋轉，十二指腸環（duodenal loop）會旋轉至左側", "D": "因上皮細胞增生而一度閉鎖（obliteration）"}, "answer": "D", "mod": "m9", "day": 42, "sel": "duoM"}, {"id": "113-1-醫學一-34", "stem": "下列關於十二指腸（duodenum）發育的敘述，何者最適當？", "options": {"A": "由前腸（foregut）與後腸（hindgut）共同發育而來", "B": "血液供應有上腸繫膜動脈（superior mesenteric artery）與下腸繫膜動脈（inferior mesenteric artery）", "C": "因胃（stomach）的旋轉使十二指腸旋轉至右側，並且大部分貼在後腹壁", "D": "發育過程中均呈現中空管狀的結構"}, "answer": "C", "mod": "m9", "day": 56, "sel": "duoF"}, {"id": "114-1-醫學一-34", "stem": "下列關於胰臟（pancreas）發育的敘述，何者正確？", "options": {"A": "由中胚層發育衍生出背胰芽（dorsal pancreatic buds）和腹胰芽（ventral pancreatic buds）", "B": "當十二指腸旋轉至左側時，會使背胰芽（dorsal pancreatic buds）轉至後側和十二指腸前方的腹胰芽（ventral pancreatic buds）癒合，形成胰臟", "C": "腹胰芽（ventral pancreatic buds）主要發育為胰臟的鉤狀突（uncinate process）以及部分的頭端", "D": "環狀胰臟（annular pancreas）為常見的消化道缺陷，主要會造成胃阻塞"}, "answer": "C", "mod": "m9", "day": 44, "sel": "vp"}, {"id": "115-2-醫學一-34", "stem": "下列關於胃（stomach）發育的敘述，何者正確？", "options": {"A": "一開始右側開始膨大，之後左側前方發育快於後方，因而產生胃大彎（greater curvature）", "B": "發育時會逆時針旋轉180度，使頭端移至右下側，而尾端移至左下側", "C": "原始背側胃繫膜（primordial dorsal mesogastrium）因胃旋轉被帶至左側，形成網膜囊（omental bursa）", "D": "胃部發育不正常很普遍，常見於女嬰，且多為幽門閉鎖（pyloric atresia）的症狀"}, "answer": "C", "mod": "m9", "day": 52, "sel": "ob"}, {"id": "107-1-醫學一-33", "stem": "下列何種器官由前腸（foregut）衍生而來？", "options": {"A": "脾臟（spleen）", "B": "膽囊（gallbladder）", "C": "闌尾（appendix）", "D": "空腸（jejunum）"}, "answer": "B", "mod": "m9", "day": 56, "sel": "gb"}, {"id": "110-2-醫學一-33", "stem": "大部分腹側腸繫膜（ventral mesentery）在胚胎發育過程中都會消失，下列何者尾端仍保留此構造？", "options": {"A": "原始咽（primordial pharynx）", "B": "前腸（foregut）", "C": "中腸（midgut）", "D": "後腸（hindgut）"}, "answer": "B", "mod": "m9", "day": 56, "sel": "lom"}, {"id": "106-2-醫學一-34", "stem": "下列有關脾臟（spleen）發育之敘述，何項錯誤？", "options": {"A": "最早出現於背側胃繫膜（dorsal mesogastrium）之間", "B": "源自前腸（foregut）內胚層（endoderm）", "C": "原先位於胃之背側，後來因胃之旋轉而移至左側", "D": "曾為造血器官"}, "answer": "B", "mod": "m9", "day": 56, "sel": "spl"}, {"id": "106-1-醫學一-29", "stem": "胚胎發育至第幾週時，肝細胞（hepatocyte）開始製造膽汁（bile）？", "options": {"A": "第4週", "B": "第8週", "C": "第12週", "D": "第16週"}, "answer": "C", "mod": "m9", "day": 56, "sel": "liv"}, {"id": "107-2-醫學一-35", "stem": "輸尿管（ureter）的胚胎起源為何？", "options": {"A": "後腎中胚層（metanephric mesoderm）", "B": "原腎（pronephros）", "C": "中腎（mesonephros）", "D": "後腎憩室（metanephric diverticulum）"}, "answer": "D", "mod": "m10", "day": 35, "sel": "ub"}, {"id": "108-1-醫學一-34", "stem": "下列有關膀胱（urinary bladder）的敘述，何者錯誤？", "options": {"A": "內襯上皮的胚胎起源是內胚層（endoderm）", "B": "膀胱三角（trigone）起源於後腎管（metanephric duct）", "C": "六歲時進入大骨盆（greater pelvis）", "D": "在胚胎時期與尿囊（allantois）相連"}, "answer": "B", "mod": "m11", "day": 56, "sel": "tri"}, {"id": "106-1-醫學一-30", "stem": "有關女性假陰陽人（female pseudohermaphroditism）具有特徵之敘述，下列何者錯誤？", "options": {"A": "男性荷爾蒙分泌太多", "B": "染色體46, XX", "C": "肇因於腎上腺萎縮", "D": "外生殖器官男性化"}, "answer": "C", "mod": "m13", "day": 98, "sel": "cah"}, {"id": "107-1-醫學一-34", "stem": "下列何者分泌穆勒氏抑制物（Müllerian inhibiting substance, MIS），使副中腎管（paramesonephric duct）退化？", "options": {"A": "睪丸支持細胞（Sertoli cell）", "B": "睪丸間質細胞（Leydig cell）", "C": "原始生殖細胞（primordial germ cell）", "D": "濾泡細胞（follicular cell）"}, "answer": "A", "mod": "m12", "day": 56, "sel": "ser"}, {"id": "108-2-醫學一-35", "stem": "以下有關性腺（gonad）分化的敘述，何者正確？", "options": {"A": "性腺索（gonadal cord）在女性發育成原始濾泡（primordial follicles）", "B": "皮質索（cortical cord）在男性發育成副睪（epididymis）", "C": "性腺索（gonadal cord）在男性發育成細精管（seminiferous tubules）", "D": "皮質索（cortical cord）在女性發育成輸卵管（oviduct）"}, "answer": "C", "mod": "m12", "day": 70, "sel": "sc"}, {"id": "109-1-醫學一-73", "stem": "下列有關性腺在胚胎發育過程之敘述，何者正確？", "options": {"A": "Testosterone負責男性外生殖器之分化", "B": "男性的睪丸及其雄性附屬器官是由wolffian duct所發育而成", "C": "Müllerian duct可被由睪丸Sertoli cell所分泌之Müllerian-inhibiting substance所抑制", "D": "Testosterone負責促進睪丸的生成"}, "answer": "AC", "mod": "m12", "day": 49, "sel": "gon"}, {"id": "112-2-醫學一-73", "stem": "下列何者與胚胎性別分化（sex differentiation）最相關？", "options": {"A": "Müllerian-inhibiting substance（MIS）", "B": "follicle-stimulating hormone（FSH）", "C": "androgen-binding protein", "D": "inhibin"}, "answer": "A", "mod": "m12", "day": 63, "sel": "md"}, {"id": "109-2-醫學一-34", "stem": "下列何種構造不是由中腎管（mesonephric duct）衍生而成？", "options": {"A": "睪丸網（rete testis）", "B": "副睪（epididymis）", "C": "輸精管（ductus deferens）", "D": "精囊（seminal vesicle）"}, "answer": "A", "mod": "m12", "day": 70, "sel": "rt"}, {"id": "111-1-醫學一-34", "stem": "在男性生殖系統，下列何者構造衍生自胚胎時期之中腎管（mesonephric duct）？", "options": {"A": "細精管（seminiferous tubule）", "B": "睪丸網（rete testis）", "C": "射精管（ejaculatory duct）", "D": "睪丸附件（appendix of testis）"}, "answer": "C", "mod": "m12", "day": 70, "sel": "ejd"}, {"id": "112-2-醫學一-34", "stem": "下列何者是由中腎管（mesonephric duct）末端所形成？", "options": {"A": "前列腺（prostate gland）", "B": "前列腺囊（prostatic utricle）", "C": "精囊（seminal vesicle）", "D": "尿道球腺（bulbourethral gland）"}, "answer": "C", "mod": "m12", "day": 70, "sel": "sv"}, {"id": "114-2-醫學一-34", "stem": "女性陰道（vagina）的發育，是由下列那兩個構造共同形成？", "options": {"A": "中腎管（mesonephric duct）與尿殖竇（urogenital sinus）", "B": "中腎管（mesonephric duct）與竇陰道球泡（sinovaginal bulb）", "C": "副中腎管（paramesonephric duct）與竇陰道球泡（sinovaginal bulb）", "D": "副中腎管（paramesonephric duct）與生殖結節（genital tubercle）"}, "answer": "C", "mod": "m12", "day": 84, "sel": "vag"}, {"id": "115-2-醫學一-35", "stem": "下列何者是由副中腎管（paramesonephric duct）衍生形成的構造？", "options": {"A": "輸卵管（oviduct）", "B": "射精管（ejaculatory duct）", "C": "輸精管（ductus deferens）", "D": "輸尿管（ureter）"}, "answer": "A", "mod": "m12", "day": 84, "sel": "ft"}, {"id": "109-1-醫學一-34", "stem": "精索積水（hydrocele of the spermatic cord）是由於下列何者閉鎖不全造成？", "options": {"A": "白膜（tunica albuginea）", "B": "鞘突（processus vaginalis）", "C": "泌尿生殖竇（urogenital sinus）", "D": "泌尿生殖褶（urogenital fold）"}, "answer": "B", "mod": "m14", "day": 3, "sel": "hyd"}, {"id": "110-1-醫學一-28", "stem": "胚胎時期的引帶（gubernaculum），在女性將退化形成何構造？", "options": {"A": "卵巢懸韌帶（suspensory ligament of ovary）", "B": "子宮圓韌帶（round ligament of uterus）", "C": "內側臍韌帶（medial umbilical ligament）", "D": "主韌帶（cardinal ligament）"}, "answer": "B", "mod": "m14", "day": 3, "sel": "gub"}, {"id": "114-2-醫學二-82", "stem": "先天性心臟病中，長期處於下列何種狀況最容易造成肺高壓？", "options": {"A": "明顯的心室中隔缺損（ventricular septal defect）", "B": "典型的Fallot氏四合症（classic tetralogy of Fallot）", "C": "成人型導管後主動脈狹窄（adult form postductal coarctation of aorta）", "D": "單獨的肺動脈瓣狹窄（isolated pulmonary stenosis）"}, "answer": "A", "mod": "m2", "day": 56, "sel": "vsd", "subj": "病理科"}, {"id": "108-2-醫學二-83", "stem": "下列何種先天性心臟病必須保持開放的動脈導管（ductus arteriosus），否則嬰兒出生後通常很快致命？", "options": {"A": "心室中隔缺損（ventricular septal defect）", "B": "主動脈縮窄（coarctation of aorta）", "C": "心房中隔缺損（atrial septal defect）", "D": "主動脈閉鎖（aortic atresia）"}, "answer": "D", "mod": "m2", "day": 56, "sel": "slv", "subj": "病理科"}, {"id": "113-1-醫學二-84", "stem": "下列何種疾病最可能藉由抑制前列腺素E2（prostaglandin E2）來治療？", "options": {"A": "開放動脈導管（patent ductus arteriosus）", "B": "心房中膈缺損（atrial septal defect）", "C": "心室中膈缺損（ventricular septal defect）", "D": "主動脈閉鎖（aortic atresia）"}, "answer": "A", "mod": "m3", "day": 56, "sel": "pda", "subj": "病理科"}, {"id": "109-1-醫學二-78", "stem": "下列關於染色體22q11.2缺失症候群（chromosome 22q11.2 deletion syndrome）的敘述，何者正確？", "options": {"A": "免疫系統主要會有B淋巴細胞的功能異常", "B": "內分泌系統主要是腦下腺發育不良的問題", "C": "多數的個案其染色體的缺失或突變是隨機的發生在生殖細胞（精或卵）形成的過程", "D": "必須靠傳統染色體核型分析（karyotyping）才能確診"}, "answer": "C", "mod": "m6", "day": 56, "sel": "dg", "subj": "病理科"}, {"id": "109-2-醫學二-97", "stem": "下列有關隱睪症（cryptorchidism）的敘述，何者較不正確？", "options": {"A": "睪丸的下移可以分為兩個時期，在第一時期，腹部位移時期（transabdominal phase），主要是受穆勒氏管抑制素（müllerian-inhibiting substance）的控制", "B": "睪丸的下移可以分為兩個時期，在第二時期，腹股溝陰囊時期（inguinoscrotal phase），主要是受雄性素（androgen）的控制", "C": "未下降的睪丸，如未及時治療，比正常下降的睪丸有更高發生睪丸癌的危險性", "D": "腹腔是睪丸未能按照正常發育程序從腰部腹膜後下降至陰囊而停留（arrest）的最常見位置"}, "answer": "D", "mod": "m14", "day": 3, "sel": "cry", "subj": "病理科"}, {"id": "114-1-醫學一-15", "stem": "若病人的主動脈弓（aortic arch）發生動脈瘤（aneurysm），造成聲音沙啞，最可能是因為下列那一條神經功能間接受損？", "options": {"A": "右側迷走神經（right vagus nerve）", "B": "右側交感神經幹（right sympathetic trunk）", "C": "左側交感神經幹（left sympathetic trunk）", "D": "左側喉返神經（left recurrent laryngeal nerve）"}, "answer": "D", "mod": "m3", "day": 56, "sel": "lrln", "subj": "解剖學"}, {"id": "106-2-醫學一-23", "stem": "有關上縱隔（superior mediastinum）內，神經走向之敘述，下列何者正確？", "options": {"A": "右喉返神經（right reccurent laryngeal nerve）繞經右頭臂靜脈（right brachiocephalic vein）向上", "B": "左喉返神經（left reccurent laryngeal nerve）繞經左鎖骨下動脈（left subclavian artery）向上", "C": "右膈神經位於上腔靜脈（superior vena cava）和縱膈肋膜（mediastinal part of parietal pleura）間", "D": "左膈神經沿降主動脈（descendig aorta）下行"}, "answer": "C", "mod": "m3", "day": 56, "sel": "lrln", "subj": "解剖學"}, {"id": "110-1-醫學一-25", "stem": "心臟之靜脈（cardiac veins）主要匯流至：", "options": {"A": "冠狀竇（coronary sinus）", "B": "左心房（left antrium）", "C": "右心室（right ventricle）", "D": "上腔靜脈（superior vena cava）"}, "answer": "A", "mod": "m4", "day": 70, "sel": "cs", "subj": "解剖學"}, {"id": "109-1-醫學一-20", "stem": "動脈韌帶（ligamentum arteriosum），位在那兩條血管之間？", "options": {"A": "主動脈與肺動脈", "B": "肺動脈與上腔靜脈", "C": "主動脈與上腔靜脈", "D": "主動脈與肺靜脈"}, "answer": "A", "mod": "m5", "day": 5, "sel": "da", "subj": "解剖學"}, {"id": "112-1-醫學一-21", "stem": "闌尾最不可能在下列何處出現？", "options": {"A": "盲腸前（prececal）", "B": "迴腸後（postileal）", "C": "骨盆緣（pelvic brim）", "D": "盲腸後（retrocecal）"}, "answer": "A", "mod": "m8", "day": 84, "sel": "app", "subj": "解剖學"}, {"id": "114-2-醫學一-19", "stem": "下列何者不具備腸繫膜（mesentery）的構造？", "options": {"A": "十二指腸下降段（descending part of duodenum）", "B": "闌尾（appendix）", "C": "乙狀結腸（sigmoid colon）", "D": "橫結腸（transverse colon）"}, "answer": "A", "mod": "m8", "day": 84, "sel": "duoM", "subj": "解剖學"}, {"id": "113-1-醫學一-20", "stem": "下列何者是上腸繫膜動脈（superior mesenteric artery）的分支？", "options": {"A": "前上胰十二指腸動脈（anterior superior pancreaticoduodenal artery）", "B": "後上胰十二指腸動脈（posterior superior pancreaticoduodenal artery）", "C": "左結腸動脈（left colic artery）", "D": "下胰十二指腸動脈（inferior pancreaticoduodenal artery）"}, "answer": "D", "mod": "m8", "day": 84, "sel": "sma", "subj": "解剖學"}, {"id": "111-1-醫學一-22", "stem": "下列何者與網膜孔（omental foramen）的關係位置不正確？", "options": {"A": "總膽管在其後方", "B": "肝門靜脈在其前方", "C": "肝臟在其上方", "D": "十二指腸在其下方"}, "answer": "A", "mod": "m9", "day": 56, "sel": "ef", "subj": "解剖學"}, {"id": "107-2-醫學一-26", "stem": "下列何者不存在精索（spermatic cord）內？", "options": {"A": "髂腹下神經（iliohypogastric nerve）", "B": "輸精管（ductus deferens）", "C": "提睪肌動脈（cremasteric artery）", "D": "鞘突遺跡（vestige of vaginal process）"}, "answer": "A", "mod": "m14", "day": 3, "sel": "pv", "subj": "解剖學"}, {"id": "108-2-醫學一-26", "stem": "有關腹股溝管（inguinal canal）的敘述，下列何者正確？", "options": {"A": "男性腹股溝管通過精索（spermatic cord），女性通過卵巢韌帶（ligament of the ovary）", "B": "胚胎期間，鞘突（vaginal process）只發生在男性個體", "C": "發生在管內的疝氣，稱為直接型腹股溝疝氣（direct inguinal hernia）", "D": "腹橫筋膜（transversalis fascia）圍成腹股溝管深環（deep inguinal ring）頂部的外側1/3"}, "answer": "D", "mod": "m14", "day": 3, "sel": "pv", "subj": "解剖學"}, {"id": "115-1-醫學一-72", "stem": "有關妊娠期間母體內分泌調節與胎兒發育，下列敘述何者最為適當？", "options": {"A": "母體血液醛固酮（aldosterone）含量增加，以抗衡胰島素（insulin）的作用", "B": "母體血液濾泡促素（FSH）含量是作為胚體（conceptus）正常狀態的臨床指標", "C": "胎兒循環系統的靜脈導管（ductus venosus）有利於有效提供其全身充氧血液", "D": "母體之血液甲狀腺素（thyroid hormone）含量提升，以調節血鈣提供鈣離子給胎兒成長之需"}, "answer": "C", "mod": "m5", "day": 0, "sel": "dv", "subj": "生理學"}, {"id": "110-1-醫學一-57", "stem": "下列有關母體與胎兒的紅血球與氧氣結合的敘述，何者正確？", "options": {"A": "胎兒與母體的血紅素皆為 α₂-β₂ chain，因此氧氣量相同", "B": "母體的血紅素為α₂-β₂ chain，胎兒的血紅素為 ε₂-ζ₂ chain，因此母體血紅素較易接合氧氣", "C": "母體的血紅素為 α₂-β₂chain，胎兒的血紅素為 α₄ chain，因此胎兒血紅素較易接合氧氣", "D": "母體的血紅素為 α₂-β₂chain，胎兒的血紅素為 α₂-γ₂ chain，因此胎兒血紅素較易接合氧氣"}, "answer": "D", "mod": "m5", "day": 0, "sel": "uv", "subj": "生理學"}, {"id": "110-1-醫學一-72", "stem": "有關賽托利細胞（Sertoli cell）之功能與作用的敘述，下列何者錯誤？", "options": {"A": "經由分泌抑制素B（inhibin B），回饋抑制腦下垂體黃體刺激素（luteinizing hormone）的分泌", "B": "提供精子生長所需的養分", "C": "形成血睪屏障（blood-testis barrier）", "D": "在胚胎時期，分泌Müllerian抑制物質（Müllerian-inhibiting substance），造成女性原始生殖管道（Müllerian duct）的退化"}, "answer": "A", "mod": "m12", "day": 56, "sel": "ser", "subj": "生理學"}, {"id": "111-1-醫學一-49", "stem": "下列何者是參與引發睪丸下降至陰囊（testis descent）的重要因子，而此與精子生成能力密切相關？", "options": {"A": "激活素（activin）", "B": "雄性素（androgen）", "C": "沃氏管退化因子（Wolffian duct regression factor）", "D": "血管內皮生長因子（vascular endothelial growth factor）"}, "answer": "B", "mod": "m14", "day": 2, "sel": "te", "subj": "生理學"}, {"id": "107-1-醫學二-57", "stem": "下列何種藥物除了常用於治療痛風外，對新生兒動脈導管閉鎖不全也有促進其關閉的作用？", "options": {"A": "indomethacin", "B": "etodolac", "C": "ketoprofen", "D": "naproxen"}, "answer": "A", "mod": "m5", "day": 5, "sel": "pda", "subj": "藥理學"}, {"id": "109-1-醫學二-57", "stem": "一早產兒發生動脈導管閉鎖不全，可以使用下列何種藥物來使其關閉？", "options": {"A": "diclofenac", "B": "ibuprofen", "C": "rofecoxib", "D": "sulindac"}, "answer": "B", "mod": "m5", "day": 5, "sel": "pda", "subj": "藥理學"}, {"id": "107-1-醫學二-24", "stem": "因為22對染色體部分缺損（22q11.2）而造成的DiGeorge症候群，下列何者不屬於其常見症狀？", "options": {"A": "甲狀腺發育不全", "B": "胸腺發育不全", "C": "先天性心臟病", "D": "臉型異常"}, "answer": "ABCD", "mod": "m6", "day": 56, "sel": "dg", "subj": "微免"}, {"id": "113-1-醫學二-24", "stem": "先天性免疫缺失疾病（primary immunodeficiency diseases）經常是因為與免疫細胞發育或是功能相關的基因缺陷造成。下列疾病與其缺陷基因之配對，何者最不適當？", "options": {"A": "X-linked SCID：IL-2 receptor common gamma chain", "B": "Wiskott-Aldrich syndrome：NF-κB", "C": "Bruton's X-linked agammaglobulinemia：BTK", "D": "DiGeorge syndrome：TBX1"}, "answer": "B", "mod": "m6", "day": 56, "sel": "dg", "subj": "微免"}];</script>
 <script type="module">
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -496,6 +500,15 @@ stage.addEventListener("wheel", (e) => {
   const d = THREE.MathUtils.clamp(off.length() * Math.exp(e.deltaY * .025), controls.minDistance, controls.maxDistance);
   camera.position.copy(controls.target).add(off.setLength(d)); needsRender = true;
 }, { capture: true, passive: false });
+// Safari 觸控板捏合不送 ctrl+wheel，改送 gesture 事件：照 scale 比例縮放（^1.6，同 2D）；觸控裝置交給 OrbitControls
+let gs3 = 1;
+stage.addEventListener("gesturestart", (e) => { e.preventDefault(); gs3 = 1; });
+stage.addEventListener("gesturechange", (e) => {
+  e.preventDefault(); if (TOUCH || !e.scale) return; fly = null;
+  const off = camera.position.clone().sub(controls.target);
+  const d = THREE.MathUtils.clamp(off.length() * Math.pow(gs3 / e.scale, 1.6), controls.minDistance, controls.maxDistance);
+  camera.position.copy(controls.target).add(off.setLength(d)); gs3 = e.scale; needsRender = true;
+});
 function setZoomLimits() { // 各模組的縮放範圍：最近＝各視角原始距離最小值的 0.3 倍，最遠＝切過去時距離（窄畫面會拉遠）的 3 倍，不超過 far
   const ds = mod.views.map((V) => { const v = V.v(); return Math.hypot(...v.p.map((x, i) => x - v.t[i])); });
   const d = camera.position.distanceTo(controls.target);
@@ -4288,7 +4301,7 @@ const STRUCT = {
   trc: { name: "橫結腸", en: "transverse colon", meta: "近端 2/3 中腸、遠端 1/3 後腸",
     body: `<p>近端 2/3 來自中腸（尾側肢、SMA），遠端 1/3 來自後腸（IMA）（Langman 15th 第 15 章）。保留橫結腸繫膜。</p><p>正常旋轉後，橫結腸走在 SMA 和十二指腸的前面；反向旋轉時走在後面（Langman 15th Fig. 15.33B）。</p>` },
   hg: { name: "後腸", en: "hindgut", meta: "IMA 供應",
-    body: `<p>橫結腸遠端 1/3、降結腸、乙狀結腸、直腸、肛管上段（Langman 15th 第 15 章）。降結腸的腸繫膜和後腹壁融合，成為次發腹膜後；乙狀結腸保留腸繫膜（Langman 15th 第 15 章；Moore 11th p.209）。</p>` },
+    body: `<p>橫結腸遠端 1/3、降結腸、乙狀結腸、直腸、肛管上段（Langman 15th 第 15 章）。降結腸的腸繫膜和後腹壁融合，成為次發腹膜後；乙狀結腸保留腸繫膜（Langman 15th 第 15 章；Moore 11th p.209）。</p><p>後腸末端接泄殖腔：${goTo("m11,42,hg", "模組 11 泄殖腔與膀胱")}</p>` },
   duoF: { name: "十二指腸（前腸部分）", en: "duodenum, foregut part", meta: "主乳頭以上・腹腔動脈",
     body: `<p>十二指腸由前腸尾端和中腸頭端組成，以主乳頭（總膽管開口）為界：以上屬前腸、腹腔動脈供應；以下屬中腸、SMA 供應（Langman 15th 第 15 章；Moore 11th p.198）。</p>` + toM9(56, "duoF", "模組 9 胃與十二指腸") },
   duoM: { name: "十二指腸（中腸部分）", en: "duodenum, midgut part", meta: "主乳頭以下・SMA・次發腹膜後",
@@ -4868,9 +4881,1229 @@ M.pick = (ray) => LIB.pick(ray, state.cut3d && M.secMode === "tx", YC());
 return M;
 })();
 
+/* ===== 泌尿生殖共用：新色號、男女狀態、沿折線取點 ===== */
+{
+  const L = "--c-pro: #b07ac8; --c-wd: #2f7fc1; --c-ub: #6fb7e8; --c-mmb: #f2a65a; --c-md: #d65a8c; --c-ugs: #e6c34a; --c-al: #7fb08a; --c-gon: #7c5cd6; --c-gt: #c8467a; --c-uf: #e0a070; --c-gs: #7a9fd0; --c-gub: #8c7a5a;";
+  const D = "--c-pro: #c89ae0; --c-wd: #5aa0e0; --c-ub: #8fcaf0; --c-mmb: #f5b878; --c-md: #e87aa6; --c-ugs: #f0d36a; --c-al: #9cc8a6; --c-gon: #9c82ea; --c-gt: #e0699a; --c-uf: #ecb488; --c-gs: #9ab8e4; --c-gub: #ab9a78;";
+  document.head.insertAdjacentHTML("beforeend", `<style>:root { ${L} } @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { ${D} } } :root[data-theme="dark"] { ${D} }</style>`);
+}
+// 模組 12、13 共用：性染色體與 CAH／AIS（who＝最後打開 CAH／AIS 的模組，只有它跳天數）
+const GU = { xy: true, cah: false, ais: false, who: null };
+const GU_XX = ["ft", "ut", "vag", "svb", "ov", "uta", "ugrF", "lmi", "lma", "clt"], GU_XY = ["ser", "ley", "rt", "ed", "epi", "vd", "sv", "ejd", "hyp", "pen", "scr", "spu"];
+function guLen(P) { let s = 0; for (let i = 1; i < P.length; i++) s += P[i].distanceTo(P[i - 1]); return s; }
+function guAlong(P, u) { // 折線上弧長比例 u 的點
+  const T = guLen(P) * Math.min(1, Math.max(0, u)); let s = 0;
+  for (let i = 1; i < P.length; i++) { const d = P[i].distanceTo(P[i - 1]); if (s + d >= T || i === P.length - 1) return P[i - 1].clone().lerp(P[i], d ? Math.min(1, (T - s) / d) : 0); s += d; }
+  return P[0].clone();
+}
+function guUpto(P, u0, u1) { // 折線從 u0 到 u1 的一段
+  const T = guLen(P), a = T * Math.max(0, u0), b = T * Math.min(1, u1), out = [guAlong(P, u0)]; let s = 0;
+  for (let i = 1; i < P.length; i++) { s += P[i].distanceTo(P[i - 1]); if (s > a && s < b) out.push(P[i].clone()); }
+  out.push(guAlong(P, u1)); return out;
+}
 
-const MODS = [M1, M2, M3, M4, M5, M6, M7, M8, M9];
+/* ===== 模組 10：腎（前腎 → 中腎 → 後腎；第 21–70 天；Langman 15th 為主、Moore 11th 補充） ===== */
+const M10 = (() => {
+const V3 = THREE.Vector3;
+const fn = (v) => (typeof v === "function" ? v : () => v);
+const v3 = (x, y, z) => new V3(x, y, z);
+const lin = (a, b, n) => Array.from({ length: n + 1 }, (_, i) => a + (b - a) * i / n);
+const DEG = Math.PI / 180, END = 70;
+
+const flags = { pel: false, dup: false, pkd: false, agn: false };
+const FLAG_N = { pel: "骨盆腎／馬蹄腎", dup: "雙輸尿管", pkd: "多囊腎", agn: "腎缺如（單側）" };
+const SUB = { pel: 0, dup: 0 };
+const PEL_N = ["骨盆腎", "馬蹄腎"], DUP_N = ["部分（分叉）", "完全＋異位開口"];
+const flagOn = () => Object.keys(flags).find((k) => flags[k]);
+
+/* ---------- 卡片 ---------- */
+const STRUCT = {
+  pro: { name: "前腎", en: "pronephros", meta: "頸部・沒有功能・很快退化",
+    body: `<p>中間中胚層最頭側的一段，形成幾團沒有功能的小管（Langman 15th Fig. 16.1、16.2）。</p><p>出現與退化的時間兩書寫法不同：Langman 寫第 3 週末出現、第 4 週末完全退化；Moore 11th p.223 寫第 4 週初出現。模型照 Langman。</p>` },
+  mes: { name: "中腎", en: "mesonephros", meta: "第 4 週起・短暫有功能・第 2 個月末大部分退化",
+    body: `<p>前腎退化時，胸腰段的中間中胚層長出中腎小管：一端形成腎小球囊包住微血管球，另一端接到中腎管（Langman 15th Fig. 16.1、16.3；Moore 11th p.223）。</p><p>第 2 個月中腎是一個大的卵圓形器官，在中線兩側；頭側的小管退化時尾側的還在長，第 2 個月末大部分消失（Langman 15th 第 16 章）。男性少數尾側小管和中腎管留下來成為生殖管（看模組 12）。</p><p>${goTo("m4,42,meso", "模組 4 靜脈（中腎的位置）")}</p>` },
+  wd: { name: "中腎管（Wolff 管）", en: "mesonephric（Wolffian）duct", meta: "通到泄殖腔・長出輸尿管芽",
+    body: `<p>中腎小管匯集的縱走管，尾端通到泄殖腔（Langman 15th Fig. 16.3、16.4）。第 5 週在靠近泄殖腔處長出輸尿管芽。</p><p>之後尾端併入膀胱壁、形成膀胱三角（看模組 11）；男性 → 附睪管、輸精管、精囊、射精管，女性大部分退化（看模組 12）。</p><p>${goTo("m11,49,tri", "模組 11 泄殖腔與膀胱（膀胱三角）")}　${goTo("m12,70,vd", "模組 12 性腺與生殖管（男性衍生物）")}</p>` },
+  ub: { name: "輸尿管芽（後腎憩室）", en: "ureteric bud（metanephric diverticulum）", meta: "第 5 週・→ 集尿系統",
+    body: `<p>第 5 週從中腎管靠近泄殖腔處長出，穿進後腎胚基（Langman 15th Fig. 16.4）。</p><p>芽的柄 → <b>輸尿管</b>；頭端擴大 → <b>腎盂</b>，反覆分支 → 大腎盞、小腎盞、<b>集尿管</b>（Langman 15th Fig. 16.5）。模型畫四代分支，實際會分到十幾代。</p><p>之後中腎管尾端併入膀胱，輸尿管和中腎管各自開口（看模組 11）。</p>`,
+    trap: `107-2-35：輸尿管來自後腎憩室（輸尿管芽）；後腎中胚層（胚基）形成的是腎元，不是輸尿管。`, kg: ["107-2-醫學一-35"] },
+  mmb: { name: (st) => (st.t < 40 ? "後腎胚基" : "後腎（後腎胚基 → 腎元）"), en: "metanephric blastema（metanephros）", meta: "第 5 週・→ 腎元・上升並轉向",
+    body: `<p>後腎＝永久腎，來自兩個來源：輸尿管芽 → 集尿系統；<b>後腎胚基</b>（中間中胚層尾段）→ <b>腎元</b>（腎小球囊、近曲小管、亨利環、遠曲小管）（Langman 15th Fig. 16.5、16.6）。集尿管的末端誘導胚基形成小泡，再變成腎元。</p><p>腎一開始在骨盆，之後相對上升到腰部，主要是腰骶部長大；上升時由較高的主動脈分支供血，腎門從朝前轉向內側（Langman 15th Fig. 16.10；Moore 11th p.235 寫第 6–9 週上升、腎門轉約 90°）。Moore 11th p.225：後腎出現約 4 週後開始產尿。</p><p>${goTo("m4,56,meta", "模組 4 靜脈（後腎的位置）")}</p>` },
+  ao: { name: "主動脈（參照）", en: "aorta", meta: "參照", body: `<p>參照位置。腎上升時，供血換由較高處的主動脈分支（Langman 15th 第 16 章）。</p>` },
+  uaf: { name: "臍動脈", en: "umbilical artery", meta: "參照・腎在骨盆時在它旁邊",
+    body: `<p>腎一開始在骨盆、靠近臍動脈（髂總動脈）分叉處；骨盆腎會停在這附近（Langman 15th Fig. 16.10、16.11）。</p><p>${goTo("m5,5,ua", "模組 5 胎兒循環（臍動脈出生後的變化）")}</p>` },
+  ima: { name: "腸繫膜下動脈", en: "inferior mesenteric artery", meta: "參照・馬蹄腎被它擋住",
+    body: `<p>後腸的動脈。馬蹄腎上升時，融合的下極被腸繫膜下動脈根部擋住，停在下腰部（Langman 15th Fig. 16.11；Moore 11th p.235）。</p><p>${goTo("m8,84,ima", "模組 8 中腸旋轉（腸繫膜下動脈）")}</p>` },
+  cl: { name: (st) => (st.t < 49 ? "泄殖腔（參照）" : "膀胱（參照）"), en: "cloaca / urinary bladder", meta: "看模組 11",
+    body: `<p>中腎管通到泄殖腔；泄殖腔被尿直腸隔分成前面的尿生殖竇（→ 膀胱）和後面的肛門直腸管（Langman 15th Fig. 16.12）。</p><p>${goTo("m11,42,cl", "模組 11 泄殖腔與膀胱")}</p>` },
+  pel: { name: () => `${PEL_N[SUB.pel]}`, en: "pelvic kidney / horseshoe kidney", meta: "圖例「類型」切換兩種",
+    body: () => [
+      `<p><b>骨盆腎</b>：一側腎沒有上升，停在骨盆、靠近髂總動脈；腎門仍朝前（Langman 15th Fig. 16.11A；Moore 11th p.235）。模型畫左腎。</p>`,
+      `<p><b>馬蹄腎</b>：兩腎下極在中線融合，上升時峽部被腸繫膜下動脈根部擋住，停在下腰部；峽部在主動脈前面，腎門仍朝前（Langman 15th Fig. 16.11B；Moore 11th p.232、235）。</p>`][SUB.pel] + `<p>點圖例「類型」換另一種。</p>` },
+  dup: { name: () => `雙輸尿管：${DUP_N[SUB.dup]}`, en: "duplication of the ureter", meta: "圖例「類型」切換兩種",
+    body: () => [
+      `<p><b>部分</b>：輸尿管芽太早分叉，形成 Y 形輸尿管，上下兩個腎盂（Langman 15th Fig. 16.9A）。模型畫左側。</p>`,
+      `<p><b>完全</b>：中腎管長出兩個輸尿管芽，形成兩條輸尿管；一條開口在膀胱，另一條的開口在異常位置（女性可在陰道、尿道或前庭，造成持續滴尿）（Langman 15th Fig. 16.9B）。模型畫左側，紅點是異位開口。</p>`][SUB.dup] + `<p>點圖例「類型」換另一種。</p>` },
+  pkd: { name: "多囊腎", en: "polycystic kidney disease", meta: "兩腎變大・很多囊腫",
+    body: `<p>腎內形成大量囊腫，兩腎變大（Langman 15th Fig. 16.8；Moore 11th p.232–233、236）。體染色體隱性型多在嬰幼兒期就表現；體染色體顯性型多到成人才表現。</p>` },
+  agn: { name: "腎缺如（單側）", en: "renal agenesis", meta: "輸尿管芽沒長出或很早退化",
+    body: `<p>輸尿管芽沒長出或很早退化，後腎胚基沒有被誘導，就沒有腎（Langman 15th 第 16 章；Moore 11th p.232–233, Fig. 12.12–12.13）。模型畫左側，淡色是原本腎的位置（示意）。</p><p>單側多沒有症狀；雙側 → 羊水過少。</p>` },
+};
+for (const s in STRUCT) { STRUCT[s].name = fn(STRUCT[s].name); STRUCT[s].body = fn(STRUCT[s].body); }
+
+const LAYER_OF = {};
+for (const [ly, ids] of Object.entries({ mesL: "pro mes", artL: "ao uaf ima" })) for (const s of ids.split(" ")) LAYER_OF[s] = ly;
+const LAYER_N = { mesL: ["前腎、中腎", "--c-pro"], artL: ["動脈", "--c-aor"] };
+const ORDER = ["pro", "mes", "wd", "ub", "mmb", "cl", "ao", "uaf", "ima", "pel", "dup", "pkd", "agn"];
+const cuts = { front: .5, tx: .3 };
+const YC = () => lerp(-2.1, 2.7, cuts.tx);
+
+const M = {
+  id: "m10", name: "腎", title: "腎（前腎 → 中腎 → 後腎）", sub: "第 3–10 週：前腎出現又退化，中腎短暫有功能，第 5 週輸尿管芽穿進後腎胚基；腎從骨盆上升到腰部、腎門轉向內側；下方 4 個異常開關。",
+  range: [21, END], speed: 2, evLbl: "時間軸（Langman 為主）",
+  legendLbl: "構造（點一下看說明）・圖層", layers: { mesL: true, artL: true },
+  flags, exclusive: true, togLbl: "先天異常（一次開一個，數字鍵 1–4）",
+  toggles: Object.keys(flags).map((id, i) => ({ id, label: FLAG_N[id], title: `${FLAG_N[id]}（${i + 1}）`, key: String(i + 1) })),
+  secModes: [
+    { id: "front", label: "正面", title: "正面示意（從腹側看）", fixed: true, hint: "從腹側看的投影：看腎上升" },
+    { id: "tx", label: "橫切", title: "橫切面（從腳往頭看）", ends: ["尾側", "頭側"] },
+  ],
+  secMode: "front", secTitle: "正面示意", secEnds: ["尾側", "頭側"], cutRange: [0, 1, .005],
+  beforeMsg: (d) => `第 ${Math.floor(d)} 天還沒有腎小管，跳到第 21 天`,
+  afterMsg: (d) => `第 ${Math.floor(d)} 天腎已上升到腰部，跳到第 70 天`,
+  note: "示意立體圖：前腎（紫）、中腎（淡紫，軟組織很淡）、中腎管（藍）、輸尿管芽與集尿系統（淺藍）、後腎胚基（橘）。泄殖腔／膀胱只是參照（看模組 11）。位置、大小是示意；兩書沒寫到天的事件只寫週。開關一次只開一個，打開時跳到第 70 天。來源：Langman 15th 為主、Moore 11th 補充。",
+  struct: STRUCT, group: new THREE.Group(), autoFit: true, cuts,
+  get legend() {
+    const L = ORDER.filter((id) => PRESENT.has(id)).map((id) => ({ id, name: STRUCT[id].name({ t: state.day }), css: CSS.get(id) }));
+    if (flags.pel) L.push({ id: "pelSub", name: `類型：${PEL_N[SUB.pel]}（點一下換）`, css: "--c-mmb", toggle: true });
+    if (flags.dup) L.push({ id: "dupSub", name: `類型：${DUP_N[SUB.dup]}（點一下換）`, css: "--c-ub", toggle: true });
+    for (const [id, [name, css]] of Object.entries(LAYER_N)) L.push({ id, name, css, toggle: true });
+    return L;
+  },
+};
+Object.defineProperty(M, "cut", { get: () => cuts[M.secMode], set: (v) => { cuts[M.secMode] = v; }, enumerable: true });
+M.legendClick = (l) => {
+  if (l.id === "pelSub") { SUB.pel = (SUB.pel + 1) % 2; return; }
+  if (l.id === "dupSub") { SUB.dup = (SUB.dup + 1) % 2; return; }
+  if (l.toggle) M.layers[l.id] = !M.layers[l.id]; else select(l.id);
+};
+M.legendPressed = (l) => (l.id.endsWith("Sub") ? undefined : l.toggle ? M.layers[l.id] : undefined);
+scene.add(M.group);
+const LIB = M6.mkLib(M);
+
+/* ---------- 幾何：+x＝病人左、+y 頭、+z 腹 ---------- */
+const GEN = [37, 42, 49, 56];
+function geom(t) {
+  const FL = flags, LY = M.layers, out = [];
+  const tube = (s, c, pts, r, x = {}) => { if (r > .004 && pts.length > 1) out.push({ s, c, pts, r, ...x }); };
+  const ell = (s, c, p, r, x = {}) => { if (Math.min(...r) > .004) out.push({ s, c, kind: "ell", p, r, ...x }); };
+  const sph = (s, c, p, R, x = {}) => { if (R > .004) out.push({ s, c, kind: "sph", p, R, ...x }); };
+  const CL = v3(0, -1.75, .25);
+  // 參照：泄殖腔／膀胱、主動脈、臍動脈、腸繫膜下動脈
+  ell("cl", t < 49 ? "--c-hg" : "--c-ugs", CL, [.35, .28, .3], { ref: true });
+  if (LY.artL) {
+    tube("ao", "--c-ao", [v3(0, 2.6, -.6), v3(0, -.7, -.6)], .12, { ref: true });
+    for (const s of [1, -1]) tube("uaf", "--c-ao", [v3(0, -.7, -.6), v3(s * .55, -1.5, -.3), v3(s * .5, -2.0, .6)], .06);
+    tube("ima", "--c-aor", [v3(0, -.25, -.6), v3(0, -.3, -.1), v3(0, -.45, .3)], .045);
+  }
+  const proG = sm(19, 22, t) * (1 - sm(25, 28.5, t)), mesG = sm(23, 32, t) * (1 - .75 * sm(46, 60, t));
+  const asc = sm(42, 63, t), kg = sm(33, 40, t), big = sm(40, 63, t), budG = sm(32, 36, t);
+  for (const σ of [1, -1]) {
+    // 前腎：頸段 3 條小管
+    if (LY.mesL) for (const y of [2.45, 2.32, 2.19]) tube("pro", "--c-pro", [v3(σ * .5, y, -.42), v3(σ * .6, y + .04, -.38), v3(σ * .72, y, -.35)], .03 * proG);
+    // 中腎：軟組織＋7 條 S 形小管（內側端是腎小球囊）
+    if (LY.mesL && mesG > .02) {
+      ell("mes", "--c-pro", v3(σ * .55, 1.1, -.35), [.22, .85, .28].map((r) => r * mesG), { mk: "soft" });
+      for (let i = 0; i < 7; i++) {
+        const y = 1.75 - i * .22, G = v3(σ * .42, y, -.42);
+        tube("mes", "--c-pro", [G, G.clone().add(v3(σ * .1, .06, .06)), G.clone().add(v3(σ * .2, -.04, -.02)), v3(σ * .72, y - .05, -.35)], .025 * mesG);
+        sph("mes", "--c-pro", G, .05 * mesG);
+      }
+    }
+    // 中腎管：頭端跟著前腎退化往下縮；從頭往尾長到泄殖腔
+    const top = lerp(2.45, 1.9, sm(25, 30, t)), WP = [v3(σ * .72, top, -.35), v3(σ * .72, -1.0, -.35), v3(σ * .6, -1.4, -.15), v3(σ * .25, -1.6, .15)];
+    tube("wd", "--c-wd", guUpto(WP, 0, .15 + .85 * sm(21, 27, t)), .05);
+    // 後腎
+    const agn = FL.agn && σ === 1, isPel = FL.pel && SUB.pel === 0 && σ === 1, isHS = FL.pel && SUB.pel === 1;
+    const K = v3(σ * .4, -1.25, -.55).lerp(v3(σ * .5, .55, -.55), isPel ? 0 : asc);
+    if (isHS) { K.y = Math.min(K.y, -.2); K.x = σ * .32; K.z = -.45; }
+    const R = [.16 + .14 * big, .24 + .26 * big, .14 + .12 * big].map((r) => r * kg * (FL.pkd ? 1.35 : 1));
+    const turn = isPel || isHS ? 0 : sm(56, 66, t), hd = v3(0, 0, 1).lerp(v3(-σ, 0, 0), turn).normalize();
+    if (agn) { if (kg > .05) ell("agn", "--c-mmb", K, R, { mk: "faint" }); continue; }
+    if (kg > .02) ell("mmb", "--c-mmb", K, R, { mk: "g" });
+    if (FL.pkd && t > 40) for (let i = 0; i < 10; i++) {
+      const a = i * 2.4, h = 1 - 2 * (i + .5) / 10, rr = Math.sqrt(1 - h * h) * .55;
+      sph("pkd", "--c-hole", K.clone().add(v3(rr * Math.cos(a) * R[0], h * .6 * R[1], rr * Math.sin(a) * R[2])), .055 * kg);
+    }
+    if (isHS && t > 42) { const lo = K.y - R[1] * .75; tube("pel", "--c-mmb", [v3(σ * .32, lo, -.42), v3(0, lo - .05, -.3)], .12); }
+    if (isPel && kg > .1) sph("pel", "--c-hole", K.clone().add(v3(0, R[1] * 1.05, 0)), .05);
+    // 輸尿管芽：從中腎管尾段長出，第 7–8 週開口移到膀胱
+    if (budG < .02) continue;
+    const O = guAlong(WP, .88).lerp(v3(σ * .2, -1.55, .05), sm(44, 56, t)), Hp = K.clone().addScaledVector(hd, R[0] * .9);
+    const tip = O.clone().lerp(Hp, budG), mid = O.clone().lerp(tip, .5).add(v3(σ * .08, 0, 0));
+    tube("ub", "--c-ub", [O, mid, tip], .055);
+    // 集尿系統：腎盂＋四代分支（在腎門內縮方向與上下軸的平面）
+    const e1 = hd.clone().negate(), e2 = v3(0, 1, 0), dir = (th) => e1.clone().multiplyScalar(Math.cos(th)).addScaledVector(e2, Math.sin(th));
+    const pg = sm(35, 38, t), P0 = tip.clone().addScaledVector(e1, .12 * pg * kg);
+    if (pg > .05) tube("ub", "--c-ub", [tip, P0], .06);
+    const Ls = [.3, .2, .13, .09].map((l) => l * R[1] / .5);
+    const br = (p, th, n) => {
+      if (n >= 4) return; const g = sm(GEN[n] - 3, GEN[n] + 2, t); if (g < .03) return;
+      for (const s of [1, -1]) { const th2 = th + s * (n === 0 ? 70 : 35) * DEG, e = p.clone().addScaledVector(dir(th2), Ls[n] * g); tube("ub", "--c-ub", [p, e], .04 * Math.pow(.8, n)); br(e, th2, n + 1); }
+    };
+    if (pg > .05) br(P0, 0, 0);
+    // 雙輸尿管（左）
+    if (FL.dup && σ === 1) {
+      const UP = K.clone().add(v3(0, R[1] * .55, 0)).addScaledVector(hd, R[0] * .6);
+      if (SUB.dup === 0) tube("dup", "--c-ub", [O.clone().lerp(tip, .45), O.clone().lerp(tip, .6).add(v3(σ * .12, .05, 0)), UP], .045);
+      else {
+        const ECT = v3(σ * .1, -2.05, .35), O2 = guAlong(WP, .8).lerp(ECT, sm(44, 56, t));
+        tube("dup", "--c-ub", [O2, O2.clone().lerp(UP, .5).add(v3(σ * .15, 0, .05)), UP], .045);
+        if (t > 48) sph("dup", "--c-hole", ECT, .07);
+      }
+    }
+  }
+  return { seg: out };
+}
+
+/* ---------- 每次更新 ---------- */
+let GEO = null, SEG = [], PRESENT = new Set(), CSS = new Map(), prevF = null;
+M.update = function () {
+  const t = state.day, tx = M.secMode === "tx", cut = state.cut3d && tx, yc = YC();
+  GEO = geom(t); SEG = GEO.seg;
+  PRESENT = new Set(); CSS = new Map();
+  for (const sg of SEG) { PRESENT.add(sg.s); if (!CSS.has(sg.s)) CSS.set(sg.s, sg.c); }
+  LIB.build(SEG, cut, yc, tx, [-.2, 2.6, 2.2]);
+  if (mod === M) renderLegend();
+  const on = Object.keys(flags).find((k) => flags[k] && prevF && !prevF[k]);
+  if (on) setTimeout(() => { if (mod !== M) return; if (state.day < END - .1) setDay(END); select(on); });
+  prevF = { ...flags };
+};
+
+const NEED = { pro: 22, mes: 30, ub: 35, mmb: 40 };
+M.reveal = (s) => {
+  if (!s) return false;
+  if (s in flags) { if (!flags[s]) for (const k in flags) flags[k] = k === s; prevF = { ...flags }; if (state.day < END - .1) state.day = END; return true; }
+  if (LAYER_OF[s]) M.layers[LAYER_OF[s]] = true;
+  if (!geom(state.day).seg.some((x) => x.s === s && !x.ghost)) state.day = NEED[s] ?? END;
+  return true;
+};
+
+/* ---------- 地標名稱 ---------- */
+const short = (s) => (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
+M.tagAnchors = function () {
+  const A = [], f = flagOn();
+  for (const s of ["pro", "mes", "wd", "ub", "mmb", "cl", ...(f ? [f] : [])]) { const p = LIB.anchor(SEG, s); if (p) A.push([short(s), p, s]); }
+  return A;
+};
+M.tagShown = (p) => !(state.cut3d && M.secMode === "tx") || p[1] <= YC() + .06;
+
+/* ---------- 2D ---------- */
+const LAB2 = (s) => s === state.sel || !["ao", "uaf", "ima"].includes(s) || (s === "ima" && flags.pel && SUB.pel === 1);
+M.drawSection = function (ctx, W, H, dpr) {
+  if (!GEO) M.update();
+  const tx = M.secMode === "tx", yc = YC();
+  const [X0, X1, Y0, Y1] = tx ? [-1.5, 1.5, -1.1, 1.0] : [-1.5, 1.5, -2.3, 2.7];
+  const pad = W * .03, top = H * .07, sc = Math.min((W - 2 * pad) / (X1 - X0), (H - 2 * top) / (Y1 - Y0));
+  const ox = W / 2 - (X0 + X1) / 2 * sc, oy = H / 2 + (Y0 + Y1) / 2 * sc, P = ([x, y]) => [ox + x * sc, oy - y * sc];
+  const items = tx ? LIB.txSec(SEG, yc) : LIB.frontSec(SEG);
+  const hits = LIB.draw(ctx, items, P, dpr);
+  drawLeaders(ctx, LIB.labels(items, !tx, short, LAB2).map(([txt, p, sd, s]) => [txt, P(p), sd, s]), W, H, dpr, { bottom: H - 22 * dpr });
+  if (!tx) { dirText(ctx, W, H, dpr, "頭側", "尾側（從腹側看，畫面右＝病人左）"); return { hits, where: `第 ${Math.floor(state.day)} 天的投影` }; }
+  dirText(ctx, W, H, dpr, "腹側", "背側（從腳往頭看，畫面右＝病人左）");
+  return { hits, where: yc > 1.9 ? "頸段（前腎）" : yc > .2 ? "胸腰段（中腎）" : yc > -1.4 ? "腰骶段（後腎）" : "泄殖腔的高度" };
+};
+
+/* ---------- 時間軸、卡片、鏡頭、點選 ---------- */
+M.events = [
+  { d: 21, lbl: "第 3 週末", tick: "前腎", sec: "front", t: "前腎", s: "頸段中間中胚層形成幾團沒有功能的小管（Langman 15th Fig. 16.1、16.2）。Moore 11th p.223 寫第 4 週初。" },
+  { d: 24, lbl: "第 4 週", tick: "中腎", sec: "front", t: "中腎與中腎管", s: "胸腰段長出中腎小管，接到往尾側長的中腎管；中腎管通到泄殖腔（Langman 15th Fig. 16.1、16.3；Moore 11th p.223）。" },
+  { d: 28, lbl: "第 4 週末", tick: "4 週", sec: "front", t: "前腎退化", s: "Langman 15th 寫第 4 週末前腎完全退化。" },
+  { d: 35, lbl: "第 5 週", tick: "芽", sec: "front", t: "輸尿管芽穿進後腎胚基", s: "中腎管靠近泄殖腔處長出輸尿管芽，穿進後腎胚基，帽在它頭端（Langman 15th Fig. 16.4）。" },
+  { d: 42, lbl: "第 6 週", tick: "6 週", sec: "front", t: "分支開始、腎開始上升", s: "輸尿管芽擴大成腎盂，開始分支（Langman 15th Fig. 16.5）。腎從骨盆開始上升（Fig. 16.10；Moore 11th p.235 寫第 6–9 週）。" },
+  { d: 56, lbl: "第 8 週", tick: "8 週", sec: "front", t: "中腎大部分退化", s: "第 2 個月末中腎大部分消失（Langman 15th 第 16 章）。集尿管持續分支（Fig. 16.5）。" },
+  { d: 63, lbl: "第 9 週", tick: "腎門", sec: "tx", t: "腎門轉向內側", s: "腎上升到腰部，腎門從朝前轉向內側（Langman 15th Fig. 16.10；Moore 11th p.235）。Moore 11th p.225：後腎出現約 4 週後開始產尿。" },
+];
+M.cardState = () => ({ t: state.day });
+M.dayInfo = (t) => (t < 24 ? "前腎" : t < 28 ? "中腎與中腎管" : t < 35 ? "前腎退化" : t < 42 ? "輸尿管芽穿進後腎胚基" : t < 56 ? "集尿管分支、腎上升" : t < 63 ? "中腎大部分退化" : "腎門轉向內側");
+M.dayText = (t) => { const f = flagOn(); return `第 ${Math.ceil(Math.floor(t + .001) / 7)} 週<small>${M.dayInfo(t)}${f ? " · " + STRUCT[f].name({ t }) : ""}</small>`; };
+M.views = [
+  { id: "front", label: "正面", v: () => ({ p: [0, .2, 8], t: [0, .2, -.3] }) },
+  { id: "obl", label: "左前斜", v: () => ({ p: [5.5, 1.6, 6], t: [0, .2, -.3] }) },
+  { id: "back", label: "背側", v: () => ({ p: [0, .2, -8], t: [0, .2, -.3] }) },
+  { id: "top", label: "從頭往下", v: () => ({ p: [0, 8.5, .6], t: [0, .2, -.3] }) },
+];
+M.defaultView = "front";
+M.pick = (ray) => LIB.pick(ray, state.cut3d && M.secMode === "tx", YC());
+return M;
+})();
+
+/* ===== 模組 11：泄殖腔與膀胱（尿直腸隔、膀胱、臍尿管、膀胱三角；第 28–56 天） ===== */
+const M11 = (() => {
+const V3 = THREE.Vector3;
+const fn = (v) => (typeof v === "function" ? v : () => v);
+const v3 = (x, y, z) => new V3(x, y, z);
+const END = 56;
+
+const flags = { urc: false, exs: false };
+const FLAG_N = { urc: "臍尿管異常", exs: "膀胱外翻" };
+const SUB = { urc: 0 }, URC_N = ["臍尿管瘻", "臍尿管囊腫", "臍尿管竇"];
+const flagOn = () => Object.keys(flags).find((k) => flags[k]);
+
+const STRUCT = {
+  hg: { name: "後腸", en: "hindgut", meta: "通到泄殖腔・→ 肛門直腸管",
+    body: `<p>後腸尾端擴大成泄殖腔（Langman 15th Fig. 16.12）。尿直腸隔把泄殖腔分開後，後腸這一側成為肛門直腸管。</p><p>${goTo("m8,84,hg", "模組 8 中腸旋轉（後腸與腸繫膜下動脈）")}</p>` },
+  cl: { name: "泄殖腔", en: "cloaca", meta: "內胚層・第 4–7 週被分隔",
+    body: `<p>後腸尾端的腔，前面接尿囊、尾側被泄殖腔膜封住（Langman 15th Fig. 16.12A）。第 4–7 週被尿直腸隔分成前面的<b>尿生殖竇</b>和後面的<b>肛門直腸管</b>（Langman 15th Fig. 16.12）。</p>` },
+  al: { name: "尿囊", en: "allantois", meta: "從泄殖腔伸進臍帶",
+    body: `<p>從泄殖腔前壁伸進臍帶的小憩室（Langman 15th Fig. 16.12A、16.13）。膀胱形成後，膀胱頂到臍的那段尿囊收窄成<b>臍尿管</b>。</p>` },
+  urs: { name: "尿直腸隔", en: "urorectal septum", meta: "中胚層・從尿囊與後腸之間往尾側長",
+    body: `<p>尿囊和後腸之間的中胚層，往泄殖腔膜的方向長，把泄殖腔分成前後兩半（Langman 15th Fig. 16.12）。碰到泄殖腔膜的地方成為<b>會陰體</b>。</p>` },
+  clm: { name: (st) => (st.t < 49 ? "泄殖腔膜" : "尿生殖膜、肛門膜"), en: "cloacal membrane", meta: "外胚層＋內胚層・第 7–8 週破開",
+    body: `<p>泄殖腔尾側的膜，外胚層和內胚層直接相貼。尿直腸隔到達後分成前面的尿生殖膜、後面的肛門膜（Langman 15th Fig. 16.12B）。</p><p>Langman 15th 寫第 7–8 週破開，形成尿生殖竇與肛門的開口（Fig. 16.12B、C）。</p>` },
+  ugs: { name: "尿生殖竇", en: "urogenital sinus", meta: "泄殖腔前半・→ 膀胱、尿道",
+    body: `<p>泄殖腔分隔後的前半（Langman 15th Fig. 16.12、16.13）。分三段：上段最大 → <b>膀胱</b>；骨盆段（窄）→ 男性的尿道前列腺部與膜部；陰莖段（扁）→ 往生殖結節方向（看模組 13）。</p><p>${goTo("m13,63,ugr", "模組 13 外生殖器")}</p>` },
+  bl: { name: "膀胱", en: "urinary bladder", meta: "尿生殖竇上段",
+    body: `<p>尿生殖竇最上段，一開始和尿囊相連（Langman 15th Fig. 16.13）。上皮來自內胚層；膀胱壁的肌層與結締組織來自鄰近的臟壁中胚層。</p><p>中腎管和輸尿管的尾端併入膀胱後壁（看「膀胱三角」）。</p>`,
+    trap: `108-1-34：膀胱上皮是內胚層、胚胎時與尿囊相連、出生後還在腹腔，到六歲左右才進入骨盆（大骨盆）。錯的是「膀胱三角起源於後腎管」，三角來自中腎管尾端。`, kg: ["108-1-醫學一-34"] },
+  ur: { name: "臍尿管", en: "urachus", meta: "→ 正中臍韌帶",
+    body: `<p>膀胱頂到臍的那段尿囊收窄成厚的纖維索，成人叫<b>正中臍韌帶</b>（Langman 15th Fig. 16.13B）。</p><p>不要和內側臍韌帶混淆：內側臍韌帶是臍動脈遠段閉鎖而成（左右各一條）；正中臍韌帶只有一條，在正中線。</p><p>${goTo("m5,5,ua", "模組 5 胎兒循環（內側臍韌帶）")}</p>`,
+    trap: `109-1-35：前腹壁的腹膜皺襞——正中臍皺襞（臍尿管）、內側臍皺襞（臍動脈）、外側臍皺襞（下腹壁動脈）；靜脈導管在肝內，不形成前腹壁的皺襞。`, kg: ["109-1-醫學一-35"] },
+  wd: { name: "中腎管", en: "mesonephric duct", meta: "尾端併入膀胱壁",
+    body: `<p>中腎管通到泄殖腔（後來是尿生殖竇）。尾端逐漸併入膀胱後壁，結果輸尿管和中腎管各自開口：輸尿管開口往頭外側移，中腎管開口往下靠近尿道（男性成為射精管開口）（Langman 15th Fig. 16.14）。</p><p>${goTo("m10,35,wd", "模組 10 腎（中腎管與輸尿管芽）")}　${goTo("m12,70,vd", "模組 12 性腺與生殖管（男性衍生物）")}</p>` },
+  ub: { name: "輸尿管", en: "ureter", meta: "來自輸尿管芽・各自開口在膀胱",
+    body: `<p>來自中腎管長出的輸尿管芽（看模組 10）。中腎管尾端併入膀胱後，輸尿管直接開口在膀胱（Langman 15th Fig. 16.14）。</p><p>${goTo("m10,42,ub", "模組 10 腎（輸尿管芽）")}</p>` },
+  tri: { name: "膀胱三角", en: "trigone of bladder", meta: "中腎管尾端併入・上皮最後是內胚層",
+    body: `<p>中腎管尾端併入膀胱後壁形成的三角區，兩個角是輸尿管開口、下角是尿道內口（Langman 15th Fig. 16.14）。</p><p>最初是中胚層（來自中腎管），之後被內胚層上皮取代，所以成人整個膀胱內面都是內胚層上皮（Langman 15th 第 16 章）。</p>`,
+    trap: `108-1-34：膀胱三角來自中腎管尾端，不是「後腎管」（輸尿管）。`, kg: ["108-1-醫學一-34"] },
+  ura: { name: "尿道", en: "urethra", meta: "尿生殖竇骨盆段",
+    body: `<p>尿生殖竇骨盆段：男性 → 尿道前列腺部與膜部，女性 → 整條尿道（Langman 15th Fig. 16.13）。上皮都是內胚層。</p>` },
+  arc: { name: "肛門直腸管", en: "anorectal canal", meta: "泄殖腔後半",
+    body: `<p>泄殖腔分隔後的後半，成為直腸與肛管上段；肛管下段由外胚層的肛凹形成（Langman 15th 第 16 章；肛管看消化道章節）。</p>` },
+  pb: { name: "會陰體", en: "perineal body", meta: "尿直腸隔的尖端",
+    body: `<p>尿直腸隔碰到泄殖腔膜的地方，成為會陰體，在尿生殖竇與肛門之間（Langman 15th Fig. 16.12B、C）。</p>` },
+  ua: { name: "臍動脈", en: "umbilical artery", meta: "參照・在膀胱兩側",
+    body: `<p>沿膀胱兩側上行到臍。出生後近段 → 上膀胱動脈，遠段 → 內側臍韌帶（Langman 15th 第 13 章）。</p><p>${goTo("m5,5,ua", "模組 5 胎兒循環（臍動脈）")}</p>` },
+  cord: { name: "臍帶（參照）", en: "umbilical cord", meta: "參照", body: `<p>尿囊伸進臍帶；臍尿管的上端就到臍。</p>` },
+  gt: { name: "生殖結節（參照）", en: "genital tubercle", meta: "看模組 13", body: `<p>泄殖腔膜前方的隆起，之後形成陰莖或陰蒂（Langman 15th Fig. 16.32）。</p><p>${goTo("m13,49,gt", "模組 13 外生殖器")}</p>` },
+  abw: { name: "前腹壁（參照）", en: "anterior abdominal wall", meta: "參照", body: `<p>參照位置。膀胱外翻時，膀胱前壁和這段腹壁都沒有閉合。</p>` },
+  urc: { name: () => URC_N[SUB.urc], en: "urachal fistula / cyst / sinus", meta: "圖例「類型」切換三種",
+    body: () => [
+      `<p><b>臍尿管瘻</b>：整條臍尿管都沒有閉合，尿從臍漏出（Langman 15th Fig. 16.15A；Moore 11th p.237、239, Fig. 12.22）。</p>`,
+      `<p><b>臍尿管囊腫</b>：臍尿管中間一段沒有閉合，上皮分泌物堆積成囊（Langman 15th Fig. 16.15B；Moore 11th p.237、239, Fig. 12.22）。</p>`,
+      `<p><b>臍尿管竇</b>：靠臍那一端沒有閉合，在臍形成開口（Langman 15th Fig. 16.15B；Moore 11th p.237、239, Fig. 12.22）。</p>`][SUB.urc] + `<p>點圖例「類型」換下一種。</p>` },
+  exs: { name: "膀胱外翻", en: "exstrophy of the bladder", meta: "腹壁與膀胱前壁沒有閉合",
+    body: `<p>體壁閉合缺陷：前腹壁和膀胱前壁都沒有閉合，膀胱後壁直接露在體表（Langman 15th Fig. 16.16A；Moore 11th p.237、239–240, Fig. 12.24）。常合併尿道上裂（Langman 15th 第 16 章）。</p><p>${goTo("m8,84,gas", "模組 8 中腸旋轉（腹裂，另一種體壁缺陷）")}</p>` },
+};
+for (const s in STRUCT) { STRUCT[s].name = fn(STRUCT[s].name); STRUCT[s].body = fn(STRUCT[s].body); }
+
+const LAYER_OF = {};
+for (const [ly, ids] of Object.entries({ artL: "ua", refL: "cord gt abw" })) for (const s of ids.split(" ")) LAYER_OF[s] = ly;
+const LAYER_N = { artL: ["臍動脈", "--c-ao"], refL: ["臍帶、生殖結節、腹壁", "--c-ref"] };
+const ORDER = ["hg", "cl", "al", "urs", "clm", "ugs", "bl", "ur", "ura", "arc", "pb", "wd", "ub", "tri", "ua", "cord", "gt", "abw", "urc", "exs"];
+const cuts = { side: .5, front: .5 };
+
+const M = {
+  id: "m11", name: "泄殖腔與膀胱", title: "泄殖腔與膀胱（尿直腸隔、臍尿管、膀胱三角）", sub: "第 4–8 週：尿直腸隔把泄殖腔分成尿生殖竇（→ 膀胱、尿道）與肛門直腸管；尿囊收窄成臍尿管；中腎管尾端併入膀胱形成三角；下方 2 個異常開關。",
+  range: [28, END], speed: 1.5, evLbl: "時間軸（Langman 為主）",
+  legendLbl: "構造（點一下看說明）・圖層", layers: { artL: true, refL: true },
+  flags, exclusive: true, togLbl: "先天異常（一次開一個，數字鍵 1–2）",
+  toggles: Object.keys(flags).map((id, i) => ({ id, label: FLAG_N[id], title: `${FLAG_N[id]}（${i + 1}）`, key: String(i + 1) })),
+  secModes: [
+    { id: "side", label: "側面", title: "側面示意（從左側看）", fixed: true, hint: "從病人左側看的投影：看尿直腸隔往下長" },
+    { id: "front", label: "正面", title: "正面示意（從腹側看）", fixed: true, hint: "從腹側看的投影：看中腎管、輸尿管併入膀胱" },
+  ],
+  secMode: "side", secTitle: "側面示意", secEnds: ["", ""], cutRange: [0, 1, .01],
+  beforeMsg: (d) => `第 ${Math.floor(d)} 天泄殖腔還沒開始分隔，跳到第 28 天`,
+  afterMsg: (d) => `第 ${Math.floor(d)} 天泄殖腔分隔已完成，跳到第 56 天`,
+  note: "示意立體圖，以正中矢狀面為主：後腸（深綠）、泄殖腔與尿生殖竇（黃）、尿囊與臍尿管（綠）、尿直腸隔（灰）、中腎管（藍）、輸尿管（淺藍）。位置、大小是示意；兩書沒寫到天的事件只寫週。開關一次只開一個，打開時跳到第 56 天。來源：Langman 15th 為主、Moore 11th 補充。",
+  struct: STRUCT, group: new THREE.Group(), autoFit: true, cuts,
+  get legend() {
+    const L = ORDER.filter((id) => PRESENT.has(id)).map((id) => ({ id, name: STRUCT[id].name({ t: state.day }), css: CSS.get(id) }));
+    if (flags.urc) L.push({ id: "urcSub", name: `類型：${URC_N[SUB.urc]}（點一下換）`, css: "--c-al", toggle: true });
+    for (const [id, [name, css]] of Object.entries(LAYER_N)) L.push({ id, name, css, toggle: true });
+    return L;
+  },
+};
+Object.defineProperty(M, "cut", { get: () => .5, set: () => {}, enumerable: true });
+M.legendClick = (l) => {
+  if (l.id === "urcSub") { SUB.urc = (SUB.urc + 1) % 3; return; }
+  if (l.toggle) M.layers[l.id] = !M.layers[l.id]; else select(l.id);
+};
+M.legendPressed = (l) => (l.id.endsWith("Sub") ? undefined : l.toggle ? M.layers[l.id] : undefined);
+scene.add(M.group);
+const LIB = M6.mkLib(M);
+
+/* ---------- 幾何：+x＝病人左、+y 頭、+z 腹；以正中面為主 ---------- */
+function geom(t) {
+  const FL = flags, LY = M.layers, out = [];
+  const tube = (s, c, pts, r, x = {}) => { if (r > .004 && pts.length > 1) out.push({ s, c, pts, r, ...x }); };
+  const ell = (s, c, p, r, x = {}) => { if (Math.min(...r) > .004) out.push({ s, c, kind: "ell", p, r, ...x }); };
+  const sph = (s, c, p, R, x = {}) => { if (R > .004) out.push({ s, c, kind: "sph", p, R, ...x }); };
+  const sep = sm(29, 49, t), blG = sm(40, 52, t), inc = sm(44, 56, t), rup = sm(50, 56, t);
+  const UMB = v3(0, .55, 1.35);
+  // 參照：臍帶、生殖結節、前腹壁
+  if (LY.refL) {
+    tube("cord", "--c-umb", [UMB, v3(0, 1.05, 2.1)], .32, { mk: "soft" });
+    sph("gt", "--c-gt", v3(0, -2.0, .95), .12 + .06 * sm(35, 56, t), { ref: true });
+    if (FL.exs) { tube("abw", "--c-ref", [v3(0, -.15, 1.32), UMB], .035, { ref: true }); tube("abw", "--c-ref", [v3(0, -1.85, 1.05), v3(0, -1.9, 1.0)], .035, { ref: true }); }
+    else tube("abw", "--c-ref", [v3(0, -1.85, 1.05), v3(0, -1.0, 1.2), UMB], .035, { ref: true });
+  }
+  // 後腸 → 肛門直腸管
+  tube("hg", "--c-hg", [v3(0, .9, -.55), v3(0, -.4, -.45), v3(0, -1.1, -.3)], .14);
+  // 泄殖腔：隨分隔縮小，換成前面的尿生殖竇和後面的肛門直腸管
+  if (sep < .97) ell("cl", "--c-hg", v3(0, -1.6, .15), [.32, .5, .55].map((r) => r * (1 - .7 * sep)), { mk: "g" });
+  if (sep > .05) {
+    tube("arc", "--c-hg", [v3(0, -1.1, -.3), v3(0, -1.6, -.3), v3(0, -1.6 - .42 * sep, -.25)], .13 * (.5 + .5 * sep));
+    ell("ugs", "--c-ugs", v3(0, -1.85, .55), [.18, .22, .2].map((r) => r * sep), { mk: "g" });
+  }
+  // 尿直腸隔：從尿囊與後腸之間往尾側長，碰到膜的地方是會陰體
+  const US0 = v3(0, -1.0, .12), US1 = v3(0, -2.02, .15);
+  if (sep > .02) tube("urs", "--c-st", [US0, US0.clone().lerp(US1, sep)], .08);
+  if (sep > .95) sph("pb", "--c-st", US1, .11);
+  // 泄殖腔膜 → 尿生殖膜、肛門膜（第 7–8 週破開）
+  if (rup < .98) {
+    if (sep < .95) ell("clm", "--c-ecto", v3(0, -2.12, .2), [.08, .03, .45 * (1 - rup)], { mk: "g" });
+    else for (const z of [.55, -.25]) ell("clm", "--c-ecto", v3(0, -2.12, z), [.08, .03, .18 * (1 - rup)], { mk: "g" });
+  }
+  // 膀胱：尿生殖竇上段長大
+  const BL = v3(0, -1.2, .6);
+  if (blG > .03) {
+    if (FL.exs) {
+      ell("bl", "--c-ugs", v3(0, -1.2, 1.12), [.42, .42, .1], { mk: "g" });
+      ell("exs", "--c-hole", v3(0, -1.2, 1.24), [.36, .36, .03]);
+    } else ell("bl", "--c-ugs", BL, [.35, .42, .38].map((r) => r * blG), { mk: "g" });
+  }
+  const top = FL.exs ? v3(0, -.75, 1.15) : BL.clone().add(v3(0, .4 * Math.max(blG, .2), .12));
+  // 尿囊（膀胱形成前從泄殖腔前壁出發）→ 臍尿管
+  const AL0 = blG < .3 ? v3(0, -1.2, .5) : top;
+  if (blG < .75) tube("al", "--c-al", [AL0, v3(0, -.3, 1.05), UMB, v3(0, .95, 1.95)], .07);
+  else {
+    tube("al", "--c-al", [UMB, v3(0, .95, 1.95)], .06);
+    const UR = [top, v3(0, -.3, 1.18), UMB];
+    if (FL.urc && SUB.urc === 0) { tube("urc", "--c-al", UR, .07); sph("urc", "--c-hole", UMB.clone().add(v3(0, 0, .05)), .07); }
+    else if (FL.urc && SUB.urc === 1) { tube("ur", "--c-al", UR, .025, { mk: "g" }); ell("urc", "--c-al", v3(0, -.3, 1.18), [.14, .2, .14]); }
+    else if (FL.urc && SUB.urc === 2) { tube("ur", "--c-al", [top, v3(0, -.3, 1.18)], .025, { mk: "g" }); tube("urc", "--c-al", [v3(0, -.05, 1.25), UMB], .07); sph("urc", "--c-hole", UMB.clone().add(v3(0, 0, .05)), .07); }
+    else if (!FL.exs) tube("ur", "--c-al", UR, .03 + .03 * (1 - sm(49, 56, t)));
+  }
+  // 尿道（尿生殖竇骨盆段）
+  if (blG > .5 && !FL.exs) tube("ura", "--c-ugs", [BL.clone().add(v3(0, -.38, -.02)), v3(0, -1.85, .55)], .07);
+  // 中腎管與輸尿管：尾端併入膀胱後壁，兩者分開開口
+  for (const σ of [1, -1]) {
+    const WE = v3(σ * .22, -1.55, .35).lerp(v3(σ * .07, -1.72, .48), inc);
+    tube("wd", "--c-wd", [v3(σ * .7, .7, -.4), v3(σ * .6, -1.1, -.3), v3(σ * .4, -1.45, .1), WE], .045);
+    const UB0 = (t < 44 ? v3(σ * .38, -1.42, .05) : v3(σ * .3, -1.48, .22).lerp(v3(σ * .26, -1.22, .3), inc));
+    if (t > 32) tube("ub", "--c-ub", [UB0, UB0.clone().add(v3(σ * .15, .4, -.35)), v3(σ * .4, -.4, -.6)], .04);
+    if (LY.artL) tube("ua", "--c-ao", [v3(σ * .45, -.6, -.6), v3(σ * .45, -1.35, -.3), v3(σ * .38, -1.25, .65), v3(σ * .12, .2, 1.2), UMB], .05);
+  }
+  if (inc > .2 && blG > .3 && !FL.exs) ell("tri", inc < .9 ? "--c-wd" : "--c-ugs", v3(0, -1.45, .26), [.22, .16, .04].map((r) => r * inc), { mk: "g" });
+  return { seg: out };
+}
+
+let GEO = null, SEG = [], PRESENT = new Set(), CSS = new Map(), prevF = null;
+M.update = function () {
+  const t = state.day; GEO = geom(t); SEG = GEO.seg;
+  PRESENT = new Set(); CSS = new Map();
+  for (const sg of SEG) { PRESENT.add(sg.s); if (!CSS.has(sg.s)) CSS.set(sg.s, sg.c); }
+  LIB.build(SEG, false, 0, false, [0, 1, 1]);
+  if (mod === M) renderLegend();
+  const on = Object.keys(flags).find((k) => flags[k] && prevF && !prevF[k]);
+  if (on) setTimeout(() => { if (mod !== M) return; if (state.day < END - .1) setDay(END); select(on); });
+  prevF = { ...flags };
+};
+const NEED = { cl: 28, al: 28, clm: 28, urs: 35, ugs: 42, arc: 42, bl: 49, ura: 49, pb: 50, ur: 52, tri: 52, ub: 35 };
+M.reveal = (s) => {
+  if (!s) return false;
+  if (s in flags) { if (!flags[s]) for (const k in flags) flags[k] = k === s; prevF = { ...flags }; if (state.day < END - .1) state.day = END; return true; }
+  if (LAYER_OF[s]) M.layers[LAYER_OF[s]] = true;
+  if (!geom(state.day).seg.some((x) => x.s === s && !x.ghost)) state.day = NEED[s] ?? END;
+  return true;
+};
+
+const short = (s) => (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
+M.tagAnchors = function () {
+  const A = [], f = flagOn();
+  for (const s of ["hg", "cl", "al", "urs", "ugs", "bl", "ur", "arc", ...(f ? [f] : [])]) { const p = LIB.anchor(SEG, s); if (p) A.push([short(s), p, s]); }
+  return A;
+};
+M.tagShown = () => true;
+
+/* ---------- 2D：側面（從左側看，畫面左＝腹側）、正面 ---------- */
+const side = (p) => v3(-p.z, p.y, p.x);
+function toSide(sg) {
+  if (sg.kind === "ell") return { ...sg, p: side(sg.p), r: [sg.r[2], sg.r[1], sg.r[0]] };
+  if (sg.kind === "sph") return { ...sg, p: side(sg.p) };
+  return { ...sg, cv: undefined, pts: sg.pts.map(side) };
+}
+const LAB2 = (s) => s === state.sel || !["cord", "abw", "ua"].includes(s);
+M.drawSection = function (ctx, W, H, dpr) {
+  if (!GEO) M.update();
+  const sd = M.secMode === "side";
+  const [X0, X1, Y0, Y1] = sd ? [-2.0, 1.0, -2.4, 1.3] : [-1.1, 1.1, -2.4, 1.3];
+  const pad = W * .03, top = H * .06, sc = Math.min((W - 2 * pad) / (X1 - X0), (H - 2 * top) / (Y1 - Y0));
+  const ox = W / 2 - (X0 + X1) / 2 * sc, oy = H / 2 + (Y0 + Y1) / 2 * sc, P = ([x, y]) => [ox + x * sc, oy - y * sc];
+  const items = LIB.frontSec(sd ? SEG.filter((sg) => sg.s !== "ua" || (sg.pts && sg.pts[0].x > 0)).map(toSide) : SEG);
+  const hits = LIB.draw(ctx, items, P, dpr);
+  drawLeaders(ctx, LIB.labels(items, true, short, LAB2).map(([txt, p, sd2, s]) => [txt, P(p), sd2, s]), W, H, dpr, { bottom: H - 22 * dpr });
+  if (sd) { dirText(ctx, W, H, dpr, "頭側", "尾側（從左側看，畫面左＝腹側）"); return { hits, where: `第 ${Math.floor(state.day)} 天・左側投影` }; }
+  dirText(ctx, W, H, dpr, "頭側", "尾側（從腹側看，畫面右＝病人左）");
+  return { hits, where: `第 ${Math.floor(state.day)} 天・正面投影` };
+};
+
+M.events = [
+  { d: 28, lbl: "第 4 週", tick: "泄殖腔", sec: "side", t: "泄殖腔", s: "後腸尾端的泄殖腔，前面接尿囊、尾側是泄殖腔膜（Langman 15th Fig. 16.12A）。" },
+  { d: 35, lbl: "第 5 週", tick: "隔", sec: "side", t: "尿直腸隔往下長", s: "尿囊與後腸之間的中胚層往泄殖腔膜長（Langman 15th Fig. 16.12）。輸尿管芽從中腎管長出（看模組 10）。" },
+  { d: 42, lbl: "第 6 週", tick: "6 週", sec: "side", t: "尿生殖竇與肛門直腸管", s: "泄殖腔漸漸分成前面的尿生殖竇、後面的肛門直腸管；尿生殖竇上段開始擴大成膀胱（Langman 15th Fig. 16.12、16.13）。" },
+  { d: 49, lbl: "第 7 週", tick: "會陰體", sec: "side", t: "分隔完成、會陰體", s: "尿直腸隔碰到泄殖腔膜，形成會陰體；膜分成尿生殖膜、肛門膜（Langman 15th Fig. 16.12B）。Langman 寫泄殖腔在第 4–7 週分隔。" },
+  { d: 56, lbl: "第 8 週", tick: "三角", sec: "front", t: "膀胱三角、膜破開", s: "中腎管尾端併入膀胱後壁，輸尿管與中腎管分開開口，形成膀胱三角（Langman 15th Fig. 16.14）。膜在第 7–8 週破開（Fig. 16.12B、C）。尿囊收窄成臍尿管（Fig. 16.13B）。" },
+];
+M.cardState = () => ({ t: state.day });
+M.dayInfo = (t) => (t < 35 ? "泄殖腔" : t < 42 ? "尿直腸隔往下長" : t < 49 ? "尿生殖竇與肛門直腸管" : t < 54 ? "分隔完成、會陰體" : "膀胱三角、膜破開");
+M.dayText = (t) => { const f = flagOn(); return `第 ${Math.ceil(Math.floor(t + .001) / 7)} 週<small>${M.dayInfo(t)}${f ? " · " + STRUCT[f].name({ t }) : ""}</small>`; };
+M.views = [
+  { id: "left", label: "左側", v: () => ({ p: [8, -.4, .3], t: [0, -.8, .3] }) },
+  { id: "front", label: "正面", v: () => ({ p: [0, -.4, 8.5], t: [0, -.8, .3] }) },
+  { id: "obl", label: "左前斜", v: () => ({ p: [6, .4, 6], t: [0, -.8, .3] }) },
+];
+M.defaultView = "left";
+M.pick = (ray) => LIB.pick(ray, false, 0);
+return M;
+})();
+
+/* ===== 模組 12：性腺與生殖管（原始生殖細胞 → 睪丸／卵巢；中腎管、副中腎管；第 35–84 天） ===== */
+const M12 = (() => {
+const V3 = THREE.Vector3;
+const fn = (v) => (typeof v === "function" ? v : () => v);
+const v3 = (x, y, z) => new V3(x, y, z);
+const END = 84;
+
+// cah、ais 和模組 13 共用（GU）；uta 只屬 46,XX
+const flags = {
+  uta: false,
+  get cah() { return GU.cah; }, set cah(v) { GU.cah = v; if (v) { GU.xy = false; GU.ais = false; GU.who = M.id; } },
+  get ais() { return GU.ais; }, set ais(v) { GU.ais = v; if (v) { GU.xy = true; GU.cah = false; GU.who = M.id; } },
+};
+const FLAG_N = { uta: "子宮異常", cah: "先天性腎上腺增生（46,XX）", ais: "雄性素不敏感（46,XY）" };
+const SUB = { uta: 0 }, UTA_N = ["雙子宮", "雙角子宮", "單角子宮"];
+const flagOn = () => Object.keys(flags).find((k) => flags[k]);
+const XY = () => GU.xy;
+const male = () => GU.xy; // 有睪丸（AIS 也有）
+const wolff = () => GU.xy && !GU.ais; // 中腎管保留要睪固酮作用
+
+const STRUCT = {
+  pgc: { name: "原始生殖細胞", en: "primordial germ cells", meta: "第 3 週在卵黃囊壁・第 5 週到達生殖嵴",
+    body: `<p>第 3 週出現在卵黃囊壁、靠近尿囊的地方，沿後腸的背側腸繫膜遷移（Langman 15th Fig. 16.18）。第 5 週初到達原始性腺，第 6 週侵入生殖嵴（Langman 15th 第 16 章）。</p><p>原始生殖細胞誘導性腺發育；沒有到達，性腺就不會發育（Langman 15th Fig. 16.21）。</p><p>${goTo("m1,24,vit", "模組 1 心管（卵黃靜脈，卵黃囊方向）")}</p>` },
+  gon: { name: (st) => (st.t < 49 ? "未分化性腺（生殖嵴）" : GU.xy ? "睪丸" : "卵巢"), en: "indifferent gonad → testis / ovary", meta: "中腎內側・第 7 週前男女看不出差別",
+    body: `<p>中腎內側的生殖嵴：體腔上皮增生、下面的間質變厚（Langman 15th Fig. 16.17、16.19）。第 7 週前看不出男女，叫<b>未分化性腺</b>。</p><p><b>46,XY</b>：Y 染色體上的 <i>SRY</i> → Sertoli 細胞分化 → 睪丸（Langman 15th Fig. 16.20、16.28）。<b>46,XX</b>：沒有 <i>SRY</i> → 卵巢（Langman 15th 第 16 章）。</p><p>點圖例「性染色體」切換男女。${goTo("m4,56,gonv", "模組 4 靜脈（性腺靜脈）")}</p>`,
+    trap: `109-1-73（題目給分 AC）：Sertoli 細胞分泌 MIS 抑制副中腎管（對）；外生殖器男性化嚴格說是 DHT。睪丸不是由中腎管（Wolff 管）形成。`, kg: ["109-1-醫學一-73"] },
+  sc: { name: (st) => (st.t < 49 ? "原始性索" : GU.xy ? "睪丸索（→ 細精管）" : "皮質索"), en: "primitive sex cords → testis cords / cortical cords", meta: "體腔上皮長進間質",
+    body: `<p>體腔上皮長進間質形成原始性索（Langman 15th Fig. 16.19）。</p><p><b>男</b>：性索往髓質長成<b>睪丸索</b>，到青春期才有管腔，成為<b>細精管</b>；睪丸索在門部分成細網 → 睪丸網；外面被白膜隔開（Langman 15th Fig. 16.20）。</p><p><b>女</b>：原始性索退化，表面上皮再長出<b>皮質索</b>，之後分成一團團包住卵原細胞 → 原始濾泡（Langman 15th 第 16 章）。</p>`,
+    trap: `108-2-35：性腺索在男性成為細精管（對）；女性的原始性索退化，原始濾泡來自皮質索；皮質索不形成副睪或輸卵管。`, kg: ["108-2-醫學一-35"] },
+  rt: { name: "睪丸網", en: "rete testis", meta: "來自性索・不是中腎管",
+    body: `<p>睪丸索在睪丸門部分成細的網狀小管，成為睪丸網，再接到輸出小管（Langman 15th Fig. 16.20）。</p>`,
+    trap: `109-2-34：睪丸網來自性索，不是中腎管衍生物；副睪、輸精管、精囊才是。`, kg: ["109-2-醫學一-34"] },
+  ed: { name: "輸出小管", en: "efferent ductules", meta: "來自中腎小管",
+    body: `<p>睪丸網附近的幾條中腎小管留下來，成為輸出小管，把睪丸網接到中腎管（之後的附睪管）（Langman 15th Fig. 16.20、16.26）。</p>` },
+  ser: { name: "Sertoli 細胞", en: "Sertoli cells", meta: "在睪丸索裡・分泌 MIS",
+    body: `<p><i>SRY</i> 使性索裡的細胞分化成 Sertoli 細胞，分泌<b>抗副中腎管荷爾蒙</b>（MIS，又稱 AMH），讓副中腎管退化（Langman 15th Fig. 16.28）。</p>`,
+    trap: `107-1-34：分泌 MIS 的是 Sertoli 細胞，不是 Leydig 細胞。110-1-72（生理）：inhibin B 抑制的是 FSH，不是 LH。`, kg: ["107-1-醫學一-34", "110-1-醫學一-72"] },
+  ley: { name: "Leydig 細胞", en: "Leydig（interstitial）cells", meta: "睪丸索之間・分泌睪固酮",
+    body: `<p>睪丸索之間的間質細胞，分泌<b>睪固酮</b>：讓中腎管分化成男性生殖管；在外生殖器轉成 DHT，使外生殖器男性化（Langman 15th Fig. 16.28）。</p>` },
+  wd: { name: (st) => (GU.xy && !GU.ais ? "中腎管（Wolff 管）" : st.t < 56 ? "中腎管（Wolff 管）" : "中腎管（退化中）"), en: "mesonephric（Wolffian）duct", meta: "睪固酮 → 男性生殖管",
+    body: `<p><b>男</b>：睪固酮作用下 → 附睪管、輸精管、精囊、射精管（Langman 15th Fig. 16.26）。</p><p><b>女</b>：沒有睪固酮，大部分退化，留下卵巢冠、卵巢旁體、Gartner 囊腫等殘跡（Langman 15th Fig. 16.24）。</p><p>${goTo("m10,35,wd", "模組 10 腎（中腎管）")}　${goTo("m11,56,tri", "模組 11 膀胱三角")}</p>`,
+    trap: `中腎管衍生：附睪、輸精管、精囊、射精管（109-2-34、111-1-34、112-2-34）。睪丸網、細精管來自性索；睪丸附件、前列腺囊是副中腎管殘跡；前列腺、尿道球腺來自尿生殖竇。`, kg: ["109-2-醫學一-34", "111-1-醫學一-34", "112-2-醫學一-34"] },
+  epi: { name: "附睪", en: "epididymis", meta: "中腎管頭段", body: `<p>中腎管頭段變長、高度盤曲，成為附睪管（Langman 15th Fig. 16.26）。</p>` },
+  vd: { name: "輸精管", en: "ductus deferens", meta: "中腎管", body: `<p>附睪尾到精囊的中腎管，外面有厚的平滑肌（Langman 15th Fig. 16.26）。</p>` },
+  sv: { name: "精囊", en: "seminal vesicle", meta: "中腎管尾端長出",
+    body: `<p>中腎管靠尾端長出的憩室（Langman 15th Fig. 16.26）。</p>`,
+    trap: `112-2-34：精囊來自中腎管末端；前列腺、尿道球腺來自尿生殖竇，前列腺囊是副中腎管殘跡。`, kg: ["112-2-醫學一-34"] },
+  ejd: { name: "射精管", en: "ejaculatory duct", meta: "中腎管末端・開口在尿道前列腺部",
+    body: `<p>精囊以下到尿道的一小段中腎管（Langman 15th Fig. 16.26）。開口在尿道前列腺部（看模組 11：中腎管開口往下移）。</p>`,
+    trap: `111-1-34：射精管是中腎管衍生物；細精管、睪丸網、睪丸附件不是。`, kg: ["111-1-醫學一-34"] },
+  md: { name: (st) => (GU.xy && st.t >= 56 ? "副中腎管（退化中）" : "副中腎管（Müller 管）"), en: "paramesonephric（Müllerian）duct", meta: "中腎外側・MIS 讓它退化",
+    body: `<p>體腔上皮在中腎前外側凹進去形成；頭端開口在體腔，往尾側先走在中腎管外側，再從腹側跨過中腎管到內側，和對側的在中線融合（Langman 15th Fig. 16.24、16.25）。</p><p><b>女</b>：頭段 → 輸卵管；尾端融合 → 子宮（子宮陰道管）（Langman 15th Fig. 16.24、16.29）。<b>男</b>：MIS 使它退化，只留睪丸附件、前列腺囊（Langman 15th Fig. 16.26）。</p>`,
+    trap: `112-2-73：性別分化最相關的是 MIS（Sertoli 細胞分泌，讓副中腎管退化）；FSH、ABP、inhibin 不是。`, kg: ["112-2-醫學一-73"] },
+  ft: { name: "輸卵管", en: "uterine tube", meta: "副中腎管頭段",
+    body: `<p>副中腎管沒有融合的頭段（含開口在體腔的那端），成為輸卵管（Langman 15th Fig. 16.24）。</p>`,
+    trap: `115-2-35：副中腎管衍生的是輸卵管；射精管、輸精管來自中腎管，輸尿管來自輸尿管芽。`, kg: ["115-2-醫學一-35"] },
+  ut: { name: "子宮（子宮陰道管）", en: "uterus（uterovaginal canal）", meta: "兩側副中腎管尾端融合",
+    body: `<p>兩側副中腎管尾端在中線融合成子宮陰道管 → 子宮體、子宮頸（Langman 15th Fig. 16.24、16.29）。融合時把一片腹膜往上帶，成為子宮闊韌帶（Langman 15th 第 16 章）。</p>` },
+  svb: { name: "竇陰道球", en: "sinovaginal bulbs", meta: "尿生殖竇長出 → 陰道板",
+    body: `<p>子宮陰道管的尖端碰到尿生殖竇後壁，竇長出兩個竇陰道球，增生成實心的陰道板，之後中空成陰道（Langman 15th Fig. 16.29、16.30）。</p>` },
+  vag: { name: "陰道", en: "vagina", meta: "兩個來源",
+    body: `<p>陰道有兩個來源：上段來自子宮陰道管（副中腎管），下段來自尿生殖竇（竇陰道球 → 陰道板）（Langman 15th Fig. 16.29、16.30）。陰道和尿生殖竇之間留一片薄膜＝處女膜。</p>`,
+    trap: `114-2-34：陰道＝副中腎管＋竇陰道球（尿生殖竇）。`, kg: ["114-2-醫學一-34"] },
+  mes: { name: "中腎（參照）", en: "mesonephros", meta: "參照・看模組 10", body: `<p>性腺在中腎內側發育；男性少數中腎小管成為輸出小管。</p><p>${goTo("m10,42,mes", "模組 10 腎（中腎）")}</p>` },
+  ugs: { name: "尿生殖竇（參照）", en: "urogenital sinus", meta: "參照・看模組 11", body: `<p>中腎管、副中腎管的尾端都到尿生殖竇後壁（Langman 15th Fig. 16.24、16.26）。</p><p>${goTo("m11,49,ugs", "模組 11 泄殖腔與膀胱")}</p>` },
+  hg: { name: "後腸（參照）", en: "hindgut", meta: "參照・原始生殖細胞沿它的背側腸繫膜遷移", body: `<p>原始生殖細胞沿後腸的背側腸繫膜遷移到生殖嵴（Langman 15th Fig. 16.18）。</p>` },
+  adr: { name: (st) => (GU.cah ? "腎上腺（增生）" : "腎上腺（參照）"), en: "suprarenal gland", meta: "參照", body: `<p>位置參照。先天性腎上腺增生時兩側增大，分泌過多雄性素（看開關）。</p>` },
+  uta: { name: () => UTA_N[SUB.uta], en: "uterine anomalies", meta: "圖例「類型」切換三種",
+    body: () => [
+      `<p><b>雙子宮</b>：兩側副中腎管尾端完全沒有融合，形成兩個子宮（可合併雙陰道）（Langman 15th Fig. 16.31；Moore 11th p.255–256, Fig. 12.44）。</p>`,
+      `<p><b>雙角子宮</b>：只有下段融合，上段分成兩角（Langman 15th Fig. 16.31；Moore 11th p.255–256, Fig. 12.44）。</p>`,
+      `<p><b>單角子宮</b>：一側副中腎管沒發育或發育不全，只有一側子宮角（Langman 15th Fig. 16.31；Moore 11th p.255–256, Fig. 12.44）。模型畫右側沒發育。</p>`][SUB.uta] + `<p>只在 46,XX 出現，打開會切到 46,XX。點圖例「類型」換下一種。</p>` },
+  cah: { name: "先天性腎上腺增生（46,XX）", en: "congenital adrenal hyperplasia", meta: "和模組 13 共用",
+    body: `<p>46,XX：腎上腺皮質增生，製造過多雄性素。卵巢、內生殖管是女性（子宮、輸卵管都在，中腎管退化）；外生殖器男性化（看模組 13）（Langman 15th Fig. 16.38；Moore 11th p.253, Fig. 12.40）。</p><p>${goTo("m13,98,cah", "模組 13 外生殖器")}</p>`,
+    trap: `106-1-30：腎上腺是增生，不是萎縮；46,XX、雄性素過多、外生殖器男性化。`, kg: ["106-1-醫學一-30"] },
+  ais: { name: "雄性素不敏感（46,XY）", en: "androgen insensitivity syndrome", meta: "和模組 13 共用",
+    body: `<p>46,XY：有睪丸、會分泌睪固酮和 MIS，但雄性素受體沒有作用（Langman 15th 第 16 章；Moore 11th p.253, Fig. 12.41）。</p><p>MIS 有作用 → 副中腎管退化（沒有子宮、輸卵管）；睪固酮沒作用 → 中腎管也退化；外生殖器是女性外觀（看模組 13）。</p><p>${goTo("m13,98,ais", "模組 13 外生殖器")}</p>` },
+};
+for (const s in STRUCT) { STRUCT[s].name = fn(STRUCT[s].name); STRUCT[s].body = fn(STRUCT[s].body); }
+
+const LAYER_OF = {};
+for (const [ly, ids] of Object.entries({ refL: "mes ugs hg adr" })) for (const s of ids.split(" ")) LAYER_OF[s] = ly;
+const LAYER_N = { refL: ["中腎、尿生殖竇、後腸、腎上腺", "--c-ref"] };
+const ORDER = ["pgc", "gon", "sc", "rt", "ed", "ser", "ley", "wd", "epi", "vd", "sv", "ejd", "md", "ft", "ut", "svb", "vag", "mes", "ugs", "hg", "adr", "uta", "cah", "ais"];
+const cuts = { front: .5, tx: .5 };
+const YC = () => lerp(-1.9, 1.9, cuts.tx);
+
+const M = {
+  id: "m12", name: "性腺與生殖管", title: "性腺與生殖管（未分化 → 睪丸／卵巢）", sub: "第 5–12 週：原始生殖細胞遷移到生殖嵴；46,XY 由 SRY → 睪丸，MIS 讓副中腎管退化、睪固酮保留中腎管；46,XX 由副中腎管形成輸卵管、子宮、陰道上段。圖例可切換性染色體。",
+  range: [35, END], speed: 2, evLbl: "時間軸（Langman 為主）",
+  legendLbl: "構造（點一下看說明）・性染色體・圖層",
+  layers: {
+    get xy() { return GU.xy; },
+    set xy(v) { GU.xy = !!v; if (v) { GU.cah = false; flags.uta = false; } else { GU.ais = false; } },
+    refL: true,
+  },
+  flags, exclusive: true, togLbl: "先天異常（一次開一個，數字鍵 1–3）",
+  toggles: Object.keys(flags).map((id, i) => ({ id, label: FLAG_N[id], title: `${FLAG_N[id]}（${i + 1}）`, key: String(i + 1) })),
+  secModes: [
+    { id: "front", label: "正面", title: "正面示意（從腹側看）", fixed: true, hint: "從腹側看的投影：看生殖管的去留" },
+    { id: "tx", label: "橫切", title: "橫切面（從腳往頭看）", ends: ["尾側", "頭側"] },
+  ],
+  secMode: "front", secTitle: "正面示意", secEnds: ["尾側", "頭側"], cutRange: [0, 1, .005],
+  beforeMsg: (d) => `第 ${Math.floor(d)} 天原始生殖細胞還在遷移，跳到第 35 天`,
+  afterMsg: (d) => `第 ${Math.floor(d)} 天生殖管已分化，跳到第 84 天`,
+  note: "示意立體圖：性腺（紫）、中腎管（藍）、副中腎管（粉紅）、尿生殖竇（黃）。圖例「性染色體」切換 46,XY／46,XX，和模組 13 共用；退化中的管畫成淡色虛影。位置、大小是示意；兩書沒寫到天的事件只寫週。開關一次只開一個，打開時跳到第 84 天。來源：Langman 15th 為主、Moore 11th 補充。",
+  struct: STRUCT, group: new THREE.Group(), autoFit: true, cuts,
+  get legend() {
+    const L = ORDER.filter((id) => PRESENT.has(id)).map((id) => ({ id, name: STRUCT[id].name({ t: state.day }), css: CSS.get(id) }));
+    L.push({ id: "xy", name: `性染色體：${GU.xy ? "46,XY" : "46,XX"}（點一下換）`, css: "--c-gon", toggle: true });
+    if (flags.uta) L.push({ id: "utaSub", name: `類型：${UTA_N[SUB.uta]}（點一下換）`, css: "--c-md", toggle: true });
+    for (const [id, [name, css]] of Object.entries(LAYER_N)) L.push({ id, name, css, toggle: true });
+    return L;
+  },
+};
+Object.defineProperty(M, "cut", { get: () => cuts[M.secMode], set: (v) => { cuts[M.secMode] = v; }, enumerable: true });
+M.legendClick = (l) => {
+  if (l.id === "utaSub") { SUB.uta = (SUB.uta + 1) % 3; return; }
+  if (l.toggle) M.layers[l.id] = !M.layers[l.id]; else select(l.id);
+};
+M.legendPressed = (l) => (l.id.endsWith("Sub") || l.id === "xy" ? undefined : l.toggle ? M.layers[l.id] : undefined);
+scene.add(M.group);
+const LIB = M6.mkLib(M);
+
+/* ---------- 幾何：+x＝病人左、+y 頭、+z 腹 ---------- */
+function geom(t) {
+  const FL = flags, LY = M.layers, out = [];
+  const tube = (s, c, pts, r, x = {}) => { if (r > .004 && pts.length > 1) out.push({ s, c, pts, r, ...x }); };
+  const ell = (s, c, p, r, x = {}) => { if (Math.min(...r) > .004) out.push({ s, c, kind: "ell", p, r, ...x }); };
+  const sph = (s, c, p, R, x = {}) => { if (R > .004) out.push({ s, c, kind: "sph", p, R, ...x }); };
+  const dif = t >= 49, gG = sm(35, 45, t), dsc = sm(56, 84, t) * (male() ? .5 : .8);
+  const mdReg = male() ? sm(56, 70, t) : 0, wdReg = wolff() ? 0 : sm(56, 72, t);
+  // 參照
+  if (LY.refL) {
+    tube("hg", "--c-hg", [v3(0, 1.4, -.55), v3(0, -.6, -.45), v3(0, -1.6, -.3)], .13, { ref: true });
+    ell("ugs", "--c-ugs", v3(0, -1.7, .4), [.24, .2, .2], { ref: true });
+    for (const σ of [1, -1]) {
+      ell("mes", "--c-pro", v3(σ * .62, .65, -.35), [.2, .8, .25].map((r) => r * (1 - .7 * sm(50, 70, t))), { mk: "soft" });
+      ell("adr", "--c-mmb", v3(σ * .3, 1.75, -.55), [.13, .1, .1].map((r) => r * (GU.cah ? 1.8 : 1)), GU.cah ? { mk: "g" } : { ref: true });
+    }
+  }
+  for (const σ of [1, -1]) {
+    // 性腺：中腎內側，第 7 週後分化；之後相對下降一點
+    const G = v3(σ * .36, .9 - dsc, -.38), GR = [.1 + .06 * gG, .3 + .1 * gG, .1 + .07 * gG].map((r) => r * Math.max(gG, .3));
+    if (gG > .05) ell("gon", "--c-gon", G, GR, { mk: "g" });
+    // 性索
+    if (gG > .4) {
+      if (!dif || male()) for (let i = 0; i < 4; i++) {
+        const y = G.y + (i - 1.5) * GR[1] * .45, a = male() && dif ? .55 : .8;
+        tube("sc", "--c-gon", [v3(σ * (.36 - GR[0] * .2), y, G.z + GR[2] * .7), v3(σ * .36, y + .02, G.z), v3(σ * (.36 + GR[0] * a), y, G.z - .02)], .025);
+        if (male() && dif && i % 2 === 0) { sph("ser", "--c-st", v3(σ * .36, y + .02, G.z + .02), .04); sph("ley", "--c-uf", v3(σ * (.36 + GR[0] * .2), y + GR[1] * .22, G.z + .05), .035); }
+      } else for (let i = 0; i < 7; i++) sph("sc", "--c-gon", v3(σ * (.36 - GR[0] * .55), G.y + (i - 3) * GR[1] * .25, G.z + GR[2] * .4 * Math.cos(i)), .035);
+    }
+    // 睪丸網、輸出小管
+    if (male() && dif) {
+      const RT = v3(σ * (.36 + GR[0] * .9), G.y, G.z);
+      tube("rt", "--c-gon", [RT.clone().add(v3(0, GR[1] * .4, 0)), RT, RT.clone().add(v3(0, -GR[1] * .4, 0))], .03);
+      if (t >= 56) for (const k of [-.3, 0, .3]) tube("ed", "--c-wd", [RT.clone().add(v3(0, k * GR[1], 0)), v3(σ * .72, G.y + k * GR[1] * 1.2 + .05, -.35)], .025);
+    }
+    // 原始生殖細胞：沿後腸背側腸繫膜遷移
+    if (t < 50) {
+      const PG = [v3(0, -1.55, 1.0), v3(0, -1.5, -.15), v3(0, -.3, -.62), v3(σ * .2, .5, -.6), v3(σ * .36, .9, -.38)];
+      tube("pgc", "--c-gon", PG, .02, { ghost: true });
+      const go = sm(33, 44, t) * 1.35;
+      for (let k = 0; k < 5; k++) sph("pgc", "--c-gon", guAlong(PG, Math.min(1, Math.max(0, go - k * .09))), .045 * (1 - sm(45, 50, t)));
+    }
+    // 中腎管：男 → 附睪、輸精管、精囊、射精管；女 → 退化
+    const WP = [v3(σ * .72, 1.55 - dsc * .6, -.35), v3(σ * .72, -.5, -.35), v3(σ * .45, -1.25, .05), v3(σ * .12, -1.62, .35)];
+    if (wolff() && t >= 63) {
+      const g = sm(63, 77, t), a = WP[0], zz = [];
+      for (let i = 0; i <= 8; i++) zz.push(v3(σ * (.72 + (i % 2 ? .07 : -.03) * g), a.y - i * .1, -.35 + (i % 2 ? .05 : -.03) * g));
+      tube("epi", "--c-wd", zz, .045 + .02 * g);
+      tube("vd", "--c-wd", [zz[8], ...guUpto(WP, .38, .86).slice(1)], .05);
+      const SV0 = guAlong(WP, .86);
+      tube("ejd", "--c-wd", guUpto(WP, .86, 1), .04);
+      tube("sv", "--c-wd", [SV0, SV0.clone().add(v3(σ * .18 * g, .22 * g, -.05)), SV0.clone().add(v3(σ * .25 * g, .4 * g, -.12))], .05 * g + .005);
+    } else if (wdReg < .9) tube("wd", "--c-wd", WP, .045, wdReg > .3 ? { ghost: true } : {});
+    else tube("wd", "--c-wd", guUpto(WP, 0, .2), .03, { ghost: true });
+    // 副中腎管：頭端開口在體腔，外側往下，跨過中腎管腹側到內側，在中線融合
+    const uni = FL.uta && SUB.uta === 2 && σ === -1;
+    const MP = [v3(σ * .9, 1.65 - dsc * .6, -.22), v3(σ * .88, -.3, -.22), v3(σ * .55, -1.0, .05), v3(σ * .06, -1.48, .28)];
+    const mg = sm(40, 56, t);
+    if (mg > .02) {
+      if (male() && mdReg > .3) { tube("md", "--c-md", guUpto(MP, 0, .25), .03, { ghost: true }); tube("md", "--c-md", guUpto(MP, .9, 1), .03, { ghost: true }); }
+      else if (!male() && t >= 63) {
+        if (uni) { tube("uta", "--c-md", MP, .035, { mk: "faint" }); continue; }
+        const fu = sm(56, 70, t), cut = FL.uta && SUB.uta === 0 ? 1 : FL.uta && SUB.uta === 1 ? .62 : .78;
+        tube("ft", "--c-md", guUpto(MP, 0, cut - .04 * fu), .05);
+        sph("ft", "--c-md", MP[0], .08);
+      } else { tube("md", "--c-md", guUpto(MP, 0, mg), .045); if (mg > .3) sph("md", "--c-md", MP[0], .07); }
+    }
+  }
+  // 子宮、竇陰道球、陰道（46,XX）
+  if (!male() && t >= 63) {
+    const fu = sm(56, 70, t), vg = sm(70, 84, t);
+    if (FL.uta && SUB.uta === 0) for (const σ of [1, -1]) ell("uta", "--c-md", v3(σ * .2, -1.25, .15), [.12, .25, .12]);
+    else if (FL.uta && SUB.uta === 1) { ell("uta", "--c-md", v3(0, -1.32, .18), [.2, .17, .13]); for (const σ of [1, -1]) ell("uta", "--c-md", v3(σ * .26, -1.02, .1), [.1, .2, .1]); }
+    else if (FL.uta && SUB.uta === 2) ell("uta", "--c-md", v3(.1, -1.25, .17), [.12, .25, .12]);
+    else ell("ut", "--c-md", v3(0, -1.25, .17), [.12 + .12 * fu, .26, .13]);
+    if (vg < .6) for (const σ of [1, -1]) sph("svb", "--c-ugs", v3(σ * .07, -1.62, .36), .07 * sm(66, 72, t) * (1 - vg));
+    if (vg > .05) tube("vag", "--c-md", [v3(0, -1.48, .22), v3(0, -1.48 - .42 * vg, .4)], .08);
+  }
+  return { seg: out };
+}
+
+/* ---------- 每次更新：性別相關開關的連動 ---------- */
+let GEO = null, SEG = [], PRESENT = new Set(), CSS = new Map(), prevF = null;
+M.update = function () {
+  const on = Object.keys(flags).find((k) => flags[k] && prevF && !prevF[k]);
+  if (on === "uta" && GU.xy) M.layers.xy = false, flags.uta = true;
+  if (flags.uta && GU.xy) flags.uta = false;
+  const t = state.day, tx = M.secMode === "tx", cut = state.cut3d && tx, yc = YC();
+  GEO = geom(t); SEG = GEO.seg;
+  PRESENT = new Set(); CSS = new Map();
+  for (const sg of SEG) { PRESENT.add(sg.s); if (!CSS.has(sg.s)) CSS.set(sg.s, sg.c); }
+  LIB.build(SEG, cut, yc, tx, [-.1, 2.4, 2.0]);
+  if (mod === M) renderLegend();
+  if (on && flags[on] && (on === "uta" || GU.who === M.id)) setTimeout(() => { if (mod !== M) return; if (state.day < END - .1) setDay(END); select(on); });
+  prevF = { ...flags };
+};
+
+const NEED = { wd: 49, pgc: 38, gon: 45, sc: 45, rt: 56, ed: 60, ser: 56, ley: 56, md: 50, epi: 70, vd: 70, sv: 70, ejd: 70, ft: 70, ut: 70, svb: 70, vag: 80 };
+M.reveal = (s) => {
+  if (!s) return false;
+  if (s in flags) { if (!flags[s]) for (const k in flags) flags[k] = k === s; if (s === "uta") M.layers.xy = false, flags.uta = true; prevF = { ...flags }; if (state.day < END - .1) state.day = END; return true; }
+  if (GU_XX.includes(s) && GU.xy) M.layers.xy = false;
+  if (GU_XY.includes(s) && !GU.xy) M.layers.xy = true;
+  if ((s === "epi" || s === "vd" || s === "sv" || s === "ejd") && GU.ais) GU.ais = false;
+  if (LAYER_OF[s]) M.layers[LAYER_OF[s]] = true;
+  if (!geom(state.day).seg.some((x) => x.s === s && !x.ghost)) state.day = NEED[s] ?? END;
+  return true;
+};
+
+const short = (s) => (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
+M.tagAnchors = function () {
+  const A = [], f = flagOn();
+  for (const s of ["pgc", "gon", "wd", "epi", "vd", "md", "ft", "ut", "vag", ...(f && f !== "cah" && f !== "ais" ? [f] : [])]) { const p = LIB.anchor(SEG, s); if (p) A.push([short(s), p, s]); }
+  return A;
+};
+M.tagShown = (p) => !(state.cut3d && M.secMode === "tx") || p[1] <= YC() + .06;
+
+const LAB2 = (s) => s === state.sel || !["hg", "mes", "adr", "ser", "ley"].includes(s) || (s === "adr" && GU.cah);
+function balance(labs) {
+  const L = labs.filter((l) => l[2] === "L"), R = labs.filter((l) => l[2] === "R"), toR = L.length > R.length;
+  const mv = Math.floor(Math.abs(L.length - R.length) / 2);
+  if (mv > 0) (toR ? L : R).sort((a, b) => (toR ? b[1][0] - a[1][0] : a[1][0] - b[1][0])).slice(0, mv).forEach((l) => { l[2] = toR ? "R" : "L"; });
+  return labs;
+}
+M.drawSection = function (ctx, W, H, dpr) {
+  if (!GEO) M.update();
+  const tx = M.secMode === "tx", yc = YC();
+  const [X0, X1, Y0, Y1] = tx ? [-1.3, 1.3, -1.0, 1.2] : [-1.3, 1.3, -2.0, 2.0];
+  const pad = W * .03, top = H * .07, sc = Math.min((W - 2 * pad) / (X1 - X0), (H - 2 * top) / (Y1 - Y0));
+  const ox = W / 2 - (X0 + X1) / 2 * sc, oy = H / 2 + (Y0 + Y1) / 2 * sc, P = ([x, y]) => [ox + x * sc, oy - y * sc];
+  const items = tx ? LIB.txSec(SEG, yc) : LIB.frontSec(SEG);
+  const hits = LIB.draw(ctx, items, P, dpr);
+  drawLeaders(ctx, balance(LIB.labels(items, !tx, short, LAB2).map(([txt, p, sd, s]) => [txt, P(p), sd, s])), W, H, dpr, { bottom: H - 22 * dpr });
+  const sx = GU.xy ? "46,XY" : "46,XX";
+  if (!tx) { dirText(ctx, W, H, dpr, "頭側", "尾側（從腹側看，畫面右＝病人左）"); return { hits, where: `第 ${Math.floor(state.day)} 天・${sx}` }; }
+  dirText(ctx, W, H, dpr, "腹側", "背側（從腳往頭看，畫面右＝病人左）");
+  return { hits, where: `${sx}・${yc > .3 ? "性腺的高度" : yc > -1.1 ? "生殖管的高度" : "尿生殖竇的高度"}` };
+};
+
+M.events = [
+  { d: 35, lbl: "第 5 週", tick: "PGC", sec: "front", t: "原始生殖細胞到達", s: "原始生殖細胞從卵黃囊壁沿後腸背側腸繫膜遷移，第 5 週初到達、第 6 週侵入生殖嵴（Langman 15th Fig. 16.18；第 16 章）。" },
+  { d: 42, lbl: "第 6 週", tick: "未分化", sec: "front", t: "未分化性腺、副中腎管出現", s: "生殖嵴形成原始性索，看不出男女（Langman 15th Fig. 16.19）。中腎外側出現副中腎管（Fig. 16.24）。" },
+  { d: 49, lbl: "第 7 週", tick: "SRY", sec: "front", t: "睪丸或卵巢", s: "46,XY：SRY → Sertoli 細胞 → 睪丸索、白膜（Langman 15th Fig. 16.20、16.28）。46,XX：原始性索退化，之後長出皮質索（第 16 章）。" },
+  { d: 56, lbl: "第 8 週", tick: "MIS", sec: "front", t: "MIS 與睪固酮", s: "男：Sertoli 細胞的 MIS 讓副中腎管退化；Leydig 細胞的睪固酮保留中腎管（Langman 15th Fig. 16.28）。女：中腎管退化。" },
+  { d: 70, lbl: "第 10 週", tick: "生殖管", sec: "front", t: "生殖管分化", s: "男：附睪、輸精管、精囊、射精管（Langman 15th Fig. 16.26）。女：副中腎管頭段 → 輸卵管，尾端融合 → 子宮（Fig. 16.24、16.29）。" },
+  { d: 84, lbl: "第 12 週", tick: "陰道", sec: "front", t: "陰道", s: "女：竇陰道球 → 陰道板，之後中空；陰道上段來自子宮陰道管、下段來自尿生殖竇（Langman 15th Fig. 16.29、16.30 寫到第 3 個月末）。" },
+];
+M.cardState = () => ({ t: state.day });
+M.dayInfo = (t) => (t < 42 ? "原始生殖細胞遷移" : t < 49 ? "未分化性腺" : t < 56 ? (GU.xy ? "睪丸分化" : "卵巢分化") : t < 70 ? (GU.xy ? "MIS 讓副中腎管退化" : "中腎管退化") : t < 84 ? "生殖管分化" : "陰道形成");
+M.dayText = (t) => { const f = flagOn(); return `第 ${Math.ceil(Math.floor(t + .001) / 7)} 週・${GU.xy ? "46,XY" : "46,XX"}<small>${M.dayInfo(t)}${f ? " · " + STRUCT[f].name({ t }) : ""}</small>`; };
+M.views = [
+  { id: "front", label: "正面", v: () => ({ p: [0, 0, 8], t: [0, 0, -.1] }) },
+  { id: "obl", label: "左前斜", v: () => ({ p: [5.5, 1.2, 6], t: [0, 0, -.1] }) },
+  { id: "left", label: "左側", v: () => ({ p: [8, .2, 0], t: [0, 0, -.1] }) },
+];
+M.defaultView = "front";
+M.pick = (ray) => LIB.pick(ray, state.cut3d && M.secMode === "tx", YC());
+return M;
+})();
+
+/* ===== 模組 13：外生殖器（泄殖腔褶 → 生殖結節、尿道褶、生殖隆起；第 28–98 天） ===== */
+const M13 = (() => {
+const V3 = THREE.Vector3;
+const fn = (v) => (typeof v === "function" ? v : () => v);
+const v3 = (x, y, z) => new V3(x, y, z);
+const END = 98;
+
+const flags = {
+  get cah() { return GU.cah; }, set cah(v) { GU.cah = v; if (v) { GU.xy = false; GU.ais = false; GU.who = M.id; } },
+  get ais() { return GU.ais; }, set ais(v) { GU.ais = v; if (v) { GU.xy = true; GU.cah = false; GU.who = M.id; } },
+  hyp: false,
+};
+const FLAG_N = { cah: "先天性腎上腺增生（46,XX）", ais: "雄性素不敏感（46,XY）", hyp: "尿道下裂" };
+const flagOn = () => Object.keys(flags).find((k) => flags[k]);
+// 男性化程度：XY＝1、XX＝0、CAH＝.6、AIS＝0
+const mxOf = () => (GU.ais ? 0 : GU.xy ? 1 : GU.cah ? .6 : 0);
+const dvOf = (t) => sm(63, 91, t);
+
+const STRUCT = {
+  clf: { name: "泄殖腔褶", en: "cloacal folds", meta: "第 3 週・圍住泄殖腔膜",
+    body: `<p>第 3 週，原條附近的間質細胞移到泄殖腔膜周圍，形成一對稍微隆起的泄殖腔褶；在膜的頭側兩褶會合，成為生殖結節（Langman 15th Fig. 16.32A）。</p><p>第 6 週泄殖腔褶分成前面的尿道褶、後面的肛門褶（Langman 15th Fig. 16.32B）。</p>` },
+  gt: { name: "生殖結節", en: "genital tubercle", meta: "泄殖腔膜頭側・男女都有",
+    body: `<p>兩側泄殖腔褶在泄殖腔膜頭側會合而成（Langman 15th Fig. 16.32）。第 6 週末仍分不出男女（Fig. 16.32C）。</p><p><b>男</b>：雄性素（DHT）→ 變長成陰莖。<b>女</b>：只稍微變長 → 陰蒂（Langman 15th 第 16 章）。</p><p>${goTo("m11,49,gt", "模組 11 泄殖腔與膀胱")}</p>` },
+  uf: { name: (st) => (GU.xy && !GU.ais && st.t >= 70 ? "尿道褶（未閉合段）" : "尿道褶"), en: "urethral（urogenital）folds", meta: "尿道溝兩側",
+    body: `<p>泄殖腔褶前段，在尿道溝（尿生殖膜破開後的開口）兩側（Langman 15th Fig. 16.32B）。</p><p><b>男</b>：生殖結節變長，把尿道褶往前拉成尿道溝的側壁；第 3 個月末兩側尿道褶在尿道板上閉合，形成陰莖（海綿體）尿道（Langman 15th Fig. 16.33）。<b>女</b>：不閉合 → 小陰唇（Langman 15th 第 16 章）。</p>` },
+  af: { name: "肛門褶", en: "anal folds", meta: "泄殖腔褶後段", body: `<p>泄殖腔褶後段，圍住肛門膜（Langman 15th Fig. 16.32B）。</p>` },
+  gs: { name: "生殖隆起", en: "genital（labioscrotal）swellings", meta: "尿道褶外側・第 6 週出現",
+    body: `<p>第 6 週出現在尿道褶兩側（Langman 15th Fig. 16.32B）。</p><p><b>男</b>：往尾側移、各成陰囊的一半，中間以陰囊中隔分開（Langman 15th Fig. 16.33）。<b>女</b>：大部分不融合 → 大陰唇（Langman 15th 第 16 章）。</p>` },
+  ugr: { name: "尿道溝", en: "urethral groove", meta: "尿生殖膜破開後・兩側尿道褶之間",
+    body: `<p>尿生殖膜破開後，兩側尿道褶之間的溝；底部是內胚層的尿道板（Langman 15th Fig. 16.33）。</p><p>${goTo("m11,56,ugs", "模組 11（尿生殖竇）")}</p>` },
+  mem: { name: (st) => (st.t < 49 ? "泄殖腔膜" : "尿生殖膜、肛門膜"), en: "cloacal membrane → urogenital / anal membranes", meta: "第 7 週分成兩片・之後破開",
+    body: `<p>尿直腸隔碰到泄殖腔膜，把它分成前面的尿生殖膜、後面的肛門膜；兩片膜之後破開（Langman 15th Fig. 16.12）。</p><p>${goTo("m11,49,clm", "模組 11 泄殖腔與膀胱")}</p>` },
+  an: { name: "肛門（參照）", en: "anus", meta: "參照", body: `<p>肛門膜破開後的開口。分隔看模組 11。</p><p>${goTo("m11,56,pb", "模組 11（會陰體）")}</p>` },
+  pen: { name: (st) => (flags.hyp ? "陰莖（尿道下裂）" : "陰莖"), en: "penis", meta: "生殖結節・雄性素（DHT）",
+    body: `<p>雄性素作用下生殖結節迅速變長成陰莖，把尿道褶往前拉（Langman 15th Fig. 16.33、16.34）。</p><p>外生殖器何時分得出男女，兩書寫法不同：Langman 寫第 3 個月末尿道褶閉合（Fig. 16.33）；Moore 11th 寫第 9 週開始分化、第 12–14 週外觀可辨。</p>`,
+    trap: `109-1-73：外生殖器男性化嚴格說靠 DHT（睪固酮在外生殖器轉換），題目給分 AC。`, kg: ["109-1-醫學一-73"] },
+  spu: { name: "陰莖尿道（尿道褶閉合處）", en: "penile（spongy）urethra", meta: "兩側尿道褶閉合",
+    body: `<p>兩側尿道褶在尿道板上閉合，形成陰莖尿道；閉合從會陰往龜頭方向進行，閉合處留下陰莖縫、陰囊縫（Langman 15th Fig. 16.33）。</p>` },
+  scr: { name: "陰囊", en: "scrotum", meta: "生殖隆起",
+    body: `<p>生殖隆起往尾側移，各成陰囊的一半，中間有陰囊中隔（Langman 15th Fig. 16.33）。</p><p>睪丸要到第 7 個月以後才進陰囊：${goTo("m14,3,te", "模組 14 睪丸下降")}</p>` },
+  clt: { name: () => (GU.cah ? "陰蒂（肥大）" : "陰蒂"), en: "clitoris", meta: "生殖結節", body: `<p>女性的生殖結節只稍微變長，成為陰蒂（Langman 15th 第 16 章）。</p>` },
+  lmi: { name: "小陰唇", en: "labia minora", meta: "尿道褶", body: `<p>女性的尿道褶不閉合，成為小陰唇（Langman 15th 第 16 章）。</p>` },
+  lma: { name: () => (GU.cah ? "大陰唇（部分融合）" : "大陰唇"), en: "labia majora", meta: "生殖隆起", body: `<p>女性的生殖隆起變大成大陰唇（Langman 15th 第 16 章）。</p>` },
+  ugrF: { name: "陰道前庭", en: "vestibule", meta: "尿道溝・保持開放", body: `<p>女性的尿道溝保持開放，成為陰道前庭；尿道、陰道都開口在這裡（Langman 15th 第 16 章）。</p>` },
+  cah: { name: "先天性腎上腺增生（46,XX）", en: "congenital adrenal hyperplasia", meta: "和模組 12 共用",
+    body: `<p>46,XX：腎上腺皮質增生，製造過多雄性素 → 陰蒂肥大、陰唇部分融合，外觀像男性（Langman 15th Fig. 16.38；Moore 11th p.253, Fig. 12.40）。卵巢、子宮、輸卵管正常（看模組 12）。</p><p>模型用「男性化程度 .6」示意，實際程度因人而異。${goTo("m12,84,cah", "模組 12 性腺與生殖管")}</p>`,
+    trap: `106-1-30：女性假陰陽人（46,XX DSD）多半是 CAH → 腎上腺是增生、不是萎縮；46,XX、雄性素過多、外生殖器男性化。`, kg: ["106-1-醫學一-30"] },
+  ais: { name: "雄性素不敏感（46,XY）", en: "androgen insensitivity syndrome", meta: "和模組 12 共用",
+    body: `<p>46,XY：有睪丸，雄性素受體沒有作用 → 外生殖器是女性外觀；陰道短、盲端（Langman 15th 第 16 章；Moore 11th p.253, Fig. 12.41）。</p><p>MIS 有作用，所以沒有子宮、輸卵管（看模組 12）。${goTo("m12,84,ais", "模組 12 性腺與生殖管")}</p>` },
+  hyp: { name: "尿道下裂（開口）", en: "hypospadias", meta: "46,XY・尿道褶沒閉合完",
+    body: `<p>兩側尿道褶沒有閉合完，尿道開口在陰莖腹側（下面），可以在龜頭附近、陰莖幹、或陰莖根部（Langman 15th Fig. 16.37；Moore 11th p.254）。</p><p>模型畫閉合只到一半，開口在陰莖幹。</p>` },
+};
+for (const s in STRUCT) { STRUCT[s].name = fn(STRUCT[s].name); STRUCT[s].body = fn(STRUCT[s].body); }
+
+const ORDER = ["clf", "gt", "uf", "af", "gs", "ugr", "mem", "an", "pen", "spu", "scr", "clt", "lmi", "lma", "ugrF", "hyp", "cah", "ais"];
+
+const M = {
+  id: "m13", name: "外生殖器", title: "外生殖器（未分化 → 男／女）", sub: "第 4–14 週：泄殖腔褶 → 生殖結節、尿道褶、肛門褶、生殖隆起；第 6 週末仍分不出男女，之後 DHT 決定男性化。圖例可切換性染色體（和模組 12 共用）。",
+  range: [28, END], speed: 2, evLbl: "時間軸（Langman 為主，Moore 並列）",
+  legendLbl: "構造（點一下看說明）・性染色體",
+  layers: {
+    get xy() { return GU.xy; },
+    set xy(v) { GU.xy = !!v; if (v) GU.cah = false; else { GU.ais = false; flags.hyp = false; } },
+  },
+  flags, exclusive: true, togLbl: "先天異常（一次開一個，數字鍵 1–3）",
+  toggles: Object.keys(flags).map((id, i) => ({ id, label: FLAG_N[id], title: `${FLAG_N[id]}（${i + 1}）`, key: String(i + 1) })),
+  secModes: [
+    { id: "per", label: "會陰", title: "會陰示意（從尾側看）", fixed: true, hint: "從腳往頭看會陰：畫面上＝腹側、畫面右＝病人左" },
+    { id: "side", label: "左側", title: "左側示意（投影）", fixed: true, hint: "從病人左側看：畫面左＝腹側" },
+  ],
+  secMode: "per", secTitle: "會陰示意", secEnds: ["", ""], cutRange: [0, 1, .01],
+  beforeMsg: (d) => `第 ${Math.floor(d)} 天還沒有生殖結節，跳到第 28 天`,
+  afterMsg: (d) => `第 ${Math.floor(d)} 天外生殖器已可辨，睪丸下降看模組 14；跳到第 98 天`,
+  note: "示意立體圖：會陰部從尾側看，生殖結節（洋紅）、尿道褶（橘）、生殖隆起（藍灰）。圖例「性染色體」切換 46,XY／46,XX，和模組 12 共用。大小、角度是示意；外觀可辨的時間兩書不同（Langman 第 3 個月末、Moore 第 12–14 週），模型分化進度畫在第 9–13 週。開關一次只開一個，打開時跳到第 98 天。來源：Langman 15th 為主、Moore 11th 補充。",
+  struct: STRUCT, group: new THREE.Group(), autoFit: true, cuts: { per: .5, side: .5 },
+  get legend() {
+    const L = ORDER.filter((id) => PRESENT.has(id)).map((id) => ({ id, name: STRUCT[id].name({ t: state.day }), css: CSS.get(id) }));
+    L.push({ id: "xy", name: `性染色體：${GU.xy ? "46,XY" : "46,XX"}（點一下換）`, css: "--c-gon", toggle: true });
+    return L;
+  },
+};
+Object.defineProperty(M, "cut", { get: () => .5, set: () => {}, enumerable: true });
+M.legendClick = (l) => { if (l.toggle) M.layers[l.id] = !M.layers[l.id]; else select(l.id); };
+M.legendPressed = (l) => undefined;
+scene.add(M.group);
+const LIB = M6.mkLib(M);
+
+/* ---------- 幾何：+x＝病人左、+y 頭、+z 腹；會陰面在 y≈−2，Q(x,u,h)：u 往腹側、h 往外（尾側）突出 ---------- */
+const Q = (x, u, h = 0) => v3(x, -2 - h, u);
+function geom(t) {
+  const out = [], mx = mxOf(), dv = dvOf(t), XYm = GU.xy && !GU.ais;
+  const tube = (s, c, pts, r, x = {}) => { if (r > .004 && pts.length > 1) out.push({ s, c, pts, r, ...x }); };
+  const ell = (s, c, p, r, x = {}) => { if (Math.min(...r) > .004) out.push({ s, c, kind: "ell", p, r, ...x }); };
+  const sph = (s, c, p, R, x = {}) => { if (R > .004) out.push({ s, c, kind: "sph", p, R, ...x }); };
+  const diff = dv > .35, mdv = mx * dv;
+  // 參照：軀幹下端外形（不能點）
+  out.push({ s: "", c: "--c-ref", kind: "ell", p: v3(0, -1.2, .1), r: [1.25, .85, 1.15], mk: "dim" });
+  // 膜：泄殖腔膜 → 尿生殖膜＋肛門膜 → 破開
+  const rup = sm(50, 57, t);
+  if (t < 49) ell("mem", "--c-hole", Q(0, .05, -.01), [.08, .015, .62]);
+  else if (rup < .95) { ell("mem", "--c-hole", Q(0, .32, -.01), [.06 * (1 - rup), .015, .3]); ell("mem", "--c-hole", Q(0, -.6, -.01), [.07, .015, .07].map((r) => r * (1 - rup))); }
+  // 肛門
+  if (t >= 49) sph("an", "--c-hg", Q(0, -.6, -.02), .09 * Math.max(rup, .5), { mk: "soft" });
+  // 生殖結節 → 陰莖／陰蒂
+  const Gb = Q(0, .78, 0), d = v3(0, -.72, .7).normalize(), nUnder = v3(0, -.7, -.72).normalize();
+  const L = .22 + .16 * sm(28, 45, t) + .85 * mdv + .08 * (1 - mx) * dv, R = .12 + .03 * mdv;
+  const T = Gb.clone().addScaledVector(d, L);
+  const gid = !diff ? "gt" : XYm ? "pen" : "clt";
+  tube(gid, "--c-gt", [Gb.clone().addScaledVector(d, -.05), T], R, { mk: "g" });
+  sph(gid, "--c-gt", T, R * (1.25 + .1 * mdv), { mk: "g" });
+  // 泄殖腔褶（第 6 週前）
+  if (t < 42) {
+    const k = sm(28, 35, t);
+    for (const σ of [1, -1]) tube("clf", "--c-uf", [Gb.clone().add(v3(σ * .05, 0, 0)), Q(σ * .2, .4), Q(σ * .24, -.2), Q(σ * .16, -.72), Q(0, -.82)], .06 * Math.max(k, .4));
+  } else {
+    // 肛門褶
+    for (const σ of [1, -1]) tube("af", "--c-uf", [Q(σ * .06, -.42), Q(σ * .17, -.6), Q(σ * .06, -.78)], .045);
+    // 尿道褶：會陰 → 陰莖腹側；閉合從會陰往龜頭
+    const F = [Q(0, -.05), Gb.clone().addScaledVector(nUnder, R * .85), Gb.clone().addScaledVector(d, L * .82).addScaledVector(nUnder, R * .85)];
+    const full = XYm ? 1 : GU.cah ? .45 : 0, c = sm(70, 91, t) * full * (flags.hyp ? .55 : 1);
+    if (c > .02) tube("spu", "--c-uf", guUpto(F, 0, c), .07);
+    const op = guUpto(F, c, 1), w = .12 + .03 * sm(42, 56, t);
+    const fid = diff && !XYm && !GU.cah ? "lmi" : "uf";
+    for (const σ of [1, -1]) tube(fid, "--c-uf", op.map((p, i) => p.clone().add(v3(σ * w * (i === 0 && c > .02 ? .4 : 1), 0, 0))), .06);
+    tube(diff && !XYm && !GU.cah ? "ugrF" : "ugr", "--c-ugs", op.map((p) => p.clone().add(v3(0, .02, 0))), .035, { mk: "soft" });
+    if (flags.hyp && t >= 70) sph("hyp", "--c-hole", guAlong(F, c), .085);
+    // 生殖隆起 → 陰囊／大陰唇
+    const g = sm(38, 50, t), fuse = Math.min(1, mdv * 1.1);
+    const gidS = !diff ? "gs" : XYm ? "scr" : "lma";
+    for (const σ of [1, -1]) ell(gidS, "--c-gs", Q(σ * lerp(.48, .17, fuse), lerp(.3, .12, fuse), .06 + .12 * fuse), [.15 + .08 * fuse, .1 + .14 * fuse, .38 - .06 * fuse].map((r) => r * Math.max(g, .25)), { mk: "soft" });
+  }
+  return { seg: out };
+}
+
+/* ---------- 每次更新 ---------- */
+let GEO = null, SEG = [], PRESENT = new Set(), CSS = new Map(), prevF = null;
+M.update = function () {
+  const on = Object.keys(flags).find((k) => flags[k] && prevF && !prevF[k]);
+  if (on === "hyp" && !GU.xy) { GU.xy = true; GU.cah = false; }
+  if (flags.hyp && (!GU.xy || GU.ais)) flags.hyp = false;
+  GEO = geom(state.day); SEG = GEO.seg;
+  PRESENT = new Set(); CSS = new Map();
+  for (const sg of SEG) if (sg.s) { PRESENT.add(sg.s); if (!CSS.has(sg.s)) CSS.set(sg.s, sg.c); }
+  LIB.build(SEG, false, 0, false, [0, 1, 1]);
+  if (mod === M) renderLegend();
+  if (on && flags[on] && (on === "hyp" || GU.who === M.id)) setTimeout(() => { if (mod !== M) return; if (state.day < END - .1) setDay(END); select(on); });
+  prevF = { ...flags };
+};
+const NEED = { clf: 30, gt: 42, uf: 50, af: 50, gs: 50, ugr: 60, mem: 42, an: 56, pen: 98, spu: 98, scr: 98, clt: 98, lmi: 98, lma: 98, ugrF: 98, hyp: 98 };
+M.reveal = (s) => {
+  if (!s) return false;
+  if (s in flags) { if (!flags[s]) for (const k in flags) flags[k] = k === s; if (s === "hyp") { GU.xy = true; GU.cah = false; GU.ais = false; flags.hyp = true; } prevF = { ...flags }; if (state.day < END - .1) state.day = END; return true; }
+  if (GU_XX.includes(s) && GU.xy) M.layers.xy = false;
+  if (GU_XY.includes(s) && (!GU.xy || GU.ais)) { M.layers.xy = true; GU.ais = false; }
+  if (!geom(state.day).seg.some((x) => x.s === s)) state.day = NEED[s] ?? END;
+  return true;
+};
+
+const short = (s) => (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
+M.tagAnchors = function () {
+  const A = [];
+  for (const s of ["clf", "gt", "pen", "clt", "uf", "lmi", "gs", "scr", "lma", "ugr", "ugrF", "spu", "an", "hyp"]) { const p = LIB.anchor(SEG, s); if (p) A.push([short(s), p, s]); }
+  return A;
+};
+M.tagShown = () => true;
+
+/* ---------- 2D：會陰（從尾側看，畫面上＝腹側）／左側 ---------- */
+const per = (p) => v3(p.x, p.z, -p.y), side = (p) => v3(-p.z, p.y, p.x);
+function proj(sg, f, ell) {
+  if (sg.kind === "ell") return { ...sg, p: f(sg.p), r: ell(sg.r) };
+  if (sg.kind === "sph") return { ...sg, p: f(sg.p) };
+  return { ...sg, cv: undefined, pts: sg.pts.map(f) };
+}
+const LAB2 = (s) => s === state.sel || s !== "an";
+M.drawSection = function (ctx, W, H, dpr) {
+  if (!GEO) M.update();
+  const sd = M.secMode === "side";
+  const S2 = SEG.filter((sg) => sg.s && (!sd || (sg.kind ? sg.p.x : sg.pts[0].x) >= -.05)).map((sg) => (sd ? proj(sg, side, (r) => [r[2], r[1], r[0]]) : proj(sg, per, (r) => [r[0], r[2], r[1]])));
+  const [X0, X1, Y0, Y1] = sd ? [-2.0, 1.0, -3.2, -1.5] : [-1.0, 1.0, -1.0, 1.9];
+  const pad = W * .03, top = H * .07, sc = Math.min((W - 2 * pad) / (X1 - X0), (H - 2 * top) / (Y1 - Y0));
+  const ox = W / 2 - (X0 + X1) / 2 * sc, oy = H / 2 + (Y0 + Y1) / 2 * sc, P = ([x, y]) => [ox + x * sc, oy - y * sc];
+  const items = LIB.frontSec(S2), hits = LIB.draw(ctx, items, P, dpr);
+  drawLeaders(ctx, LIB.labels(items, true, short, LAB2).map(([txt, p, s2, s]) => [txt, P(p), s2, s]), W, H, dpr, { bottom: H - 22 * dpr });
+  const sx = GU.xy ? "46,XY" : "46,XX";
+  if (sd) { dirText(ctx, W, H, dpr, "頭側", "尾側（從左側看，畫面左＝腹側）"); return { hits, where: `第 ${Math.floor(state.day)} 天・${sx}・左側投影` }; }
+  dirText(ctx, W, H, dpr, "腹側", "背側（從腳往頭看，畫面右＝病人左）");
+  return { hits, where: `第 ${Math.floor(state.day)} 天・${sx}・會陰` };
+};
+
+M.events = [
+  { d: 28, lbl: "第 4 週", tick: "結節", sec: "per", t: "泄殖腔褶、生殖結節", s: "第 3 週起間質細胞移到泄殖腔膜周圍成泄殖腔褶，在膜的頭側會合成生殖結節（Langman 15th Fig. 16.32A）。" },
+  { d: 42, lbl: "第 6 週", tick: "6 週", sec: "per", t: "尿道褶、肛門褶、生殖隆起", s: "泄殖腔褶分成前面的尿道褶、後面的肛門褶；兩側出現生殖隆起（Langman 15th Fig. 16.32B）。第 6 週末仍分不出男女（Fig. 16.32C）。" },
+  { d: 52, lbl: "第 7–8 週", tick: "膜破", sec: "per", t: "膜破開", s: "尿直腸隔把泄殖腔膜分成尿生殖膜、肛門膜，之後兩片膜破開（Langman 15th Fig. 16.12）。看模組 11。" },
+  { d: 70, lbl: "第 10 週", tick: "DHT", sec: "side", t: "男：結節變長、尿道褶往前拉", s: "雄性素（DHT）→ 生殖結節變長成陰莖，尿道褶被往前拉成尿道溝的側壁（Langman 15th Fig. 16.33：第 10 週男性）。Moore 11th 寫第 9 週開始分化。" },
+  { d: 84, lbl: "第 12 週", tick: "閉合", sec: "per", t: "男：尿道褶閉合", s: "Langman 15th 寫第 3 個月末兩側尿道褶閉合成陰莖尿道（Fig. 16.33）。女：尿道褶不閉合 → 小陰唇，尿道溝 → 陰道前庭（第 16 章）。" },
+  { d: 98, lbl: "第 14 週", tick: "可辨", sec: "per", t: "外觀可辨", s: "Moore 11th 寫第 12–14 週男女外觀可辨。陰囊在這時還是空的：睪丸第 7 個月以後才下降，看模組 14。" },
+];
+M.cardState = () => ({ t: state.day });
+M.dayInfo = (t) => (t < 42 ? "泄殖腔褶、生殖結節" : t < 49 ? "尿道褶、生殖隆起（未分化）" : t < 63 ? "膜破開、仍未分化" : t < 84 ? (GU.xy && !GU.ais ? "結節變長、尿道褶往前拉" : "女性外觀") : (GU.xy && !GU.ais ? "尿道褶閉合" : "女性外觀"));
+M.dayText = (t) => { const f = flagOn(); return `第 ${Math.ceil(Math.floor(t + .001) / 7)} 週・${GU.xy ? "46,XY" : "46,XX"}<small>${M.dayInfo(t)}${f ? " · " + STRUCT[f].name({ t }) : ""}</small>`; };
+M.views = [
+  { id: "per", label: "會陰", v: () => ({ p: [0, -8.2, 3.6], t: [0, -2.1, .3] }) },
+  { id: "obl", label: "左下斜", v: () => ({ p: [5, -6.5, 4.5], t: [0, -2.1, .3] }) },
+  { id: "left", label: "左側", v: () => ({ p: [8.5, -2.2, .6], t: [0, -2.2, .4] }) },
+];
+M.defaultView = "per";
+M.pick = (ray) => LIB.pick(ray, false, 0);
+return M;
+})();
+
+/* ===== 模組 14：睪丸下降（自己的狀態軸 0–3：腹腔 → 深環 → 腹股溝管 → 陰囊；只畫左側） ===== */
+const M14 = (() => {
+const V3 = THREE.Vector3;
+const fn = (v) => (typeof v === "function" ? v : () => v);
+const v3 = (x, y, z) => new V3(x, y, z);
+const ST = ["腹腔", "到深環", "通過腹股溝管", "到陰囊"];
+
+const flags = { cry: false, hyd: false };
+const FLAG_N = { cry: "隱睪", hyd: "疝氣／鞘膜積水" };
+const SUB = { cry: 1, hyd: 0 }, CRY_N = ["停在腹腔", "停在腹股溝管", "異位（示意）"], HYD_N = ["先天性腹股溝疝氣", "鞘膜積水", "精索積水"];
+const flagOn = () => Object.keys(flags).find((k) => flags[k]);
+
+const wallNote = `<p>腹壁三層各自被帶下去，成為精索與睪丸的三層被膜：腹橫筋膜 → 精索內筋膜；腹內斜肌 → 提睪肌筋膜與提睪肌；腹外斜肌 → 精索外筋膜（Langman 15th Fig. 16.40）。</p>`;
+const STRUCT = {
+  te: { name: (st) => (flags.cry ? `睪丸（${CRY_N[SUB.cry]}）` : "睪丸"), en: "testis", meta: "腹膜後・沿引帶下降",
+    body: `<p>睪丸在後腹壁的腹膜後發育，之後下降：Moore 11th 寫約第 26 週到深環、第 28 週左右通過腹股溝管（有些胎兒只要 2–3 天）、約第 32 週多數兩側都在陰囊（p.258–259, Fig. 12.47）。</p><p>Langman 15th 沒寫週數：出生時 97% 的男嬰睪丸已在陰囊，其餘多在出生後 3 個月內下降（第 16 章）。睪丸動脈從腰部的主動脈發出，所以下降後還是從那麼高的地方供血。</p>`,
+    trap: `111-1-49（生理）：引發睪丸下降、與精子生成能力相關的是雄性素；不是 activin、VEGF。`, kg: ["111-1-醫學一-49"] },
+  epi: { name: "附睪", en: "epididymis", meta: "中腎管・跟著睪丸下降", body: `<p>中腎管頭段形成，貼在睪丸後外側一起下降（Langman 15th Fig. 16.26）。${goTo("m12,84,epi", "模組 12 性腺與生殖管")}</p>` },
+  vd: { name: "輸精管", en: "ductus deferens", meta: "睪丸下降時被拉長、繞過",
+    body: `<p>中腎管形成（${goTo("m12,84,vd", "模組 12")}）。睪丸下降時被一起拉下來：從陰囊往上經腹股溝管、深環，再往內下到膀胱後面。</p>`,
+    trap: `107-2-26（解剖）：精索內有輸精管、提睪肌動脈、鞘突遺跡；髂腹下神經不在精索內。`, kg: ["107-2-醫學一-26"] },
+  gub: { name: "引帶", en: "gubernaculum", meta: "睪丸下極 → 生殖隆起（陰囊）",
+    body: `<p>從睪丸（性腺）下極經過腹壁連到生殖隆起的間質索；睪丸沿著它下降（Langman 15th Fig. 16.39）。</p><p><b>女</b>：引帶上段 → 卵巢固有韌帶，下段 → 子宮圓韌帶，經腹股溝管到大陰唇（Langman 15th 第 16 章）。</p>`,
+    trap: `110-1-28：女性的引帶 → 子宮圓韌帶（和卵巢固有韌帶）；卵巢懸韌帶、主韌帶、內側臍韌帶都不是。`, kg: ["110-1-醫學一-28"] },
+  pv: { name: (st) => (st.t > 2.8 && !flags.hyd ? "鞘突（上段閉鎖）" : "鞘突"), en: "processus vaginalis", meta: "腹膜往陰囊凸出的袋",
+    body: `<p>腹膜沿著引帶往生殖隆起凸出的袋子，帶著腹壁各層形成腹股溝管（Langman 15th Fig. 16.39）。</p><p>上段（腹腔到睪丸上方）在出生後第一年內閉鎖；包住睪丸的下段留下來成為鞘膜（Langman 15th Fig. 16.39D；第 16 章）。女性也有鞘突（Nuck 管），通常也會閉鎖。</p>`,
+    trap: `108-2-26（解剖）：深環是腹橫筋膜上的開口（對）；鞘突男女都有；女性經腹股溝管的是子宮圓韌帶，不是卵巢韌帶；管內的疝氣是間接型。`, kg: ["108-2-醫學一-26", "107-2-醫學一-26"] },
+  tv: { name: "鞘膜", en: "tunica vaginalis", meta: "鞘突下段・包住睪丸", body: `<p>鞘突沒有閉鎖的下段，包在睪丸前面和兩側（Langman 15th Fig. 16.39D）。</p>` },
+  dr: { name: "深環", en: "deep inguinal ring", meta: "腹橫筋膜上的開口", body: `<p>腹股溝管的內口，在腹橫筋膜上。Moore 11th 寫睪丸約第 26 週到這裡（p.258）。</p>${wallNote}` },
+  sr: { name: "淺環", en: "superficial inguinal ring", meta: "腹外斜肌腱膜上的開口", body: `<p>腹股溝管的外口，在腹外斜肌腱膜上。</p>${wallNote}` },
+  tf: { name: "腹橫筋膜", en: "transversalis fascia", meta: "→ 精索內筋膜", body: wallNote },
+  io: { name: "腹內斜肌", en: "internal oblique", meta: "→ 提睪肌", body: wallNote },
+  eo: { name: "腹外斜肌", en: "external oblique", meta: "→ 精索外筋膜", body: wallNote },
+  ism: { name: "精索內筋膜", en: "internal spermatic fascia", meta: "來自腹橫筋膜", body: wallNote },
+  crem: { name: "提睪肌（與筋膜）", en: "cremaster muscle and fascia", meta: "來自腹內斜肌", body: wallNote },
+  esf: { name: "精索外筋膜", en: "external spermatic fascia", meta: "來自腹外斜肌", body: wallNote },
+  scr: { name: "陰囊（參照）", en: "scrotum", meta: "生殖隆起", body: `<p>生殖隆起形成（${goTo("m13,98,scr", "模組 13 外生殖器")}）。</p>` },
+  ta: { name: "睪丸動脈", en: "testicular artery", meta: "從腰部的主動脈發出", body: `<p>睪丸在腰部發育，動脈從那裡的主動脈發出；睪丸下降時血管被拉長，跟著輸精管一起經腹股溝管。</p><p>${goTo("m4,56,gonv", "模組 4 靜脈（性腺靜脈）")}</p>` },
+  ao: { name: "主動脈（參照）", en: "aorta", meta: "參照", body: `<p>位置參照。</p>` },
+  kid: { name: "腎（參照）", en: "kidney", meta: "參照", body: `<p>位置參照。${goTo("m10,70,mmb", "模組 10 腎")}</p>` },
+  bl: { name: "膀胱（參照）", en: "urinary bladder", meta: "參照", body: `<p>位置參照。${goTo("m11,56,bl", "模組 11 泄殖腔與膀胱")}</p>` },
+  per: { name: "腹膜（參照）", en: "parietal peritoneum", meta: "前腹壁內面", body: `<p>前腹壁內面的壁層腹膜；鞘突就是它往外凸出的袋。</p>` },
+  cry: { name: () => `隱睪：${CRY_N[SUB.cry]}`, en: "cryptorchidism", meta: "圖例「類型」切換三種",
+    body: () => `<p>睪丸沒有下降到陰囊，停在腹腔或腹股溝管（Moore 11th p.259；Langman 15th 第 16 章）。${["", "", "<b>異位</b>：睪丸偏離正常路徑，模型的位置只是示意。"][SUB.cry]}</p><p>點圖例「類型」換下一種。</p>`,
+    trap: `109-2-97（病理）：未下降的睪丸最常停在腹股溝管，不是腹腔。題目把腹腔期寫成 MIS 控制、腹股溝陰囊期寫成雄性素控制，當作正確敘述；未治療的隱睪較易發生睪丸癌。`, kg: ["109-2-醫學二-97"] },
+  hyd: { name: () => HYD_N[SUB.hyd], en: "inguinal hernia / hydrocele", meta: "鞘突沒有閉好",
+    body: () => [
+      `<p><b>先天性腹股溝疝氣</b>：鞘突整條沒閉鎖、保持寬的通道，腸管可以掉進腹股溝管甚至陰囊（Langman 15th Fig. 16.41A）。</p>`,
+      `<p><b>鞘膜積水</b>：鞘突上段閉鎖不全、只留細通道，腹腔液體流到鞘膜腔，睪丸周圍積水（Langman 15th Fig. 16.41）。</p>`,
+      `<p><b>精索積水</b>：鞘突上下都閉了，中間一段沒閉，在精索上形成積水的囊（Langman 15th Fig. 16.41）。</p>`][SUB.hyd] + `<p>點圖例「類型」換下一種。</p>`,
+    trap: `109-1-34：精索積水是鞘突閉鎖不全；白膜、尿生殖竇、尿生殖褶都無關。`, kg: ["109-1-醫學一-34"] },
+};
+for (const s in STRUCT) { STRUCT[s].name = fn(STRUCT[s].name); STRUCT[s].body = fn(STRUCT[s].body); }
+
+const LAYER_OF = {};
+for (const [ly, ids] of Object.entries({ wallL: "tf io eo dr sr per", artL: "ta ao", refL: "kid bl" })) for (const s of ids.split(" ")) LAYER_OF[s] = ly;
+const LAYER_N = { wallL: ["腹壁三層、深環、淺環", "--c-pap"], artL: ["睪丸動脈、主動脈", "--c-ao"], refL: ["腎、膀胱", "--c-ref"] };
+const ORDER = ["te", "epi", "vd", "gub", "pv", "tv", "dr", "sr", "tf", "io", "eo", "ism", "crem", "esf", "scr", "ta", "ao", "kid", "bl", "per", "cry", "hyd"];
+const HOME = { te: 0, epi: 3, vd: 3, gub: 1, pv: 2, tv: 3, dr: 1, sr: 2, tf: 1, io: 1, eo: 1, ism: 3, crem: 3, esf: 3, scr: 3, ta: 3, ao: 0, kid: 0, bl: 3, per: 1 };
+
+const M = {
+  id: "m14", name: "睪丸下降", title: "睪丸下降與腹股溝管", sub: "睪丸沿引帶從腹膜後下降，鞘突帶著腹壁三層形成腹股溝管與精索被膜。滑桿是 4 個狀態（腹腔、深環、腹股溝管、陰囊），不是天數。只畫左側。",
+  range: [0, 3], speed: .4, ownAxis: true, axisLbl: "狀態", evLbl: "狀態（Moore 11th 週數；Langman 沒寫週數）",
+  legendLbl: "構造（點一下看說明）・圖層",
+  layers: { wallL: true, artL: true, refL: true },
+  flags, exclusive: true, togLbl: "先天異常（一次開一個，數字鍵 1–2）",
+  toggles: Object.keys(flags).map((id, i) => ({ id, label: FLAG_N[id], title: `${FLAG_N[id]}（${i + 1}）`, key: String(i + 1) })),
+  secModes: [{ id: "side", label: "左側", title: "左側示意（投影）", fixed: true, hint: "從病人左側看的投影：畫面左＝腹側" }],
+  secMode: "side", secTitle: "左側示意", secEnds: ["", ""], cutRange: [0, 1, .01],
+  note: "示意立體圖：左半邊的腹壁與陰囊，睪丸（紫）、附睪與輸精管（藍）、引帶（褐）、鞘突（灰）。腹壁三層和它們帶下去的被膜同色。滑桿是 4 個狀態；週數照 Moore 11th，Langman 15th 沒寫週數。位置、大小是示意。「3D 切開」拿掉腹壁三層與被膜，看得到裡面。開關打開時跳到狀態 3。",
+  struct: STRUCT, group: new THREE.Group(), autoFit: true, cuts: { side: .5 },
+  get legend() {
+    const L = ORDER.filter((id) => PRESENT.has(id)).map((id) => ({ id, name: STRUCT[id].name({ t: state.day }), css: CSS.get(id) }));
+    if (flags.cry) L.push({ id: "crySub", name: `類型：${CRY_N[SUB.cry]}（點一下換）`, css: "--c-hole", toggle: true });
+    if (flags.hyd) L.push({ id: "hydSub", name: `類型：${HYD_N[SUB.hyd]}（點一下換）`, css: "--c-hole", toggle: true });
+    for (const [id, [name, css]] of Object.entries(LAYER_N)) L.push({ id, name, css, toggle: true });
+    return L;
+  },
+};
+Object.defineProperty(M, "cut", { get: () => .5, set: () => {}, enumerable: true });
+M.legendClick = (l) => {
+  if (l.id === "crySub") { SUB.cry = (SUB.cry + 1) % 3; return; }
+  if (l.id === "hydSub") { SUB.hyd = (SUB.hyd + 1) % 3; return; }
+  if (l.toggle) M.layers[l.id] = !M.layers[l.id]; else select(l.id);
+};
+M.legendPressed = (l) => (l.id.endsWith("Sub") ? undefined : l.toggle ? M.layers[l.id] : undefined);
+scene.add(M.group);
+const LIB = M6.mkLib(M);
+
+/* ---------- 幾何：+x＝病人左、+y 頭、+z 腹；只畫左側 ---------- */
+const P0 = v3(.45, .25, -.35), DR = v3(.62, -.95, .7), MC = v3(.5, -1.15, .86), SR = v3(.36, -1.36, .98), S3 = v3(.3, -2.3, .92), EC = v3(.78, -1.55, 1.12);
+const BLp = v3(.1, -1.45, .05);
+function tePos(s) {
+  if (s <= 1) return P0.clone().lerp(DR, s);
+  if (s <= 2) return DR.clone().lerp(MC, s - 1);
+  return guAlong([MC, SR, S3], s - 2);
+}
+function geom(t) {
+  const out = [], LY = M.layers, FL = flags, cut = state.cut3d;
+  const tube = (s, c, pts, r, x = {}) => { if (r > .004 && pts.length > 1) out.push({ s, c, pts, r, ...x }); };
+  const ell = (s, c, p, r, x = {}) => { if (Math.min(...r) > .004) out.push({ s, c, kind: "ell", p, r, ...x }); };
+  const sph = (s, c, p, R, x = {}) => { if (R > .004) out.push({ s, c, kind: "sph", p, R, ...x }); };
+  // 睪丸實際停的位置
+  let s = t;
+  if (FL.cry && SUB.cry === 0) s = Math.min(t, .7);
+  if (FL.cry && SUB.cry === 1) s = Math.min(t, 1.8);
+  let T = tePos(s);
+  const ect = FL.cry && SUB.cry === 2 ? sm(2.2, 3, t) : 0;
+  if (ect) T = tePos(Math.min(t, 2.2)).lerp(EC, ect);
+  // 軀幹外形（不能點）
+  out.push({ s: "", c: "--c-ref", kind: "ell", p: v3(0, -.2, .1), r: [1.15, 1.8, .95], mk: "dim" });
+  // 參照
+  if (LY.refL) { ell("kid", "--c-mmb", v3(.42, .75, -.5), [.2, .38, .17], { ref: true }); ell("bl", "--c-ref", v3(.08, -1.35, .3), [.28, .25, .25], { ref: true }); }
+  if (LY.artL) { tube("ao", "--c-ao", [v3(0, 1.6, -.6), v3(0, -.9, -.55)], .1, { ref: true }); tube("ta", "--c-ao", [v3(.05, .45, -.55), v3(.3, .2, -.45), ...(s > 1 ? [DR.clone().add(v3(-.04, .05, -.06))] : []), ...(s > 2.1 ? [MC, SR] : []), T.clone().add(v3(0, .2, -.06))], .035); }
+  // 腹壁三層（3D 切開時拿掉）
+  if (LY.wallL && !cut) {
+    ell("per", "--c-ref", v3(.55, -.6, .64), [.55, .85, .015], { mk: "faint" });
+    ell("tf", "--c-endoc", v3(.55, -.7, .72), [.55, .8, .02], { mk: "faint" });
+    ell("io", "--c-pap", v3(.52, -.75, .82), [.55, .75, .03], { mk: "faint" });
+    ell("eo", "--c-peri", v3(.5, -.8, .93), [.55, .75, .02], { mk: "faint" });
+  }
+  if (LY.wallL) { sph("dr", "--c-hole", DR, .07); sph("sr", "--c-hole", SR, .07); }
+  // 陰囊（生殖隆起）
+  ell("scr", "--c-gs", v3(.3, -2.3, .92), [.32, .36, .3], { mk: "faint" });
+  // 鞘突：沿引帶往陰囊凸出；狀態 3 後上段閉鎖、下段成鞘膜
+  const pvG = sm(.3, 1.2, t), obl = FL.hyd ? 0 : sm(2.6, 3, t), PV = [DR, MC, SR, S3.clone().add(v3(0, .12, 0))];
+  const hy = FL.hyd ? SUB.hyd : -1;
+  if (pvG > .02) {
+    if (hy === 0) tube("pv", "--c-ref", PV, .17, { mk: "soft" });
+    else if (obl > .1 || hy > 0) {
+      tube("pv", "--c-ref", guUpto(PV, 0, .78), .04, { ghost: true });
+      if (hy === 1) tube("pv", "--c-ref", guUpto(PV, 0, .78), .03, { mk: "soft" });
+    } else tube("pv", "--c-ref", guUpto(PV, 0, pvG), .1, { mk: "soft" });
+  }
+  if (t > 2.5 && !(FL.cry && SUB.cry < 2) && !ect) ell("tv", "--c-ref", T.clone().add(v3(0, 0, .03)), [.19, .27, .19].map((r) => r * (hy === 1 ? 1.7 : 1)), { mk: "faint" });
+  // 疝氣、積水的標記
+  if (hy === 0 && t > 2) for (let k = 0; k < 3; k++) sph("hyd", "--c-gut", guAlong(PV, .35 + k * .17), .12);
+  if (hy === 1 && t > 2.5) ell("hyd", "--c-hole", T.clone().add(v3(0, .02, .1)), [.3, .4, .28], { mk: "faint" });
+  if (hy === 2 && t > 2.5) ell("hyd", "--c-hole", guAlong(PV, .55), [.14, .2, .14]);
+  // 睪丸、附睪
+  ell("te", "--c-gon", T, [.13, .2, .13], { mk: "g" });
+  if (FL.cry) ell("cry", "--c-hole", T, [.17, .25, .17], { mk: "faint" });
+  const EL = T.clone().add(v3(.07, -.2, -.08));
+  tube("epi", "--c-wd", [T.clone().add(v3(.1, .17, -.06)), T.clone().add(v3(.15, 0, -.1)), EL], .045);
+  // 輸精管：從附睪往回經過的路徑到膀胱後面
+  const back = [EL];
+  if (s > 2.4 && !ect) back.push(SR);
+  if (s > 2 && !ect) back.push(MC);
+  if (ect) back.push(SR, MC);
+  if (s > 1) back.push(DR, v3(.32, -1.12, .4)); else back.push(v3(.38, -.75, -.1));
+  back.push(BLp);
+  tube("vd", "--c-wd", back, .035);
+  // 引帶：睪丸下極 → 陰囊底
+  const fwd = [T.clone().add(v3(0, -.2, 0))];
+  if (!ect) { if (s < 1) fwd.push(DR); if (s < 2) fwd.push(MC); if (s < 2.5) fwd.push(SR); }
+  fwd.push(S3.clone().add(v3(0, -.3, 0)));
+  tube("gub", "--c-gub", fwd, s > 2.6 ? .04 : .075, { mk: "soft" });
+  // 精索與睪丸的三層被膜（通過以後）
+  const cov = sm(1.9, 2.8, t);
+  if (cov > .05 && LY.wallL && !cut && !(FL.cry && SUB.cry < 2) && !ect) {
+    const C = [["ism", "--c-endoc", [DR, MC, SR], .13, 1.45], ["crem", "--c-pap", [MC, SR], .15, 1.6], ["esf", "--c-peri", [SR], .17, 1.75]];
+    for (const [id, c, pts, r, k] of C) { tube(id, c, [...pts, T.clone().add(v3(0, .15, 0))], r * cov, { mk: "faint" }); ell(id, c, T, [.13 * k, .2 * k, .13 * k].map((x) => x * Math.max(cov, .4)), { mk: "faint" }); }
+  }
+  return { seg: out };
+}
+
+/* ---------- 每次更新 ---------- */
+const cx = (sg) => (sg.kind ? sg.p.x : sg.pts.reduce((m, p) => m + p.x, 0) / sg.pts.length);
+let SEG = [], PRESENT = new Set(), CSS = new Map(), prevF = null;
+M.update = function () {
+  SEG = geom(state.day).seg; PRESENT = new Set(); CSS = new Map();
+  for (const sg of SEG) if (sg.s) { PRESENT.add(sg.s); if (!CSS.has(sg.s)) CSS.set(sg.s, sg.c); }
+  LIB.build(SEG, false, 0, false, [0, 1, 1]);
+  if (mod === M) renderLegend();
+  const on = Object.keys(flags).find((k) => flags[k] && prevF && !prevF[k]);
+  if (on) setTimeout(() => { if (mod !== M) return; if (state.day < 2.95) setDay(3); select(on); });
+  prevF = { ...flags };
+};
+M.reveal = (s) => {
+  if (!s || !STRUCT[s]) return false;
+  if (s in flags) { if (!flags[s]) for (const k in flags) flags[k] = k === s; prevF = { ...flags }; state.day = 3; return true; }
+  if (LAYER_OF[s]) M.layers[LAYER_OF[s]] = true;
+  if (["tf", "io", "eo", "per", "ism", "crem", "esf"].includes(s) && state.cut3d) state.cut3d = false;
+  if (!geom(state.day).seg.some((x) => x.s === s && !x.ghost)) state.day = HOME[s] ?? 3;
+  return true;
+};
+const short = (s) => (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
+M.tagAnchors = function () {
+  const A = [], f = flagOn();
+  for (const s of ["te", "gub", "pv", "vd", "ta", ...(f ? [f] : [])]) { const p = LIB.anchor(SEG, s); if (p) A.push([short(s), p, s]); }
+  return A;
+};
+M.tagShown = () => true;
+
+/* ---------- 2D：左側投影（畫面左＝腹側） ---------- */
+const side = (p) => v3(-p.z, p.y, p.x);
+function toSide(sg) {
+  if (sg.kind === "ell") return { ...sg, p: side(sg.p), r: [sg.r[2], sg.r[1], sg.r[0]] };
+  if (sg.kind === "sph") return { ...sg, p: side(sg.p) };
+  return { ...sg, cv: undefined, pts: sg.pts.map(side) };
+}
+const LAB2 = (s) => s === state.sel || !["ao", "kid", "per", "tf", "io", "eo"].includes(s);
+M.drawSection = function (ctx, W, H, dpr) {
+  if (!SEG.length) M.update();
+  const S2 = SEG.filter((sg) => sg.s && cx(sg) >= -.05).map(toSide);
+  const [X0, X1, Y0, Y1] = [-1.5, 1.0, -2.8, 1.3];
+  const pad = W * .03, top = H * .05, sc = Math.min((W - 2 * pad) / (X1 - X0), (H - 2 * top) / (Y1 - Y0));
+  const ox = W / 2 - (X0 + X1) / 2 * sc, oy = H / 2 + (Y0 + Y1) / 2 * sc, P = ([x, y]) => [ox + x * sc, oy - y * sc];
+  const items = LIB.frontSec(S2), hits = LIB.draw(ctx, items, P, dpr);
+  drawLeaders(ctx, LIB.labels(items, true, short, LAB2).map(([txt, p, s2, s]) => [txt, P(p), s2, s]), W, H, dpr, { bottom: H - 22 * dpr });
+  dirText(ctx, W, H, dpr, "頭側", "尾側（從左側看，畫面左＝腹側）");
+  const r = Math.round(state.day);
+  return { hits, where: ST[r] };
+};
+
+M.events = [
+  { d: 0, lbl: "腹腔", tick: "腹腔", sec: "side", t: "腹膜後的睪丸", s: "睪丸在後腹壁的腹膜後；引帶從下極連到生殖隆起（Langman 15th Fig. 16.39）。鞘突沿引帶往外凸。" },
+  { d: 1, lbl: "深環", tick: "26 週", sec: "side", t: "到深環", s: "Moore 11th 寫約第 26 週睪丸到深腹股溝環（p.258）。" },
+  { d: 2, lbl: "腹股溝管", tick: "28 週", sec: "side", t: "通過腹股溝管", s: "Moore 11th Fig. 12.47 畫第 28 週正在過管；有些胎兒只要 2–3 天（p.258）。腹壁三層被帶下去成為被膜（Langman 15th Fig. 16.40）。" },
+  { d: 3, lbl: "陰囊", tick: "32 週", sec: "side", t: "到陰囊", s: "Moore 11th 寫約第 32 週多數兩側都在陰囊（p.259）。Langman 15th：出生時 97% 已下降，其餘多在 3 個月內；鞘突上段在第一年內閉鎖，下段成鞘膜（Fig. 16.39D）。" },
+];
+M.cardState = () => ({ t: state.day });
+M.dayInfo = (t) => ["腹膜後", "Moore：約 26 週", "Moore：約 28 週", "Moore：約 32 週"][Math.round(t)];
+M.dayText = (t) => { const r = Math.round(t), f = flagOn(), name = Math.abs(t - r) < .03 ? ST[r] : `${ST[Math.floor(t)]} → ${ST[Math.min(3, Math.floor(t) + 1)]}`; return `${name}<small>${M.dayInfo(t)}${f ? " · " + STRUCT[f].name({ t }) : ""}</small>`; };
+M.views = [
+  { id: "left", label: "左側", v: () => ({ p: [9, -.5, .4], t: [.3, -.6, .3] }) },
+  { id: "obl", label: "左前斜", v: () => ({ p: [6, -.3, 7], t: [.3, -.6, .3] }) },
+  { id: "front", label: "正面", v: () => ({ p: [.3, -.5, 9.5], t: [.3, -.6, .3] }) },
+];
+M.defaultView = "left";
+M.pick = (ray) => LIB.pick(ray, false, 0);
+return M;
+})();
+
+
+const MODS = [M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11, M12, M13, M14];
 let mod = MODS.find((m) => m.id === state.mod && !m.soon) || M1;
+// 上方分頁分兩層：上排器官、下排目前器官的模組（模組編號維持全域 1–14）；切器官回到該器官上次停的模組
+const ORGS = [["心臟", "m1 m2 m3 m4 m5"], ["咽弓", "m6 m7"], ["消化", "m8 m9"], ["泌尿生殖", "m10 m11 m12 m13 m14"]].map(([n, ids]) => ({ n, ids: ids.split(" ") }));
+const orgOf = (m) => ORGS.find((o) => o.ids.includes(m.id)) || ORGS[0], lastOf = {};
 
 function update() {
   heatColors(); mod.update(); applyHidden(); applyHeat(); labDirty = true; labJob = null;
@@ -4991,12 +6224,15 @@ const setLabs = (v) => { state.labs = v; $("labBtn").setAttribute("aria-pressed"
 /* ---------- 2D 切面 ---------- */
 const secCv = document.getElementById("sec"), sctx = secCv.getContext("2d");
 let secHits = [];
+const sv = { k: 1, x: 0, y: 0, key: "" }; // 2D 縮放平移（畫布像素）；換模組或 2D 方向就還原
 function drawSection() {
   const dpr = Math.min(2, devicePixelRatio || 1), cw = secCv.clientWidth || 360;
   const tw = Math.round(cw * dpr), th = Math.round(cw * 460 / 720 * dpr);
   if (secCv.width !== tw || secCv.height !== th) { secCv.width = tw; secCv.height = th; }
   const W = secCv.width, H = secCv.height;
   sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, W, H);
+  const key = mod.id + "|" + (mod.secMode || ""); if (sv.key !== key) { sv.key = key; sv.k = 1; sv.x = sv.y = 0; }
+  svClamp(); sctx.setTransform(sv.k, 0, 0, sv.k, sv.x, sv.y);
   leaderHits = [];
   const r = mod.drawSection(sctx, W, H, dpr);
   secHits = r.hits.concat(leaderHits);
@@ -5004,7 +6240,7 @@ function drawSection() {
 }
 function hitSection(ev) {
   const r = secCv.getBoundingClientRect();
-  const x = (ev.clientX - r.left) / r.width * secCv.width, y = (ev.clientY - r.top) / r.height * secCv.height;
+  const x = ((ev.clientX - r.left) / r.width * secCv.width - sv.x) / sv.k, y = ((ev.clientY - r.top) / r.height * secCv.height - sv.y) / sv.k;
   for (let i = secHits.length - 1; i >= 0; i--) {
     const [s, P] = secHits[i]; let inside = false;
     for (let a = 0, b = P.length - 1; a < P.length; b = a++) { const [xa, ya] = P[a], [xb, yb] = P[b]; if ((ya > y) !== (yb > y) && x < (xb - xa) * (y - ya) / (yb - ya) + xa) inside = !inside; }
@@ -5012,8 +6248,35 @@ function hitSection(ev) {
   }
   return null;
 }
-secCv.addEventListener("click", (e) => select(hitSection(e)));
+secCv.addEventListener("click", (e) => { if (svMoved) { svMoved = false; return; } select(hitSection(e)); });
 new ResizeObserver(() => drawSection()).observe(secCv);
+// 2D 縮放：雙指捏合（距離比 ^1.6，同 3D 調靈敏）、觸控板 ctrl+wheel、Safari gesture；放大後拖曳平移，雙擊還原
+function svClamp() { const W = secCv.width, H = secCv.height; if (sv.k <= 1.001) { sv.k = 1; sv.x = sv.y = 0; return; } sv.x = clamp(sv.x, W - W * sv.k, 0); sv.y = clamp(sv.y, H - H * sv.k, 0); }
+function svZoom(f, cx, cy) { const k = clamp(sv.k * f, 1, 6); f = k / sv.k; sv.x = cx - (cx - sv.x) * f; sv.y = cy - (cy - sv.y) * f; sv.k = k; drawSection(); }
+const svPt = (cx, cy) => { const r = secCv.getBoundingClientRect(); return [(cx - r.left) / r.width * secCv.width, (cy - r.top) / r.height * secCv.height]; };
+function svPan(dx, dy) { const r = secCv.getBoundingClientRect(), q = secCv.width / r.width; sv.x += dx * q; sv.y += dy * q; drawSection(); }
+let svMoved = false, svDrag = null, pin = null, gs2 = 1;
+secCv.addEventListener("pointerdown", (e) => { svMoved = false; if (e.pointerType === "mouse" && sv.k > 1) svDrag = { x: e.clientX, y: e.clientY, go: false }; });
+addEventListener("pointermove", (e) => {
+  if (!svDrag) return; const dx = e.clientX - svDrag.x, dy = e.clientY - svDrag.y;
+  if (!svDrag.go && Math.hypot(dx, dy) < 4) return; svDrag.go = svMoved = true; svDrag.x = e.clientX; svDrag.y = e.clientY; svPan(dx, dy);
+});
+addEventListener("pointerup", () => { svDrag = null; });
+const tDist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+secCv.addEventListener("touchstart", (e) => {
+  if (e.touches.length === 2) { pin = { d: tDist(...e.touches) }; e.preventDefault(); }
+  else if (e.touches.length === 1 && sv.k > 1) pin = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+}, { passive: false });
+secCv.addEventListener("touchmove", (e) => {
+  if (!pin) return;
+  if (e.touches.length === 2 && pin.d) { const [a, b] = e.touches, d = tDist(a, b); svZoom(Math.pow(d / pin.d, 1.6), ...svPt((a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2)); pin.d = d; svMoved = true; e.preventDefault(); }
+  else if (e.touches.length === 1 && pin.x !== undefined) { const t = e.touches[0]; svPan(t.clientX - pin.x, t.clientY - pin.y); pin.x = t.clientX; pin.y = t.clientY; svMoved = true; e.preventDefault(); }
+}, { passive: false });
+secCv.addEventListener("touchend", (e) => { pin = e.touches.length === 1 && sv.k > 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null; });
+secCv.addEventListener("wheel", (e) => { if (!e.ctrlKey) return; e.preventDefault(); svZoom(Math.exp(-e.deltaY * .025), ...svPt(e.clientX, e.clientY)); }, { passive: false });
+secCv.addEventListener("gesturestart", (e) => { e.preventDefault(); gs2 = 1; });
+secCv.addEventListener("gesturechange", (e) => { e.preventDefault(); if (pin || !e.scale) return; svZoom(Math.pow(e.scale / gs2, 1.6), ...svPt(e.clientX, e.clientY)); gs2 = e.scale; });
+secCv.addEventListener("dblclick", () => { sv.k = 1; drawSection(); });
 // 卡片裡的靜態 2D 示意圖：<canvas class="fig" data-fig="名稱" data-r="高寬比">，由 mod.figs[名稱](ctx, W, H, dpr) 畫（摺疊打開時才有寬度）
 const figRO = new ResizeObserver((es) => es.forEach((e) => drawFig(e.target)));
 function drawFig(cv) {
@@ -5218,7 +6481,9 @@ function thinTicks() {
 addEventListener("resize", thinTicks);
 new ResizeObserver(() => thinTicks()).observe($("ticks")); // 收起左右欄時天數軸變寬
 function renderMod() {
-  document.querySelectorAll("#mods .tab").forEach((b, i) => b.setAttribute("aria-current", String(MODS[i] === mod)));
+  const og = orgOf(mod); lastOf[og.n] = mod.id;
+  document.querySelectorAll("#orgRow .tab").forEach((b) => b.setAttribute("aria-current", String(b.dataset.org === og.n)));
+  document.querySelectorAll("#modRow .tab").forEach((b) => { b.hidden = !og.ids.includes(b.dataset.mod); b.setAttribute("aria-current", String(b.dataset.mod === mod.id)); });
   $("modTitle").textContent = mod.title; $("modSub").textContent = mod.sub; $("evLbl").textContent = mod.evLbl;
   const [a, b] = mod.range;
   dayIn.min = a; dayIn.max = b; dayIn.setAttribute("aria-label", mod.axisLbl || "胚胎日數");
@@ -5257,8 +6522,10 @@ function renderMod() {
   const [c0, c1, cs] = mod.cutRange; cutIn.min = c0; cutIn.max = c1; cutIn.step = cs; cutIn.value = mod.cut;
   renderSecMode();
   $("modNote").textContent = mod.note; $("modNote").classList.remove("open");
-  const cur = document.querySelector('#mods .tab[aria-current="true"]'), nav = $("mods"); // 手機上模組分頁橫向捲動：捲到目前這個
-  if (cur && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - nav.offsetLeft - 8;
+  for (const id of ["orgRow", "modRow"]) { // 手機上分頁橫向捲動：捲到目前這個
+    const nav = $(id), cur = nav.querySelector('.tab[aria-current="true"]');
+    if (cur && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - nav.offsetLeft - 8;
+  }
 }
 /* 左右欄開關（記在 localStorage，不進網址）、左欄「事件｜國考」分頁 */
 function setPanels() {
@@ -5306,10 +6573,16 @@ function setMod(id, keepPlaying, day) {
   update();
 }
 function buildUi() {
-  const nav = $("mods");
+  const orgRow = $("orgRow"), modRow = $("modRow");
+  for (const o of ORGS) {
+    const i0 = MODS.findIndex((m) => m.id === o.ids[0]) + 1, b = document.createElement("button");
+    b.className = "tab org"; b.dataset.org = o.n; b.innerHTML = `${o.n}<small>${o.ids.length > 1 ? `${i0}–${i0 + o.ids.length - 1}` : i0}</small>`;
+    b.title = `${o.n}（模組 ${i0}–${i0 + o.ids.length - 1}）`;
+    b.addEventListener("click", () => { const id = lastOf[o.n] || o.ids[0]; if (id !== mod.id) setMod(id); }); orgRow.appendChild(b);
+  }
   MODS.forEach((m, i) => {
-    const b = document.createElement("button"); b.className = "tab"; b.innerHTML = `${i + 1}. ${m.name}${m.soon ? "<small>製作中</small>" : ""}`;
-    b.disabled = !!m.soon; b.addEventListener("click", () => setMod(m.id)); nav.appendChild(b);
+    const b = document.createElement("button"); b.className = "tab"; b.dataset.mod = m.id; b.innerHTML = `${i + 1}. ${m.name}${m.soon ? "<small>製作中</small>" : ""}`;
+    b.disabled = !!m.soon; b.addEventListener("click", () => setMod(m.id)); modRow.appendChild(b);
   });
   $("cut3d").addEventListener("click", () => setCut3d(!state.cut3d));
   $("tagBtn").setAttribute("aria-pressed", String(state.tags));
@@ -5621,6 +6894,6 @@ buildUi(); resize(); snapDefaults(); quietClamp = !!HASH0; setMod(mod.id); quiet
 if (HASH0) applyHash(HASH0);
 booted = true; saveHash();
 requestAnimationFrame(loop);
-window.__emb = { hidden, resetMod, applyHash, hashStr, findMatches, nameOf, goEvent, THREE, scene, camera, controls, state, setDay, setMod, update, select, flyTo, MODS, M1, M2, M3, M4, M5, M6, M7, M8, M9, get mod() { return mod; } };
+window.__emb = { hidden, resetMod, applyHash, hashStr, findMatches, nameOf, goEvent, THREE, scene, camera, controls, state, setDay, setMod, update, select, flyTo, MODS, M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11, M12, M13, M14, get mod() { return mod; } };
 </script>
 </html>
