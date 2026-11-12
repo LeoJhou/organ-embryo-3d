@@ -133,8 +133,8 @@ ol.ev .s { display: block; font-weight: 400; color: var(--mute); font-size: 12.5
 .chip i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
 .chip[aria-pressed="false"] { opacity: .45; }
 .chip[aria-pressed="false"] i { background: transparent !important; outline: 1px solid var(--mute); }
-/* 構造說明小卡：浮在 3D 上該構造的名稱旁；「完整說明」在卡內展開（內部捲動）；≤860px 改成從底部滑出 */
-#pop { position: absolute; z-index: 6; width: 290px; max-width: calc(100% - 16px); box-sizing: border-box; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); box-shadow: 0 6px 22px rgba(0, 0, 0, .2); }
+/* 構造說明小卡：固定在 3D 角落（預設右下，蓋到選取構造就換角落）；「完整說明」在卡內展開（內部捲動）；≤860px 改成從底部滑出 */
+#pop { position: absolute; z-index: 6; right: 10px; bottom: 8px; width: 290px; max-width: calc(100% - 16px); box-sizing: border-box; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); box-shadow: 0 6px 22px rgba(0, 0, 0, .2); }
 #pop:not(.show) { display: none; }
 #pop.full { width: 390px; }
 #popX { position: absolute; top: 6px; right: 6px; z-index: 1; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 5px; background: none; color: var(--mute); font-size: 14px; cursor: pointer; }
@@ -6116,7 +6116,7 @@ const ORGS = [["心臟", "m1 m2 m3 m4 m5"], ["咽弓", "m6 m7"], ["消化", "m8 
 const orgOf = (m) => ORGS.find((o) => o.ids.includes(m.id)) || ORGS[0], lastOf = {};
 
 function update() {
-  heatColors(); mod.update(); applyHidden(); applyHeat(); labDirty = true; labJob = null;
+  heatColors(); mod.update(); applyHidden(); applyHeat(); labDirty = true; labJob = null; selBoxDirty = true; selScr = null;
   drawSection(); renderDay();
   if (state.sel) showCard(state.sel);
   needsRender = true; // 名稱標籤在迴圈畫完這一幀時一起更新
@@ -6188,14 +6188,9 @@ function labRun(budget) { // 跑完回傳 true
 }
 function labFinish() {
   const J = labJob; labJob = null;
-  // 選取中構造的錨點（小卡用）：圖上名稱關掉、或它的名稱被擋住時，小卡貼這個點
-  const me = state.sel && J.st.get(state.sel);
-  if (me) {
-    const cx = me.sx / me.n, cy = me.sy / me.n; let best = me.pts[0], bd = 1e9;
-    for (const p of me.pts) { const d = (p[0] - cx) ** 2 + (p[1] - cy) ** 2; if (d < bd) { bd = d; best = p; } }
-    labNdc.set((best[0] + .5) / J.nx * 2 - 1, 1 - (best[1] + .5) / J.ny * 2); labRay.setFromCamera(labNdc, camera);
-    selAnchor = firstHit(labRay) || selAnchor;
-  }
+  // 選取構造在畫面上的範圍（小卡避遮用）：心管各段這類沒有自己網格的構造，只能靠掃格點得到
+  const me = state.sel && J.st.get(state.sel); selScr = null;
+  if (me) { let a = 1e9, b = 1e9, c = -1, d = -1; for (const [x, y] of me.pts) { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); } const W = stage.clientWidth, H = stage.clientHeight; selScr = [a * W / J.nx, b * H / J.ny, (c + 1) * W / J.nx, (d + 1) * H / J.ny]; }
   if (!state.labs) { placePop(); return; }
   // 地標名稱已經標了的（同名）不再標
   const fixed = state.tags ? [...tagBox.children].map((e) => (e.firstChild?.textContent || "").replace(/（.*?）/g, "").trim()) : [];
@@ -6300,25 +6295,26 @@ function drawFig(cv) {
 
 /* ---------- 卡片 ---------- */
 const cardEl = document.getElementById("card"), popEl = document.getElementById("pop");
-let popFull = false, popSel = null, selPt = null, selAnchor = null;
-function select(s, pt = null) { // mod.reveal(s)：選到某些構造時模組自己開開關或跳天數，有變就重畫；pt＝在 3D 上點到的點（小卡錨點）
-  state.sel = s; labDirty = true; selPt = pt; selAnchor = s ? structPt(s) : null;
+let popFull = false, popSel = null, selBox = null, modelBox = null, selBoxDirty = true, selScr = null, popCorner = null;
+function select(s, pt = null) { // mod.reveal(s)：選到某些構造時模組自己開開關或跳天數，有變就重畫；pt 保留給呼叫端（小卡改固定角落後不用）
+  if (s !== state.sel) popCorner = null; // 換選別的構造：小卡先回右下再判斷要不要換角落
+  state.sel = s; labDirty = true; selBoxDirty = true; selScr = null;
   if (mod.reveal?.(s)) { dayIn.value = state.day; renderLegend(); update(); }
-  showCard(s); drawSection(); saveHash();
+  showCard(s, true); drawSection(); saveHash();
 }
-function structPt(s) { // 構造自己有網格時，先用外框中心當錨點（掃完畫面格點後改用 selAnchor）
+function structBox(s) { // 選取構造看得到的網格外框（世界座標）；s＝null 時是整個模型（所有可點的構造）
   const box = new THREE.Box3(), b = new THREE.Box3();
-  mod.group.traverseVisible((o) => { if (o.isMesh && o.userData.struct === s && o.layers.test(camera.layers) && o.geometry) { o.updateMatrixWorld(); o.geometry.computeBoundingBox(); box.union(b.copy(o.geometry.boundingBox).applyMatrix4(o.matrixWorld)); } });
-  return box.isEmpty() ? null : box.getCenter(new THREE.Vector3());
+  mod.group.traverseVisible((o) => { if (o.isMesh && (s ? o.userData.struct === s : o.userData.struct) && o.layers.test(camera.layers) && o.geometry) { o.updateMatrixWorld(); o.geometry.computeBoundingBox(); box.union(b.copy(o.geometry.boundingBox).applyMatrix4(o.matrixWorld)); } });
+  return box;
 }
 function setPopFull(v) {
   popFull = v; popEl.classList.toggle("full", v);
   const b = document.getElementById("popMore"); b.textContent = v ? "收起 ▴" : "完整說明 ▾"; b.setAttribute("aria-expanded", String(v));
-  placePop();
+  placePop(true);
 }
-function showCard(s) { // 內容沒變就不動（摺疊維持開關）；變了也把原本打開的摺疊留著
+function showCard(s, force = false) { // 內容沒變就不動（摺疊維持開關）；變了也把原本打開的摺疊留著
   const C = s && mod.struct[s];
-  if (!C) { popEl.classList.remove("show"); cardEl.innerHTML = ""; cardEl.dataset.sig = ""; popSel = null; return; }
+  if (!C) { popEl.classList.remove("show"); cardEl.innerHTML = ""; cardEl.dataset.sig = ""; popSel = null; popCorner = null; return; }
   if (s !== popSel) { popSel = s; if (popFull) setPopFull(false); }
   const st = mod.cardState(s);
   const kgs = (C.kg || []).filter((id) => KGI[id]);
@@ -6327,43 +6323,76 @@ function showCard(s) { // 內容沒變就不動（摺疊維持開關）；變了
     (kgs.length && state.kg ? `<details class="fold"><summary>國考題（${kgs.length}）</summary>${kgs.map(qHtml).join("")}</details>` : "");
   const sig = mod.id + "|" + s + "|" + html;
   popEl.classList.add("show");
-  if (cardEl.dataset.sig === sig) return;
+  if (cardEl.dataset.sig === sig) { if (force) placePop(true); return; }
   const same = cardEl.dataset.sig?.startsWith(mod.id + "|" + s + "|");
   const open = same ? new Set([...cardEl.querySelectorAll("details[open] > summary")].map((x) => x.textContent)) : new Set();
   cardEl.innerHTML = html; cardEl.dataset.sig = sig; if (!same) cardEl.scrollTop = 0;
   cardEl.querySelectorAll("details > summary").forEach((x) => { if (open.has(x.textContent)) x.parentElement.open = true; });
   figRO.disconnect(); cardEl.querySelectorAll("canvas.fig").forEach((c) => figRO.observe(c));
-  placePop();
+  placePop(true);
 }
-/* 小卡位置：貼在該構造圖上名稱的右邊（放不下翻到左邊），上下夾在 3D 裡、不壓到上方按鈕；
-   沒有名稱（圖上名稱關掉或被擋）時用 3D 點選的點，再來是掃畫面格點得到的點；都沒有就停在右上 */
-const MOBILE = matchMedia("(max-width: 860px)");
-function placePop() {
+/* 小卡位置（照全身模型）：固定在 3D 舞台角落、不跟構造移動，預設右下；試右下、右上、左上、左下，
+   避開上方按鈕與國考上色圖例（同一欄、離錨定邊不遠的推開，較遠的只限制高度），挑蓋到選取構造外框最少的角落；
+   換角落要比目前少蓋超過外框面積 15% 才換（轉鏡頭時不來回跳）；≤860px 維持從底部滑出 */
+cardEl.addEventListener("toggle", () => placePop(), true); // 卡內摺疊開關後重算（可能要換角落）
+const MOBILE = matchMedia("(max-width: 860px)"), REDUCED = matchMedia("(prefers-reduced-motion: reduce)");
+const POP_C = { br: { bottom: 8, right: 10 }, tr: { right: 10 }, tl: { left: 10 }, bl: { bottom: 8, left: 10 } };
+function stageRects() { // 舞台上的面板（舞台座標 [左, 上, 右, 下]）：上方按鈕一顆一顆算、國考上色圖例
+  const sr = stage.getBoundingClientRect(), out = [];
+  const add = (el) => { if (!el || el.hidden) return; const r = el.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return; out.push([r.left - sr.left, r.top - sr.top, r.right - sr.left, r.bottom - sr.top]); };
+  document.querySelectorAll("#views .btn").forEach(add); add(document.getElementById("heatLg"));
+  return out;
+}
+function placePop(force = false) {
   if (!popEl.classList.contains("show")) return;
-  if (MOBILE.matches) { popEl.style.left = popEl.style.top = popEl.style.maxHeight = ""; return; }
-  const W = stage.clientWidth, H = stage.clientHeight, m = 8, side = 20, gap = 14, sr = stage.getBoundingClientRect();
-  let vb = 0, vr = 0;
-  for (const b of document.querySelectorAll("#views .btn")) { const r = b.getBoundingClientRect(); if (r.width) { vb = Math.max(vb, r.bottom - sr.top); vr = Math.max(vr, r.right - sr.left); } }
-  popEl.style.maxHeight = (popFull ? H - 2 * m : Math.min(H - 2 * m, 360)) + "px";
-  const pw = popEl.offsetWidth, ph = popEl.offsetHeight;
-  let ax = null, ay = 0, hw = 0;
-  // 錨點：圖上名稱 → 地標名稱（同名構造只標地標）→ 命中點 → 構造中心
-  const L = labs.find((x) => x.s === state.sel);
-  const lel = L && L.el.isConnected && L.el.style.display !== "none" ? L.el : [...tagBox.children].find((e) => e.dataset.s === state.sel);
-  if (lel) { const r = lel.getBoundingClientRect(); ax = (r.left + r.right) / 2 - sr.left; ay = r.top - sr.top + 22; hw = r.width / 2; }
-  else for (const P of [selPt, selAnchor]) {
-    if (!P) continue; v3.copy(P).project(camera);
-    if (v3.z < 1) { ax = (v3.x + 1) / 2 * W; ay = (1 - v3.y) / 2 * H; hw = 5; break; }
+  if (MOBILE.matches) { for (const k of ["left", "top", "right", "bottom", "maxHeight"]) popEl.style[k] = ""; popCorner = null; return; }
+  if (selBoxDirty) { selBox = structBox(state.sel); modelBox = selBox.isEmpty() ? structBox(null) : null; selBoxDirty = false; }
+  const W = stage.clientWidth, H = stage.clientHeight, w = popEl.offsetWidth, vw = document.getElementById("views");
+  const top = vw.offsetTop + vw.offsetHeight + 6, obs = stageRects();
+  const nat = cardEl.scrollHeight + document.getElementById("popMore").offsetHeight + 2;
+  const h0 = Math.min(nat, popFull ? H - 16 : 360), m = Math.min(120, h0);
+  // 角落 → [左, 上, 右, 下, 高, 這個角落可用的高度]
+  const rect = (p) => {
+    const L = p.left ?? W - p.right - w, R = L + w, col = obs.filter((o) => o[0] < R && o[2] > L);
+    let T, B;
+    if (p.bottom == null) {
+      T = top; for (let k = 0; k < 6; k++) { const o = col.find((o) => o[3] > T && o[1] < T + m); if (!o || o[3] + 66 > H) break; T = o[3] + 6; }
+      B = Math.min(H - 8, ...col.filter((o) => o[1] >= T).map((o) => o[1] - 6));
+    } else {
+      B = H - p.bottom; for (let k = 0; k < 6; k++) { const o = col.find((o) => o[1] < B && o[3] > B - m); if (!o || o[1] - 66 < top) break; B = o[1] - 6; }
+      T = Math.max(top, ...col.filter((o) => o[3] <= B).map((o) => o[3] + 6));
+    }
+    const h = Math.max(0, Math.min(h0, B - T));
+    return p.bottom == null ? [L, T, R, T + h, h, B - T] : [L, B - h, R, B, h, B - T];
+  };
+  // 選取構造在畫面上的外框：有網格的每幀投影八個角；沒有（心管各段）用掃格點的範圍；
+  // 兩個都沒有（心肌層這類整層、或被擋住）就避開整個模型的外框
+  let x0 = W, y0 = H, x1 = 0, y1 = 0;
+  const bx = selBox && !selBox.isEmpty() ? selBox : selScr ? null : modelBox;
+  if (!bx && selScr) [x0, y0, x1, y1] = selScr;
+  else if (bx && !bx.isEmpty()) for (let i = 0; i < 8; i++) {
+    v3.set(i & 1 ? bx.max.x : bx.min.x, i & 2 ? bx.max.y : bx.min.y, i & 4 ? bx.max.z : bx.min.z).project(camera);
+    if (v3.z > 1) continue;
+    const sx = (v3.x + 1) / 2 * W, sy = (1 - v3.y) / 2 * H;
+    x0 = Math.min(x0, sx); y0 = Math.min(y0, sy); x1 = Math.max(x1, sx); y1 = Math.max(y1, sy);
   }
-  let x, y;
-  if (ax !== null && ax > -40 && ax < W + 40 && ay > -40 && ay < H + 40) {
-    x = ax + hw + gap;
-    if (x + pw > W - side) { const xl = ax - hw - gap - pw; x = xl >= side ? xl : (W - ax > ax ? W - side - pw : side); }
-    x = clamp(x, side, Math.max(side, W - side - pw));
-    y = clamp(ay - 22, m, Math.max(m, H - ph - m));
-    if (x < vr && y < vb + 6) y = Math.min(vb + 6, Math.max(m, H - ph - m));
-  } else { x = Math.max(side, W - side - pw); y = Math.min(vb + 6, Math.max(m, H - ph - m)); }
-  popEl.style.left = Math.round(x) + "px"; popEl.style.top = Math.round(y) + "px";
+  x0 = Math.max(x0, 0); y0 = Math.max(y0, 0); x1 = Math.min(x1, W); y1 = Math.min(y1, H);
+  const area = Math.max(0, x1 - x0) * Math.max(0, y1 - y0);
+  // 分數＝蓋到選取構造的面積＋縮掉的高度（縮了要捲，算重一點）；高度不到 m 的角落不用
+  const score = (r) => r[4] < m ? Infinity : Math.max(0, Math.min(r[2], x1) - Math.max(r[0], x0)) * Math.max(0, Math.min(r[3], y1) - Math.max(r[1], y0)) + (h0 - r[4]) * w * 2;
+  const R = {}; for (const k in POP_C) R[k] = rect(POP_C[k]);
+  if (!(popCorner in POP_C)) { popCorner = "br"; force = true; }
+  const cur = score(R[popCorner]);
+  let best = popCorner, bo = cur;
+  for (const k in POP_C) { const o = score(R[k]); if (o < bo) { bo = o; best = k; } }
+  if (bo === Infinity) for (const k in POP_C) if (R[k][4] > R[best][4]) best = k; // 每個角落都太矮：用最高的
+  if (best !== popCorner && (cur === Infinity || cur - bo > 0.15 * area)) {
+    popCorner = best; force = true;
+    if (!REDUCED.matches && popEl.animate) popEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180 });
+  }
+  const p = POP_C[popCorner], r = R[popCorner], up = p.bottom == null;
+  const sty = { top: up ? r[1] + "px" : "auto", bottom: up ? "auto" : H - r[3] + "px", left: p.left != null ? p.left + "px" : "auto", right: p.left != null ? "auto" : p.right + "px", maxHeight: Math.round(Math.min(popFull ? 1e9 : 360, r[5])) + "px" }; // 上限給到角落可用高度，卡內摺疊打開時可以長高
+  for (const k in sty) if (force || popEl.style[k] !== sty[k]) popEl.style[k] = sty[k];
 }
 
 /* ---------- 國考 ---------- */
