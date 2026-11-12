@@ -52,14 +52,24 @@ header h1 { font: 600 18px/1.2 var(--f-display); margin: 0; letter-spacing: .02e
 .tab:disabled { opacity: .55; cursor: default; }
 .tab small { font-size: 11px; opacity: .8; margin-left: 4px; }
 main { --lw: 300px; --rw: 360px; min-height: 0; display: grid; grid-template-columns: var(--lw) minmax(0, 1fr) var(--rw); }
-main.noL { --lw: 0px; } main.noR { --rw: 0px; }
+main.noL { --lw: 30px; } main.noR { --rw: 30px; }
 #notes { grid-column: 1; } #center { grid-column: 2; } #bench { grid-column: 3; }
-main.noL #notes, main.noR #bench { display: none; }
-/* 面板開關：3D 左右邊緣中間的小箭頭（≤860px 不顯示） */
-.edge { position: absolute; top: 50%; z-index: 5; transform: translateY(-50%); width: 16px; height: 46px; padding: 0; border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 90%, transparent); color: var(--mute); font-size: 15px; line-height: 1; cursor: pointer; }
-.edge:hover { color: var(--accent); background: var(--panel); }
-#edgeL { left: 0; border-left: 0; border-radius: 0 6px 6px 0; }
-#edgeR { right: 0; border-right: 0; border-radius: 6px 0 0 6px; }
+/* 面板開關（同 CT 閱片的序列 ‹）：欄頂端的 ‹ ›；收起後剩 30px 窄邊＋直排欄名，點窄邊任何地方都會展開（≤860px 不顯示） */
+.fh { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.fh .lbl { margin: 0; }
+.fold { flex: none; align-self: center; width: 24px; height: 26px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--mute); font-size: 16px; line-height: 1; cursor: pointer; }
+.fold:hover { background: var(--chip); color: var(--ink); }
+#notes .fh { margin: -6px -8px 2px 0; }
+#secHead .fold { margin: -4px 0 0 -8px; }
+.rail { display: none; writing-mode: vertical-rl; letter-spacing: .2em; font-size: 12.5px; color: var(--mute); margin-top: 6px; }
+@media (min-width: 861px) {
+main.noL #notes, main.noR #bench { padding: 4px 2px; align-items: center; cursor: pointer; gap: 0; }
+main.noL #notes:hover, main.noR #bench:hover { background: var(--chip); }
+main.noL #notes > :not(.fh):not(.rail), main.noL #notes .fh .lbl, main.noR #bench > :not(#secHead):not(.rail), main.noR #secHead > :not(.fold) { display: none; }
+main.noL #notes .fh, main.noR #secHead { margin: 0; }
+main.noR #secHead .fold { margin: 0; }
+main.noL #notes .rail, main.noR #bench .rail { display: block; }
+}
 aside { min-height: 0; overflow: auto; background: var(--panel); padding: 12px 14px; }
 #notes { border-right: 1px solid var(--line); display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; }
 #notes > * { flex: none; }
@@ -217,7 +227,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
   aside { overflow: visible; border: 0 !important; border-top: 1px solid var(--line) !important; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   #notes { display: block; padding-bottom: 12px; }
   .lpane { overflow: visible; }
-  .edge { display: none; }
+  .fold, .rail { display: none !important; }
   #scrub { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   /* 3D 上方按鈕：單行橫向捲動，底色不透明，不蓋到模型（模型預設置中、留邊） */
   #views { top: 0; left: 0; right: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 6px 10px; background: color-mix(in srgb, var(--panel) 92%, transparent); border-bottom: 1px solid var(--line); pointer-events: auto; }
@@ -275,7 +285,8 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
   </header>
   <main>
     <aside id="notes">
-      <div class="lbl">模組</div>
+      <div class="fh"><div class="lbl">模組</div><button class="fold" id="edgeL" aria-label="收起左欄" title="收起左欄（[）">‹</button></div>
+      <span class="rail">事件・國考</span>
       <h2 id="modTitle"></h2>
       <p id="modSub"></p>
       <p class="note" id="modNote" title="點一下展開／收起"></p>
@@ -306,8 +317,6 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
           <button class="btn" id="showAll" hidden title="把 H 隱藏的構造全部顯示"></button>
         </div>
         <div id="labels"></div>
-        <button class="edge" id="edgeL" aria-label="收起左欄" title="收起左欄（[）">‹</button>
-        <button class="edge" id="edgeR" aria-label="收起右欄" title="收起右欄（]）">›</button>
         <div id="pop" role="dialog" aria-label="構造說明">
           <button id="popX" aria-label="關閉說明" title="關閉（Esc）">✕</button>
           <div id="card"></div>
@@ -325,7 +334,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
       </div>
     </div>
     <aside id="bench">
-      <div id="secHead"><h2 id="secTitle"></h2><span id="secModes" role="group" aria-label="切面方向"></span><span id="secWhere"></span></div>
+      <div id="secHead"><button class="fold" id="edgeR" aria-label="收起右欄" title="收起右欄（]）">›</button><h2 id="secTitle"></h2><span id="secModes" role="group" aria-label="切面方向"></span><span id="secWhere"></span></div>
       <canvas id="sec" width="720" height="460"></canvas>
       <div class="row2"><span id="secL"></span><span id="secHint">拖曳改切面位置</span><span id="secR"></span></div>
       <input id="cut" type="range" aria-label="切面位置">
@@ -334,6 +343,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
       <div class="lbl" id="togLbl" hidden></div>
       <div id="togs" hidden></div>
       <p class="note" id="selHint">點 3D 或切面上的構造，說明會浮在 3D 上的名稱旁。</p>
+      <span class="rail">切面・圖例</span>
     </aside>
   </main>
 </div>
@@ -346,7 +356,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
   <table>
     <tr><td>旋轉／平移／縮放</td><td>拖曳 3D；右鍵拖曳或兩指拖曳平移；滾輪或捏合縮放</td></tr>
     <tr><td>看構造說明</td><td>點 3D 或右欄切面上的構造（搜尋、國考清單也可以），說明小卡會浮在 3D 上該構造的名稱旁，轉動時跟著走；按「完整說明」在卡內展開（表格、示意圖、國考題）；✕ 或 Esc 關閉。滑鼠停在構造上會顯示名稱。手機版小卡從底部滑出。</td></tr>
-    <tr><td>收起左右欄</td><td>點 3D 左右邊緣的 ‹ › 小箭頭（快捷鍵 <kbd>[</kbd> <kbd>]</kbd>），3D 會變寬；會記住上次的狀態</td></tr>
+    <tr><td>收起左右欄</td><td>點左欄、右欄頂端的 ‹ ›（快捷鍵 <kbd>[</kbd> <kbd>]</kbd>），收起後剩一條窄邊、點一下就展開，3D 會變寬；會記住上次的狀態</td></tr>
     <tr><td>左欄</td><td>「事件」「國考」兩個分頁，各自捲動；國考清單點題目會跳到對應模組、天數與構造</td></tr>
     <tr><td>換天數</td><td>拖下方天數滑桿，或點左欄事件、滑桿下的刻度（事件會連切面一起跳）</td></tr>
     <tr><td>換切面位置</td><td>拖右欄切面下方的滑桿</td></tr>
@@ -6529,7 +6539,7 @@ function renderMod() {
 }
 /* 左右欄開關（記在 localStorage，不進網址）、左欄「事件｜國考」分頁 */
 function setPanels() {
-  const mn = document.querySelector("main"); mn.classList.toggle("noL", !state.pl); mn.classList.toggle("noR", !state.pr);
+  const mn = document.querySelector("main"); mn.classList.toggle("noL", !state.pl); mn.classList.toggle("noR", !state.pr); // 收起樣式只在 >860px 生效
   const L = $("edgeL"), R = $("edgeR");
   L.textContent = state.pl ? "‹" : "›"; L.setAttribute("aria-label", state.pl ? "收起左欄" : "打開左欄"); L.title = (state.pl ? "收起左欄" : "打開左欄") + "（[）";
   R.textContent = state.pr ? "›" : "‹"; R.setAttribute("aria-label", state.pr ? "收起右欄" : "打開右欄"); R.title = (state.pr ? "收起右欄" : "打開右欄") + "（]）";
@@ -6596,8 +6606,10 @@ function buildUi() {
   $("resetBtn").addEventListener("click", resetMod);
   $("showAll").addEventListener("click", () => { hidden.clear(); update(); });
   buildTools();
-  $("edgeL").addEventListener("click", () => togglePanel("pl"));
-  $("edgeR").addEventListener("click", () => togglePanel("pr"));
+  $("edgeL").addEventListener("click", (e) => { e.stopPropagation(); togglePanel("pl"); });
+  $("edgeR").addEventListener("click", (e) => { e.stopPropagation(); togglePanel("pr"); });
+  $("notes").addEventListener("click", () => { if (!state.pl) togglePanel("pl"); }); // 收起時點窄邊展開
+  $("bench").addEventListener("click", () => { if (!state.pr) togglePanel("pr"); });
   setPanels();
   $("tabEv").addEventListener("click", () => setLtab("ev"));
   $("tabKg").addEventListener("click", () => setLtab("kg"));
