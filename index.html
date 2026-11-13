@@ -430,6 +430,44 @@ function planeFrame(op, edgeOp) {
 function ellipse(cx, cy, rx, ry, n) { const o = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; o.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a)]); } return o; }
 const area = (P) => { let a = 0; for (let i = 0; i < P.length; i++) { const p = P[i], q = P[(i + 1) % P.length]; a += p[0] * q[1] - q[0] * p[1]; } return a / 2; };
 function clearGroup(g) { for (const m of g.children) { m.geometry.dispose(); m.material.dispose?.(); } g.clear(); }
+/* ---------- 播放效能（第 16 版） ----------
+   tubeGeo：和 THREE.TubeGeometry 同樣的頂點、法線、索引排列（不產生 uv，材質沒有貼圖用不到），直接寫 typed array，快約 3 倍
+   geoCache：形狀相同（key 相同）就沿用上一輪建好的幾何；一輪結束（end）才把沒再用到的釋放；flush 全部釋放（切走模組時） */
+const _tP = new THREE.Vector3();
+function tubeGeo(cv, n, r, rad) {
+  const F = cv.computeFrenetFrames(n, false), R1 = rad + 1, V = (n + 1) * R1;
+  const pos = new Float32Array(V * 3), nor = new Float32Array(V * 3), cs = [], sn = [];
+  for (let j = 0; j <= rad; j++) { const v = j / rad * Math.PI * 2; sn.push(Math.sin(v)); cs.push(-Math.cos(v)); }
+  for (let i = 0, k = 0; i <= n; i++) {
+    cv.getPointAt(i / n, _tP); const N = F.normals[i], B = F.binormals[i];
+    for (let j = 0; j <= rad; j++, k += 3) {
+      let x = cs[j] * N.x + sn[j] * B.x, y = cs[j] * N.y + sn[j] * B.y, z = cs[j] * N.z + sn[j] * B.z;
+      const l = Math.sqrt(x * x + y * y + z * z) || 1; x /= l; y /= l; z /= l;
+      nor[k] = x; nor[k + 1] = y; nor[k + 2] = z; pos[k] = _tP.x + r * x; pos[k + 1] = _tP.y + r * y; pos[k + 2] = _tP.z + r * z;
+    }
+  }
+  const idx = new (V > 65535 ? Uint32Array : Uint16Array)(n * rad * 6);
+  for (let j = 1, q = 0; j <= n; j++) for (let i = 1; i <= rad; i++) {
+    const a = R1 * (j - 1) + i - 1, b = R1 * j + i - 1, c = R1 * j + i, d = R1 * (j - 1) + i;
+    idx[q++] = a; idx[q++] = b; idx[q++] = d; idx[q++] = b; idx[q++] = c; idx[q++] = d;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3)); g.setAttribute("normal", new THREE.BufferAttribute(nor, 3)); g.setIndex(new THREE.BufferAttribute(idx, 1));
+  return g;
+}
+function geoCache() {
+  let prev = new Map(), cur = new Map();
+  const C = {
+    get(key, make) { let g = cur.get(key); if (g) return g; g = prev.get(key); if (g) prev.delete(key); else g = make(); cur.set(key, g); return g; },
+    end() { for (const g of prev.values()) g.dispose(); prev = cur; cur = new Map(); },
+    flush() { C.end(); C.end(); },
+  };
+  return C;
+}
+// 形狀 key：點座標取到 1e-4（差異遠小於一個像素）
+const ptsKey = (pts) => { let s = ""; for (const p of pts) s += Math.round(p.x * 1e4) + "," + Math.round(p.y * 1e4) + "," + Math.round(p.z * 1e4) + ";"; return s; };
+// 管端球蓋：畫面用低面數 CAP，射線（點選、名稱定位）和 autoFit（userData.fitGeo）仍用原本的球體，結果和改前一樣
+const capRaycast = (G) => function (rc, hits) { const g = this.geometry; this.geometry = G; THREE.Mesh.prototype.raycast.call(this, rc, hits); this.geometry = g; };
 // 切面多邊形 → 3D 切口的面；to3(x, y) → [x, y, z]
 function capGeometry(P, to3) {
   if (P.length < 3 || Math.abs(area(P)) < 1e-5) return null;
@@ -2122,7 +2160,7 @@ const curveOf = (sg) => sg.cv || (sg.cv = crv(sg.pts));
 /* ---------- 3D 網格 ---------- */
 const VG = new THREE.Group(), heartG = new THREE.Group(), capG = new THREE.Group(), frameG = new THREE.Group();
 M.group.add(VG, heartG, capG, frameG); frameG.add(...planeFrame(.05, .6));
-const SPH = new THREE.SphereGeometry(1, 14, 10), CYL = new THREE.CylinderGeometry(1, 1, 1, 28, 1, true);
+const SPH = new THREE.SphereGeometry(1, 14, 10), CAP = new THREE.SphereGeometry(1, 12, 8), capRC = capRaycast(SPH), CYL = new THREE.CylinderGeometry(1, 1, 1, 28, 1, true);
 const MATC = new Map(), ALLM = [];
 function matFor(s, c, kind = "") {
   const key = s + "|" + c + "|" + kind; let m = MATC.get(key);
@@ -2139,26 +2177,30 @@ const CAPM = {};
 const capMat = (c, a) => CAPM[c + a] || (CAPM[c + a] = themed(new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: a < 1, opacity: a, depthWrite: a >= 1 }), c));
 const plane = new THREE.Plane(new V3(0, -1, 0), 0);
 function mesh(g, m, s, parent = VG) { const o = new THREE.Mesh(g, m); o.userData.struct = s; parent.add(o); return o; }
-function clearVG() { for (const o of VG.children) if (o.geometry !== SPH && o.geometry !== CYL) o.geometry.dispose(); VG.clear(); }
+// 管的幾何放快取（geoCache）：形狀沒變就沿用；clearVG 只拿掉網格
+const GC = geoCache();
+function clearVG() { VG.clear(); }
 function addSeg(sg) {
   if (sg.kind === "sph") { const o = mesh(SPH, matFor(sg.s, sg.c)), p = sg.p; o.position.copy(p); o.scale.setScalar(sg.R); return; }
   if (sg.kind === "cyl") { const o = mesh(CYL, matFor(sg.s, sg.c, "soft")); o.userData.soft = true; o.position.set(0, (sg.y0 + sg.y1) / 2, sg.cz); o.scale.set(sg.rx, sg.y1 - sg.y0, sg.rz); return; }
-  const cv = curveOf(sg), n = Math.max(8, Math.ceil(cv.getLength() * 24));
+  const segN = () => { const cv = curveOf(sg); return [cv, Math.max(8, Math.ceil(cv.getLength() * 24))]; };
   if (sg.ghost) {
-    const g = new THREE.TubeGeometry(cv, n, sg.r, 6, false), idx = g.index.array, keep = [], per = 36;
-    for (let j = 0; j < n; j++) if (((j >> 1) & 1) === 0) for (let k = j * per; k < (j + 1) * per; k++) keep.push(idx[k]);
-    g.setIndex(keep); mesh(g, matFor(sg.s, sg.c, "g"), sg.s); return;
+    mesh(GC.get("g" + sg.r + "|" + ptsKey(sg.pts), () => {
+      const [cv, n] = segN(), g = tubeGeo(cv, n, sg.r, 6), idx = g.index.array, keep = [], per = 36;
+      for (let j = 0; j < n; j++) if (((j >> 1) & 1) === 0) for (let k = j * per; k < (j + 1) * per; k++) keep.push(idx[k]);
+      g.setIndex(keep); return g;
+    }), matFor(sg.s, sg.c, "g"), sg.s); return;
   }
   const m = matFor(sg.s, sg.c);
-  mesh(new THREE.TubeGeometry(cv, n, sg.r, 10, false), m, sg.s);
-  for (const p of [sg.pts[0], sg.pts[sg.pts.length - 1]]) { const o = mesh(SPH, m, sg.s); o.position.copy(p); o.scale.setScalar(sg.r); }
+  mesh(GC.get("t" + sg.r + "|" + ptsKey(sg.pts), () => { const [cv, n] = segN(); return tubeGeo(cv, n, sg.r, 10); }), m, sg.s);
+  for (const p of [sg.pts[0], sg.pts[sg.pts.length - 1]]) { const o = mesh(CAP, m, sg.s); o.raycast = capRC; o.userData.fitGeo = SPH; o.position.copy(p); o.scale.setScalar(sg.r); }
 }
-// 心臟外形：借模組 1 同一天的心管（淡色、不能點）
+// 心臟外形：借模組 1 同一天的心管（淡色、不能點）；直接共用模組 1 的幾何（模組 1 原地更新），不複製、也不釋放
 function buildHeart(DS) {
-  for (const o of heartG.children) o.geometry.dispose(); heartG.clear();
+  heartG.clear();
   if (!M.layers.heart) return;
   const c3 = state.cut3d; state.cut3d = false; M1.update(); state.cut3d = c3;
-  M1.group.traverse((o) => { if (o.isMesh && o.userData.tube && o.visible) heartG.add(new THREE.Mesh(o.geometry.clone(), heartMat)); });
+  M1.group.traverse((o) => { if (o.isMesh && o.userData.tube && o.visible) heartG.add(new THREE.Mesh(o.geometry, heartMat)); });
   heartG.position.y = -DS;
 }
 
@@ -2170,7 +2212,7 @@ M.update = function () {
   plane.constant = yc;
   const clip = cut ? [plane] : [];
   for (const m of ALLM) m.clippingPlanes = clip;
-  clearVG(); for (const sg of SEG) addSeg(sg);
+  clearVG(); for (const sg of SEG) addSeg(sg); GC.end();
   for (const m of ALLM) if (m.userData.s) m.emissive.copy(m.color).multiplyScalar(state.sel === m.userData.s ? .45 : 0);
   buildHeart(GEO.DS);
   // 切面框、切口
@@ -2188,6 +2230,9 @@ M.update = function () {
   if (on) setTimeout(() => { if (state.day < 55.9) setDay(56); select(on); });
   prevF = { ...flags };
 };
+
+// 切走這個模組時釋放網格與幾何（模組 1 的心管幾何不屬於這裡，不釋放）
+M.sleep = () => { clearVG(); GC.flush(); heartG.clear(); for (const o of capG.children) o.geometry.dispose(); capG.clear(); };
 
 // 選到目前沒有的構造：跳到看得到的天數；選到異常：打開那個開關
 const NEED = { a1: 24, a2: 27, a3: 32, a4: 32, sac: 32, dao: 32, a5: 32, a6: 34, isa7: 34, cd: 34, pa: 34, tr: 30, maxa: 30, hya: 30, vag: 32, trach: 32, eso: 32, phx: 32, lung: 32 };
@@ -2612,7 +2657,7 @@ const curveOf = (sg) => sg.cv || (sg.cv = crv(sg.pts));
 /* ---------- 3D 網格 ---------- */
 const VG = new THREE.Group(), heartG = new THREE.Group(), capG = new THREE.Group(), frameG = new THREE.Group();
 M.group.add(VG, heartG, capG, frameG); frameG.add(...planeFrame(.05, .6));
-const SPH = new THREE.SphereGeometry(1, 18, 12), CYL = new THREE.CylinderGeometry(1, 1, 1, 28, 1, false);
+const SPH = new THREE.SphereGeometry(1, 18, 12), CAP = new THREE.SphereGeometry(1, 12, 8), capRC = capRaycast(SPH), CYL = new THREE.CylinderGeometry(1, 1, 1, 28, 1, false);
 const MATC = new Map(), ALLM = [];
 function matFor(s, c, kind = "") {
   const key = s + "|" + c + "|" + kind; let m = MATC.get(key);
@@ -2629,28 +2674,32 @@ const CAPM = {};
 const capMat = (c, a) => CAPM[c + a] || (CAPM[c + a] = themed(new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: a < 1, opacity: a, depthWrite: a >= 1 }), c));
 const plane = new THREE.Plane(new V3(0, -1, 0), 0);
 function mesh(g, m, s, parent = VG) { const o = new THREE.Mesh(g, m); o.userData.struct = s; parent.add(o); return o; }
-function clearVG() { for (const o of VG.children) if (o.geometry !== SPH && o.geometry !== CYL) o.geometry.dispose(); VG.clear(); }
+// 管的幾何放快取（geoCache）：形狀沒變就沿用；clearVG 只拿掉網格
+const GC = geoCache();
+function clearVG() { VG.clear(); }
 function addSeg(sg) {
   if (sg.kind === "sph") { const o = mesh(SPH, matFor(sg.s, sg.c, sg.soft ? "soft" : ""), sg.s); o.userData.soft = !!sg.soft; o.position.copy(sg.p); o.scale.setScalar(sg.R); return; }
   if (sg.kind === "ell") { const o = mesh(SPH, matFor(sg.s, sg.c, "soft"), sg.s); o.userData.soft = true; o.position.copy(sg.p); o.scale.set(...sg.R); return; }
   if (sg.kind === "cyl") { const o = mesh(CYL, matFor(sg.s, sg.c, "soft"), sg.s); o.userData.soft = true; o.position.set(sg.cx, (sg.y0 + sg.y1) / 2, sg.cz); o.scale.set(sg.rx, sg.y1 - sg.y0, sg.rz); return; }
-  const cv = curveOf(sg), n = Math.max(8, Math.ceil(cv.getLength() * 24));
+  const segN = () => { const cv = curveOf(sg); return [cv, Math.max(8, Math.ceil(cv.getLength() * 24))]; }, pk = sg.r + "|" + ptsKey(sg.pts);
   if (sg.ghost) {
-    const g = new THREE.TubeGeometry(cv, n, sg.r, 6, false), idx = g.index.array, keep = [], per = 36;
-    for (let j = 0; j < n; j++) if (((j >> 1) & 1) === 0) for (let k = j * per; k < (j + 1) * per; k++) keep.push(idx[k]);
-    g.setIndex(keep); mesh(g, matFor(sg.s, sg.c, "g"), sg.s); return;
+    mesh(GC.get("g" + pk, () => {
+      const [cv, n] = segN(), g = tubeGeo(cv, n, sg.r, 6), idx = g.index.array, keep = [], per = 36;
+      for (let j = 0; j < n; j++) if (((j >> 1) & 1) === 0) for (let k = j * per; k < (j + 1) * per; k++) keep.push(idx[k]);
+      g.setIndex(keep); return g;
+    }), matFor(sg.s, sg.c, "g"), sg.s); return;
   }
-  if (sg.soft) { const o = mesh(new THREE.TubeGeometry(cv, n, sg.r, 14, false), matFor(sg.s, sg.c, "soft"), sg.s); o.userData.soft = true; return; }
+  if (sg.soft) { const o = mesh(GC.get("s" + pk, () => { const [cv, n] = segN(); return tubeGeo(cv, n, sg.r, 14); }), matFor(sg.s, sg.c, "soft"), sg.s); o.userData.soft = true; return; }
   const m = matFor(sg.s, sg.c);
-  mesh(new THREE.TubeGeometry(cv, n, sg.r, 10, false), m, sg.s);
-  for (const p of [sg.pts[0], sg.pts[sg.pts.length - 1]]) { const o = mesh(SPH, m, sg.s); o.position.copy(p); o.scale.setScalar(sg.r); }
+  mesh(GC.get("t" + pk, () => { const [cv, n] = segN(); return tubeGeo(cv, n, sg.r, 10); }), m, sg.s);
+  for (const p of [sg.pts[0], sg.pts[sg.pts.length - 1]]) { const o = mesh(CAP, m, sg.s); o.raycast = capRC; o.userData.fitGeo = SPH; o.position.copy(p); o.scale.setScalar(sg.r); }
 }
-// 心臟外形：借模組 1 同一天的心管（淡色、不能點）
+// 心臟外形：借模組 1 同一天的心管（淡色、不能點）；直接共用模組 1 的幾何（模組 1 原地更新），不複製、也不釋放
 function buildHeart() {
-  for (const o of heartG.children) o.geometry.dispose(); heartG.clear();
+  heartG.clear();
   if (!M.layers.heart) return;
   const c3 = state.cut3d; state.cut3d = false; M1.update(); state.cut3d = c3;
-  M1.group.traverse((o) => { if (o.isMesh && o.userData.tube && o.visible) heartG.add(new THREE.Mesh(o.geometry.clone(), heartMat)); });
+  M1.group.traverse((o) => { if (o.isMesh && o.userData.tube && o.visible) heartG.add(new THREE.Mesh(o.geometry, heartMat)); });
 }
 
 /* ---------- 每次更新 ---------- */
@@ -2661,7 +2710,7 @@ M.update = function () {
   plane.constant = yc;
   const clip = cut ? [plane] : [];
   for (const m of ALLM) m.clippingPlanes = clip;
-  clearVG(); for (const sg of SEG) addSeg(sg);
+  clearVG(); for (const sg of SEG) addSeg(sg); GC.end();
   for (const m of ALLM) if (m.userData.s) m.emissive.copy(m.color).multiplyScalar(state.sel === m.userData.s ? .45 : 0);
   buildHeart();
   // 切面框、切口
@@ -2679,6 +2728,9 @@ M.update = function () {
   if (on) setTimeout(() => { if (state.day < 69.9) setDay(70); select(on); });
   prevF = { ...flags };
 };
+
+// 切走這個模組時釋放網格與幾何（模組 1 的心管幾何不屬於這裡，不釋放）
+M.sleep = () => { clearVG(); GC.flush(); heartG.clear(); for (const o of capG.children) o.geometry.dispose(); capG.clear(); };
 
 // 選到目前沒有的構造：跳到最近看得到的天數；選到異常：打開那個開關
 const has = (d, s) => geom(d).seg.some((x) => x.s === s && !x.ghost);
@@ -3121,14 +3173,18 @@ function omat(s) { // 心腔：單一含氧色、半透明
 }
 const chPlane = new THREE.Plane(new V3(1, 0, 0), .42); // 心臟特寫：從右側看，切掉右心房外側半（x < −.42），露出房中隔
 function mesh(g, m, s, parent = VG) { const o = new THREE.Mesh(g, m); o.userData.struct = s; parent.add(o); return o; }
-const SHARED = new Set([SPH, BOX, DISK, RING]);
+const CDG = tubeGeo(crv([v3(-.08, 1.86, -.4), v3(-.08, 1.82, -.15), v3(-.08, 1.86, .1)]), 16, .035, 8); // 界嵴：形狀固定，建一次
+const SHARED = new Set([SPH, BOX, DISK, RING, CDG]);
+// 管與端點球的幾何放快取（geoCache）：形狀和顏色都沒變就沿用；每次更新只拿掉網格
+const GC = geoCache();
+const colKey = (c) => Math.round(c.r * 1e4) + "," + Math.round(c.g * 1e4) + "," + Math.round(c.b * 1e4);
 function clearG(G) { G.traverse((o) => { if (o !== G && o.geometry && !SHARED.has(o.geometry)) o.geometry.dispose(); }); G.clear(); }
 function colorGeo(g, fnU) { // 依頂點在管上的位置 u 上色
   const n = g.attributes.position.count, col = new Float32Array(n * 3);
   for (let k = 0; k < n; k++) { fnU(k, tmpC); col[k * 3] = tmpC.r; col[k * 3 + 1] = tmpC.g; col[k * 3 + 2] = tmpC.b; }
   g.setAttribute("color", new THREE.BufferAttribute(col, 3));
 }
-function ballGeo(r, c) { const g = new THREE.SphereGeometry(r, 12, 8); colorGeo(g, (k, o) => o.copy(c)); return g; }
+function ballGeo(r, c) { return GC.get("b" + r + "|" + colKey(c), () => { const g = new THREE.SphereGeometry(r, 12, 8); colorGeo(g, (k, o) => o.copy(c)); return g; }); }
 function addSeg(sg, soft) {
   if (sg.kind === "ell") {
     if (sg.ch) { const m = omat(sg.s); o2col(sg.o, 0, m.color); const o = mesh(SPH, m, sg.s); o.userData.soft = true; o.position.copy(sg.p); o.scale.set(...sg.R); return; }
@@ -3138,31 +3194,36 @@ function addSeg(sg, soft) {
   if (sg.kind === "mix") { const m = cmat(sg.s, sg.c); m.emissive.copy(m.color).multiplyScalar(.3); const o = mesh(SPH, m, sg.s); o.position.copy(sg.p); o.scale.setScalar(sg.R); return; }
   if (sg.kind === "box") { const m = omat("pres" + sg.p.x); m.userData.s = "pres"; m.opacity = .85; m.depthWrite = true; o2col(sg.o, 0, m.color); const o = mesh(BOX, m, "pres"); o.position.copy(sg.p).add(v3(0, sg.h / 2, 0)); o.scale.set(.14, Math.max(.01, sg.h), .14); return; }
   if (sg.hide || sg.r <= 0) return;
-  const cv = curveOf(sg), n = Math.max(8, Math.ceil(cv.getLength() * 24)), rad = 10;
+  const segN = () => { const cv = curveOf(sg); return [cv, Math.max(8, Math.ceil(cv.getLength() * 24))]; }, rad = 10, pk = sg.r + "|" + ptsKey(sg.pts);
   if (sg.c && sg.soft) { // 臍帶外膜
     const m = cmat(sg.s, sg.c, "soft"); m.opacity = .22 * (sg.a ?? 1);
-    const o = mesh(new THREE.TubeGeometry(cv, n, sg.r, 14, false), m, sg.s); o.userData.soft = true; return;
+    const o = mesh(GC.get("s" + pk, () => { const [cv, n] = segN(); return tubeGeo(cv, n, sg.r, 14); }), m, sg.s); o.userData.soft = true; return;
   }
-  const g = new THREE.TubeGeometry(cv, n, sg.r, rad, false), c0 = o2col(sg.o[0], sg.lg), c1 = o2col(sg.o[1], sg.lg);
-  colorGeo(g, (k, o) => o.copy(c0).lerp(c1, Math.floor(k / (rad + 1)) / n));
+  const c0 = o2col(sg.o[0], sg.lg), c1 = o2col(sg.o[1], sg.lg);
+  const g = GC.get("v" + colKey(c0) + "|" + colKey(c1) + "|" + pk, () => {
+    const [cv, n] = segN(), g = tubeGeo(cv, n, sg.r, rad);
+    colorGeo(g, (k, o) => o.copy(c0).lerp(c1, Math.floor(k / (rad + 1)) / n)); return g;
+  });
   const m = vmat(sg.s, soft || (sg.a ?? 1) < 1);
   mesh(g, m, sg.s);
   for (const [p, c] of [[sg.pts[0], c0], [sg.pts[sg.pts.length - 1], c1]]) { const o = mesh(ballGeo(sg.r, c), m, sg.s); o.position.copy(p); }
-  if (sg.ring) { const o = mesh(RING, cmat("dv", "--c-dv"), "dv"); o.position.copy(sg.ring); o.scale.setScalar(sg.r * 1.25); o.lookAt(sg.ring.clone().add(cv.getTangentAt(.12))); }
+  if (sg.ring) { const o = mesh(RING, cmat("dv", "--c-dv"), "dv"); o.position.copy(sg.ring); o.scale.setScalar(sg.r * 1.25); o.lookAt(sg.ring.clone().add(curveOf(sg).getTangentAt(.12))); }
 }
 // 卵圓孔一帶：第二中隔、界嵴、第一中隔（卵圓孔瓣）、卵圓孔
 function buildSeptum(t) {
   clearG(HG);
   const fused = t >= 4.5 && !flags.pfo, P = birth(t);
   const ss = mesh(SPH, cmat("ss2", "--c-ss2"), "ss2", HG); ss.position.set(-.08, 2.08, -.15); ss.scale.set(.025, .25, .28);
-  const cd = crv([v3(-.08, 1.86, -.4), v3(-.08, 1.82, -.15), v3(-.08, 1.86, .1)]);
-  mesh(new THREE.TubeGeometry(cd, 16, .035, 8, false), cmat("cd", "--c-ss2"), "cd", HG);
+  mesh(CDG, cmat("cd", "--c-ss2"), "cd", HG);
   // 卵圓孔瓣：底部鉸鏈，胎兒期往左心房掀開，出生後貼住第二中隔（未閉時留一道縫）
   const ang = lerp(.55, flags.pfo && t >= 1 ? .06 : 0, P), fl = new THREE.Group();
   fl.position.copy(HINGE); fl.rotation.z = -ang; HG.add(fl);
   const flap = mesh(BOX, cmat("sp1", "--c-sp1"), "sp1", fl); flap.position.set(.02, .25, 0); flap.scale.set(.03, .5, .4);
   const ring = mesh(RING, cmat("fo", fused ? "--c-ss2" : "--c-hole"), "fo", HG); ring.position.copy(FO); ring.rotation.y = Math.PI / 2; ring.scale.setScalar(.13);
 }
+
+// 切走這個模組時釋放網格與幾何（共用幾何留著）
+M.sleep = () => { VG.clear(); GC.flush(); clearG(HG); };
 
 /* ---------- 流動粒子 ---------- */
 const PMAX = 1400, PR = .032;
@@ -3208,9 +3269,9 @@ M.update = function () {
   if (flagOn()) PRESENT.add(flagOn());
   if (t >= 4.5 || flags.pfo) PRESENT.add("fo");
   PRESENT.add("ss2"); PRESENT.add("sp1"); PRESENT.add("cd"); PRESENT.add("fo");
-  clearG(VG);
+  VG.clear();
   const soft = M.layers.flow;
-  for (const sg of SEG) addSeg(sg, soft);
+  for (const sg of SEG) addSeg(sg, soft); GC.end();
   buildSeptum(t);
   for (const m of ALLM) m.clippingPlanes = [];
   if (state.cut3d) for (const m of ALLM) m.clippingPlanes = [chPlane]; // 剖開：x < −.42 全部切掉（含右側血管），露出房中隔
@@ -3460,7 +3521,7 @@ const OP3 = { g: .55, soft: .2, dim: .08, faint: .3 }, OP2 = { g: .6, soft: .22,
 function mkLib(M) {
   const VG = new THREE.Group(), capG = new THREE.Group(), frameG = new THREE.Group();
   M.group.add(VG, capG, frameG); frameG.add(...planeFrame(.05, .6));
-  const SPH = new THREE.SphereGeometry(1, 20, 14), MATC = new Map(), ALLM = [], CAPM = {};
+  const SPH = new THREE.SphereGeometry(1, 20, 14), CAP = new THREE.SphereGeometry(1, 12, 8), capRC = capRaycast(SPH), MATC = new Map(), ALLM = [], CAPM = {};
   const plane = new THREE.Plane(new V3(0, -1, 0), 0);
   function matFor(s, c, kind = "") {
     const key = s + "|" + c + "|" + kind; let m = MATC.get(key);
@@ -3470,19 +3531,23 @@ function mkLib(M) {
   const capMat = (c, a) => CAPM[c + a] || (CAPM[c + a] = themed(new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: a < 1, opacity: a, depthWrite: a >= 1 }), c));
   const curveOf = (sg) => sg.cv || (sg.cv = crv(sg.pts));
   function mesh(g, m, sg) { const o = new THREE.Mesh(g, m); o.userData.struct = sg.s; if (sg.mk === "soft") o.userData.soft = true; VG.add(o); return o; }
-  function clear() { for (const o of VG.children) if (o.geometry !== SPH) o.geometry.dispose(); VG.clear(); }
+  // 管、圓柱的幾何放快取（geoCache）：形狀沒變就沿用，不再每步重建；clear 只拿掉網格
+  const GC = geoCache();
+  function clear() { VG.clear(); }
   function addSeg(sg) {
     const m = matFor(sg.s, sg.c, sg.ghost ? "g" : sg.mk || "");
     if (sg.kind === "sph" || sg.kind === "ell") { const o = mesh(SPH, m, sg); o.position.copy(sg.p); if (sg.kind === "sph") o.scale.setScalar(sg.R); else o.scale.set(...sg.r); return; }
-    if (sg.kind === "cyl") { const o = mesh(new THREE.CylinderGeometry(sg.rt ?? 1, 1, 1, 28, 1, true), m, sg); o.position.set(sg.cx ?? 0, (sg.y0 + sg.y1) / 2, sg.cz); o.scale.set(sg.rx, sg.y1 - sg.y0, sg.rz); return; }
-    const cv = curveOf(sg), n = Math.max(8, Math.ceil(cv.getLength() * 24));
+    if (sg.kind === "cyl") { const rt = sg.rt ?? 1, o = mesh(GC.get("c" + rt, () => new THREE.CylinderGeometry(rt, 1, 1, 28, 1, true)), m, sg); o.position.set(sg.cx ?? 0, (sg.y0 + sg.y1) / 2, sg.cz); o.scale.set(sg.rx, sg.y1 - sg.y0, sg.rz); return; }
+    const segN = () => { const cv = curveOf(sg); return [cv, Math.max(8, Math.ceil(cv.getLength() * 24))]; };
     if (sg.ghost) {
-      const g = new THREE.TubeGeometry(cv, n, sg.r, 6, false), idx = g.index.array, keep = [], per = 36;
-      for (let j = 0; j < n; j++) if (((j >> 1) & 1) === 0) for (let k = j * per; k < (j + 1) * per; k++) keep.push(idx[k]);
-      g.setIndex(keep); mesh(g, m, sg); return;
+      mesh(GC.get("g" + sg.r + "|" + ptsKey(sg.pts), () => {
+        const [cv, n] = segN(), g = tubeGeo(cv, n, sg.r, 6), idx = g.index.array, keep = [], per = 36;
+        for (let j = 0; j < n; j++) if (((j >> 1) & 1) === 0) for (let k = j * per; k < (j + 1) * per; k++) keep.push(idx[k]);
+        g.setIndex(keep); return g;
+      }), m, sg); return;
     }
-    mesh(new THREE.TubeGeometry(cv, n, sg.r, 10, false), m, sg);
-    for (const p of [sg.pts[0], sg.pts[sg.pts.length - 1]]) { const o = mesh(SPH, m, sg); o.position.copy(p); o.scale.setScalar(sg.r); }
+    mesh(GC.get("t" + sg.r + "|" + ptsKey(sg.pts), () => { const [cv, n] = segN(); return tubeGeo(cv, n, sg.r, 10); }), m, sg);
+    for (const p of [sg.pts[0], sg.pts[sg.pts.length - 1]]) { const o = mesh(CAP, m, sg); o.raycast = capRC; o.userData.fitGeo = SPH; o.position.copy(p); o.scale.setScalar(sg.r); }
   }
   // 2D：正面投影
   function band(Q, w) {
@@ -3583,7 +3648,7 @@ function mkLib(M) {
   }
   // 每次更新：重建網格、切開、選取高亮、切面框；fr＝[框中心 z, 寬, 高]
   function build(SEG, cut, yc, showFrame, fr) {
-    clear(); for (const sg of SEG) addSeg(sg);
+    clear(); for (const sg of SEG) addSeg(sg); GC.end();
     plane.constant = yc; const clip = cut ? [plane] : [];
     for (const m of ALLM) { m.clippingPlanes = clip; if (m.userData.s) m.emissive.copy(m.color).multiplyScalar(state.sel === m.userData.s ? .45 : 0); }
     for (const o of capG.children) o.geometry.dispose(); capG.clear();
@@ -3619,6 +3684,8 @@ function mkLib(M) {
     }
     return soft;
   }
+  // 切走這個模組時釋放網格與幾何（SEG 等資料留在模組裡，切回來 update 會重建）
+  M.sleep = () => { clear(); GC.flush(); for (const o of capG.children) o.geometry.dispose(); capG.clear(); };
   return { build, frontSec, txSec, labels, draw, anchor, pick };
 }
 
@@ -6319,7 +6386,7 @@ function select(s, pt = null) { // mod.reveal(s)：選到某些構造時模組�
 }
 function structBox(s) { // 選取構造看得到的網格外框（世界座標）；s＝null 時是整個模型（所有可點的構造）
   const box = new THREE.Box3(), b = new THREE.Box3();
-  mod.group.traverseVisible((o) => { if (o.isMesh && (s ? o.userData.struct === s : o.userData.struct) && o.layers.test(camera.layers) && o.geometry) { o.updateMatrixWorld(); o.geometry.computeBoundingBox(); box.union(b.copy(o.geometry.boundingBox).applyMatrix4(o.matrixWorld)); } });
+  mod.group.traverseVisible((o) => { if (o.isMesh && (s ? o.userData.struct === s : o.userData.struct) && o.layers.test(camera.layers) && o.geometry) { o.updateMatrixWorld(); if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); box.union(b.copy(o.geometry.boundingBox).applyMatrix4(o.matrixWorld)); } });
   return box;
 }
 function setPopFull(v) {
@@ -6610,6 +6677,7 @@ function setMod(id, keepPlaying, day) {
   const m = MODS.find((x) => x.id === id); if (!m || m.soon) return;
   if (!keepPlaying) stopPlay();
   if (modReady) { if (mod.ownAxis) mod.ownDay = state.day; else sharedDay = clampFrom && Math.abs(state.day - clampFrom[1]) < 1e-6 ? clampFrom[0] : state.day; }
+  if (modReady && mod !== m) mod.sleep?.(); // 切走的模組釋放它的網格（資料保留，切回來再建）
   modReady = true;
   mod = m; state.mod = id; state.sel = null; hidden.clear(); saveUi(); clearLabs();
   for (const x of MODS) if (x.group) x.group.visible = x === mod;
@@ -6704,7 +6772,7 @@ function autoFit(v, fill = .78) { // 沿視線調距離，讓目前看得到的�
     let mx = 0, my = 0;
     mod.group.traverseVisible((o) => {
       if (!o.isMesh || o.material.isMeshBasicMaterial) return;
-      const a = o.geometry.attributes.position; o.updateMatrixWorld();
+      const a = (o.userData.fitGeo || o.geometry).attributes.position; o.updateMatrixWorld(); // 管端球蓋量原本的球體（fitGeo），距離和改前一樣
       for (let i = 0; i < a.count; i += 3) { fitV.fromBufferAttribute(a, i).applyMatrix4(o.matrixWorld).project(fitCam); mx = Math.max(mx, Math.abs(fitV.x)); my = Math.max(my, Math.abs(fitV.y)); }
     });
     if (!mx) break;
@@ -6951,6 +7019,6 @@ buildUi(); resize(); snapDefaults(); quietClamp = !!HASH0; setMod(mod.id); quiet
 if (HASH0) applyHash(HASH0);
 booted = true; saveHash();
 requestAnimationFrame(loop);
-window.__emb = { hidden, resetMod, applyHash, hashStr, findMatches, nameOf, goEvent, THREE, scene, camera, controls, state, setDay, setMod, update, select, flyTo, MODS, M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11, M12, M13, M14, get mod() { return mod; } };
+window.__emb = { renderer, tubeGeo, hidden, resetMod, applyHash, hashStr, findMatches, nameOf, goEvent, THREE, scene, camera, controls, state, setDay, setMod, update, select, flyTo, MODS, M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11, M12, M13, M14, get mod() { return mod; } };
 </script>
 </html>
