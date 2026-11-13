@@ -459,14 +459,20 @@ let leaderHits = []; // 2D 切面上的名稱也可點：[struct, 外框多邊�
 function drawLeaders(ctx, labs, W, H, dpr, opt = {}) { // opt.top＝{L, R} 該欄名稱的最上緣（讓出角落給圖示）；opt.bottom＝名稱的最下緣
   const ink = css("--ink"), mute = css("--mute");
   ctx.font = `500 ${Math.round(12.5 * dpr)}px ${css("--f-body")}`; ctx.lineJoin = "round"; ctx.textBaseline = "middle";
+  // 一欄放不下（間距 15px）而另一欄還有空位：把最靠另一側的幾個搬過去；放得下就不搬（避免引線橫過圖面）
+  const G = 15 * dpr, span = (sd) => [Math.max(opt.top?.[sd] ?? 0, 8 * dpr), opt.bottom ?? H - 14 * dpr], cap = (sd) => { const [a, b] = span(sd); return Math.floor((b - a) / G) + 1; };
+  for (const [sd, o] of [["L", "R"], ["R", "L"]]) {
+    const mine = labs.filter((l) => l[2] === sd), k = Math.min(mine.length - cap(sd), cap(o) - labs.filter((l) => l[2] === o).length);
+    if (k > 0) mine.sort((a, b) => (sd === "L" ? b[1][0] - a[1][0] : a[1][0] - b[1][0])).slice(0, k).forEach((l) => { l[2] = o; });
+  }
   for (const side of ["L", "R"]) {
     const g = labs.filter((l) => l[2] === side).map((l) => ({ l, q: l[1] })).sort((a, b) => a.q[1] - b.q[1]);
-    const y0 = opt.top?.[side] ?? -1e9, y1 = opt.bottom ?? H - 12;
-    let gapY = 15 * dpr; if (opt.top || opt.bottom) gapY = Math.min(gapY, Math.max(12 * dpr, (y1 - Math.max(y0, 8 * dpr)) / Math.max(1, g.length - 1)));
+    const full = g.length > cap(side); // 還是放不下：壓縮間距（最小 11px），名稱限制在畫面內
+    const y0 = opt.top?.[side] ?? (full ? 8 * dpr : -1e9), y1 = opt.bottom ?? H - 14 * dpr;
+    let gapY = 15 * dpr; if (opt.top || opt.bottom || full) gapY = Math.min(gapY, Math.max((full ? 11 : 12) * dpr, (y1 - Math.max(y0, 8 * dpr)) / Math.max(1, g.length - 1)));
     let lastY = y0 - gapY;
     for (const it of g) { it.y = Math.max(it.q[1], lastY + gapY); lastY = it.y; }
-    if (opt.top || opt.bottom) { let nx = y1 + gapY; for (let i = g.length - 1; i >= 0; i--) { g[i].y = Math.min(g[i].y, nx - gapY); nx = g[i].y; } } // 只把超出的往上推，不越過 top
-    else { const over = lastY - y1; if (over > 0) for (const it of g) it.y -= over; }
+    { let nx = y1 + gapY; for (let i = g.length - 1; i >= 0; i--) { g[i].y = Math.min(g[i].y, nx - gapY); nx = g[i].y; } } // 只把超出下緣的往上推（整欄一起推會把最上面的推出畫面）
     for (const it of g) {
       const x = side === "L" ? 6 * dpr : W - 6 * dpr;
       ctx.strokeStyle = mute; ctx.lineWidth = dpr; ctx.beginPath(); ctx.moveTo(...it.q);
@@ -3528,16 +3534,37 @@ function mkLib(M) {
   }
   // 名稱：每個構造標一次；ok(s) 決定要不要標
   function labels(items, front, name, ok = () => true) {
-    const best = new Map();
+    const best = new Map(), bySide = new Map(); // bySide：每個構造在左、右各自最大的一塊（左右對稱的構造可以改標另一側）
+    const cen = (it) => it.mid || it.P.reduce((m, p) => [m[0] + p[0] / it.P.length, m[1] + p[1] / it.P.length], [0, 0]);
     for (const it of items) {
       if (!it.s || it.ghost || it.dash || it.mk === "dim" || !ok(it.s)) continue;
-      const A = front ? (it.len ?? Math.abs(area(it.P))) : Math.abs(area(it.P)), b = best.get(it.s);
+      const A = front ? (it.len ?? Math.abs(area(it.P))) : Math.abs(area(it.P)), b = best.get(it.s), c = cen(it), sd = c[0] < 0 ? "L" : "R";
       if (!b || A > b.A) best.set(it.s, { it, A });
+      const o = bySide.get(it.s) || {}; if (!o[sd] || A > o[sd].A) o[sd] = { c, A }; bySide.set(it.s, o);
     }
-    return [...best].map(([s, { it }]) => {
-      const c = it.mid || it.P.reduce((m, p) => [m[0] + p[0] / it.P.length, m[1] + p[1] / it.P.length], [0, 0]);
-      return [name(s), c, c[0] < 0 ? "L" : "R", s];
+    const bc = [...best.values()].map((b) => cen(b.it)), bx = bc.map((c) => c[0]), by = bc.map((c) => c[1]);
+    const span = Math.max(Math.max(...bx) - Math.min(...bx), Math.max(...by) - Math.min(...by), 1e-6);
+    const out = [...best].map(([s, { it, A }]) => {
+      const c = cen(it), sd = c[0] < 0 ? "L" : "R", alt = bySide.get(s)[sd === "L" ? "R" : "L"];
+      // 另一塊要大約在鏡像位置（左右對稱的構造），沿著同一條管子分段的不算
+      const mir = alt && alt.A >= .6 * A && Math.abs(alt.c[0] + c[0]) < .15 * span && Math.abs(alt.c[1] - c[1]) < .1 * span;
+      return [name(s), c, sd, s, mir ? alt.c : null];
     });
+    // 兩欄差 3 個以上：把多的那欄裡左右對稱的構造平均挑幾個，改標另一側的那一塊（引線不會橫過圖面）
+    const nL = out.filter((o) => o[2] === "L").length, nR = out.length - nL, from = nL > nR ? "L" : "R";
+    if (Math.abs(nL - nR) >= 3) {
+      const cand = out.filter((o) => o[2] === from && o[4]).sort((a, b) => b[1][1] - a[1][1]), k = Math.min(cand.length, Math.floor(Math.abs(nL - nR) / 2));
+      for (let i = 0; i < k; i++) { const o = cand[Math.floor((i + .5) * cand.length / k)]; o[1] = o[4]; o[2] = from === "L" ? "R" : "L"; }
+    }
+    // 同一欄有兩個錨點幾乎重疊（引線會交錯）：其中有對稱另一塊的，改標另一側（另一欄不能因此變得比較擠）
+    const thr = .1 * span;
+    for (const a of out) for (const b of out) {
+      if (a === b || a[2] !== b[2] || Math.hypot(a[1][0] - b[1][0], a[1][1] - b[1][1]) > thr) continue;
+      const mv = b[4] ? b : a[4] ? a : null; if (!mv) continue;
+      const here = out.filter((o) => o[2] === mv[2]).length; if (out.length - here >= here) continue;
+      mv[1] = mv[4]; mv[4] = null; mv[2] = mv[2] === "L" ? "R" : "L";
+    }
+    return out.map((o) => o.slice(0, 4));
   }
   function draw(ctx, items, P, dpr) {
     const hits = [];
@@ -4495,6 +4522,8 @@ function geom(t) {
     tube("gas", "--c-hole", lin(0, 1, 20).map((s) => C.clone().addScaledVector(f1, .45 * Math.cos(2 * Math.PI * s)).addScaledVector(f2, .45 * Math.sin(2 * Math.PI * s))), .035);
   }
   // 中腸扭轉（只轉 90° 時，繞著 SMA 的螺旋）
+  // 反向旋轉：橫結腸從 SMA 後面穿過的地方圈起來（Langman 15th Fig. 15.33B）
+  if (K.rev && w > .5) { const C = T[Math.round(NT / 2)].clone().lerp(v3(-.1, -.55, -.3), .5); tube("malr", "--c-hole", lin(0, 1, 28).map((s) => C.clone().add(v3(.24 * Math.cos(2 * Math.PI * s), .2 * Math.sin(2 * Math.PI * s), 0))), .025); }
   if (K.nonrot && ret > .5) tube("malr", "--c-hole", lin(0, 1, 36).map((s) => O.clone().addScaledVector(ax, .05 + .5 * s).addScaledVector(d, .2 * Math.cos(5 * Math.PI * s)).addScaledVector(nrm, .2 * Math.sin(5 * Math.PI * s))), .03);
   return { seg: out, th };
 }
@@ -4525,7 +4554,8 @@ M.reveal = (s) => {
 };
 
 /* ---------- 地標名稱 ---------- */
-const short = (s) => (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
+const SHORT_KEEP = { duoF: "十二指腸（前腸）", duoM: "十二指腸（中腸）" }; // 兩段都叫十二指腸，2D／3D 名稱要分得出來
+const short = (s) => SHORT_KEEP[s] || (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
 M.tagAnchors = function () {
   const A = [], f = flagOn();
   for (const s of ["jej", "cdl", "cec", "asc", "trc", "hg", "sma", "vit", ...(f ? [f] : [])]) { const p = LIB.anchor(SEG, s); if (p) A.push([short(s), p, s]); }
@@ -4551,12 +4581,6 @@ function dial(ctx, W, dpr, th) { // 角度盤：從腹側看，頭側肢的方�
   ctx.fillText(`${th < 0 ? "順時針 " : "逆時針 "}${Math.round(Math.abs(th))}°`, cx - 4 * dpr, cy + r + 10 * dpr);
   ctx.restore();
 }
-function balance(labs) { // 同 m9：兩欄差太多時，把最靠中線的幾個移到另一欄（開關時右欄常擠）
-  const L = labs.filter((l) => l[2] === "L"), R = labs.filter((l) => l[2] === "R"), toR = L.length > R.length;
-  const mv = Math.floor(Math.abs(L.length - R.length) / 2);
-  if (mv > 0) (toR ? L : R).sort((a, b) => (toR ? b[1][0] - a[1][0] : a[1][0] - b[1][0])).slice(0, mv).forEach((l) => { l[2] = toR ? "R" : "L"; });
-  return labs;
-}
 M.drawSection = function (ctx, W, H, dpr) {
   if (!GEO) M.update();
   const md = M.secMode, yc = YC();
@@ -4565,7 +4589,7 @@ M.drawSection = function (ctx, W, H, dpr) {
   const ox = W / 2 - (X0 + X1) / 2 * sc, oy = H / 2 + (Y0 + Y1) / 2 * sc, P = ([x, y]) => [ox + x * sc, oy - y * sc];
   const items = md === "tx" ? LIB.txSec(SEG, yc) : LIB.frontSec(md === "side" ? SEG.map(toSide) : SEG);
   const hits = LIB.draw(ctx, items, P, dpr);
-  drawLeaders(ctx, balance(LIB.labels(items, md !== "tx", short, LAB2).map(([txt, p, sd, s]) => [txt, P(p), sd, s])), W, H, dpr, { top: md === "front" ? { R: 62 * dpr } : undefined, bottom: H - 22 * dpr });
+  drawLeaders(ctx, (LIB.labels(items, md !== "tx", short, LAB2).map(([txt, p, sd, s]) => [txt, P(p), sd, s])), W, H, dpr, { top: md === "front" ? { R: 62 * dpr } : undefined, bottom: H - 22 * dpr });
   if (md === "front") { dial(ctx, W, dpr, GEO.th); dirText(ctx, W, H, dpr, "頭側", "尾側（從腹側看，畫面右＝病人左）"); return { hits, where: `第 ${Math.floor(state.day)} 天的投影` }; }
   if (md === "side") { dirText(ctx, W, H, dpr, "頭側", "尾側（從左側看，畫面左＝腹側）"); return { hits, where: "左側投影" }; }
   dirText(ctx, W, H, dpr, "腹側", "背側（從腳往頭看，畫面右＝病人左）");
@@ -4835,7 +4859,8 @@ M.reveal = (s) => {
 };
 
 /* ---------- 地標名稱 ---------- */
-const short = (s) => (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
+const SHORT_KEEP = { duoF: "十二指腸（前腸）", duoM: "十二指腸（中腸）" }; // 兩段都叫十二指腸，2D／3D 名稱要分得出來
+const short = (s) => SHORT_KEEP[s] || (STRUCT[s] ? STRUCT[s].name({ t: state.day }).replace(/（.*?）/g, "") : s);
 M.tagAnchors = function () {
   const A = [], f = flagOn();
   for (const s of ["sto", "duoF", "duoM", "liv", "dp", "vp", "spl", "gb", ...(f ? [f] : [])]) { const p = LIB.anchor(SEG, s); if (p) A.push([short(s), p, s]); }
@@ -4845,12 +4870,6 @@ M.tagShown = (p) => !(state.cut3d && M.secMode === "tx") || p[1] <= YC() + .06;
 
 /* ---------- 2D ---------- */
 const LAB2 = (s) => s === state.sel || !["ao", "eso", "dmg", "lom", "st", "mg"].includes(s);
-function balance(labs) { // 胃旋轉後構造多半在病人右（畫面左），左欄會擠：兩欄差太多時，把最靠中線的幾個移到另一欄
-  const L = labs.filter((l) => l[2] === "L"), R = labs.filter((l) => l[2] === "R"), toR = L.length > R.length;
-  const mv = Math.floor(Math.abs(L.length - R.length) / 2);
-  if (mv > 0) (toR ? L : R).sort((a, b) => (toR ? b[1][0] - a[1][0] : a[1][0] - b[1][0])).slice(0, mv).forEach((l) => { l[2] = toR ? "R" : "L"; });
-  return labs;
-}
 M.drawSection = function (ctx, W, H, dpr) {
   if (!GEO) M.update();
   const tx = M.secMode === "tx", yc = YC();
@@ -4861,7 +4880,7 @@ M.drawSection = function (ctx, W, H, dpr) {
   const L = GEO.lum.filter((l) => l.r > .004);
   const items = tx ? LIB.txSec(SEG, yc).concat(LIB.txSec(L, yc)) : LIB.frontSec(SEG).concat(LIB.frontSec(L).map((it) => ({ ...it, a: .9 })));
   const hits = LIB.draw(ctx, items, P, dpr).filter(([s]) => s !== "lum");
-  drawLeaders(ctx, balance(LIB.labels(items.filter((it) => it.s !== "lum"), !tx, short, LAB2).map(([txt, p, sd, s]) => [txt, P(p), sd, s])), W, H, dpr, { bottom: H - 22 * dpr });
+  drawLeaders(ctx, (LIB.labels(items.filter((it) => it.s !== "lum"), !tx, short, LAB2).map(([txt, p, sd, s]) => [txt, P(p), sd, s])), W, H, dpr, { bottom: H - 22 * dpr });
   if (!tx) { dirText(ctx, W, H, dpr, "頭側", "尾側（從腹側看，畫面右＝病人左）"); return { hits, where: `第 ${Math.floor(state.day)} 天的投影` }; }
   dirText(ctx, W, H, dpr, "腹側", "背側（從腳往頭看，畫面右＝病人左）");
   return { hits, where: yc > 1.6 ? "賁門、橫中膈的高度" : yc > .6 ? "胃體、肝的高度" : yc > -.2 ? "十二指腸、胰的高度" : "十二指腸下段" };
@@ -5179,7 +5198,7 @@ const STRUCT = {
   ur: { name: "臍尿管", en: "urachus", meta: "→ 正中臍韌帶",
     body: `<p>膀胱頂到臍的那段尿囊收窄成厚的纖維索，成人叫<b>正中臍韌帶</b>（Langman 15th Fig. 16.13B）。</p><p>不要和內側臍韌帶混淆：內側臍韌帶是臍動脈遠段閉鎖而成（左右各一條）；正中臍韌帶只有一條，在正中線。</p><p>${goTo("m5,5,ua", "模組 5 胎兒循環（內側臍韌帶）")}</p>`,
     trap: `109-1-35：前腹壁的腹膜皺襞——正中臍皺襞（臍尿管）、內側臍皺襞（臍動脈）、外側臍皺襞（下腹壁動脈）；靜脈導管在肝內，不形成前腹壁的皺襞。`, kg: ["109-1-醫學一-35"] },
-  wd: { name: "中腎管", en: "mesonephric duct", meta: "尾端併入膀胱壁",
+  wd: { name: "中腎管（Wolff 管）", en: "mesonephric（Wolffian）duct", meta: "尾端併入膀胱壁",
     body: `<p>中腎管通到泄殖腔（後來是尿生殖竇）。尾端逐漸併入膀胱後壁，結果輸尿管和中腎管各自開口：輸尿管開口往頭外側移，中腎管開口往下靠近尿道（男性成為射精管開口）（Langman 15th Fig. 16.14）。</p><p>${goTo("m10,35,wd", "模組 10 腎（中腎管與輸尿管芽）")}　${goTo("m12,70,vd", "模組 12 性腺與生殖管（男性衍生物）")}</p>` },
   ub: { name: "輸尿管", en: "ureter", meta: "來自輸尿管芽・各自開口在膀胱",
     body: `<p>來自中腎管長出的輸尿管芽（看模組 10）。中腎管尾端併入膀胱後，輸尿管直接開口在膀胱（Langman 15th Fig. 16.14）。</p><p>${goTo("m10,42,ub", "模組 10 腎（輸尿管芽）")}</p>` },
@@ -5622,12 +5641,6 @@ M.tagAnchors = function () {
 M.tagShown = (p) => !(state.cut3d && M.secMode === "tx") || p[1] <= YC() + .06;
 
 const LAB2 = (s) => s === state.sel || !["hg", "mes", "adr", "ser", "ley"].includes(s) || (s === "adr" && GU.cah);
-function balance(labs) {
-  const L = labs.filter((l) => l[2] === "L"), R = labs.filter((l) => l[2] === "R"), toR = L.length > R.length;
-  const mv = Math.floor(Math.abs(L.length - R.length) / 2);
-  if (mv > 0) (toR ? L : R).sort((a, b) => (toR ? b[1][0] - a[1][0] : a[1][0] - b[1][0])).slice(0, mv).forEach((l) => { l[2] = toR ? "R" : "L"; });
-  return labs;
-}
 M.drawSection = function (ctx, W, H, dpr) {
   if (!GEO) M.update();
   const tx = M.secMode === "tx", yc = YC();
@@ -5636,7 +5649,7 @@ M.drawSection = function (ctx, W, H, dpr) {
   const ox = W / 2 - (X0 + X1) / 2 * sc, oy = H / 2 + (Y0 + Y1) / 2 * sc, P = ([x, y]) => [ox + x * sc, oy - y * sc];
   const items = tx ? LIB.txSec(SEG, yc) : LIB.frontSec(SEG);
   const hits = LIB.draw(ctx, items, P, dpr);
-  drawLeaders(ctx, balance(LIB.labels(items, !tx, short, LAB2).map(([txt, p, sd, s]) => [txt, P(p), sd, s])), W, H, dpr, { bottom: H - 22 * dpr });
+  drawLeaders(ctx, (LIB.labels(items, !tx, short, LAB2).map(([txt, p, sd, s]) => [txt, P(p), sd, s])), W, H, dpr, { bottom: H - 22 * dpr });
   const sx = GU.xy ? "46,XY" : "46,XX";
   if (!tx) { dirText(ctx, W, H, dpr, "頭側", "尾側（從腹側看，畫面右＝病人左）"); return { hits, where: `第 ${Math.floor(state.day)} 天・${sx}` }; }
   dirText(ctx, W, H, dpr, "腹側", "背側（從腳往頭看，畫面右＝病人左）");
@@ -5842,7 +5855,9 @@ M.drawSection = function (ctx, W, H, dpr) {
   if (!GEO) M.update();
   const sd = M.secMode === "side";
   const S2 = SEG.filter((sg) => sg.s && (!sd || (sg.kind ? sg.p.x : sg.pts[0].x) >= -.05)).map((sg) => (sd ? proj(sg, side, (r) => [r[2], r[1], r[0]]) : proj(sg, per, (r) => [r[0], r[2], r[1]])));
-  const [X0, X1, Y0, Y1] = sd ? [-2.0, 1.0, -3.2, -1.5] : [-1.0, 1.0, -1.0, 1.9];
+  // 側面：早期構造小，框隨陰莖變長（dvOf×mxOf，女性維持早期框）從早期框漸變到晚期框，早期放大約 1.25 倍
+  const kv = dvOf(state.day) * mxOf(), lerp = (a, b) => a + (b - a) * kv;
+  const [X0, X1, Y0, Y1] = sd ? [lerp(-1.45, -1.95), lerp(.97, .95), lerp(-2.75, -3.2), lerp(-1.65, -1.6)] : [-1.0, 1.0, -1.0, 1.9];
   const pad = W * .03, top = H * .07, sc = Math.min((W - 2 * pad) / (X1 - X0), (H - 2 * top) / (Y1 - Y0));
   const ox = W / 2 - (X0 + X1) / 2 * sc, oy = H / 2 + (Y0 + Y1) / 2 * sc, P = ([x, y]) => [ox + x * sc, oy - y * sc];
   const items = LIB.frontSec(S2), hits = LIB.draw(ctx, items, P, dpr);
@@ -6869,6 +6884,7 @@ function buildIndex() { // 名稱會隨天數變（例如菱唇／小腦板）�
 }
 function findMatches(q) {
   if (!findIdx) buildIndex();
+  q = String(q).trim().toLowerCase();
   const r = [];
   for (const e of findIdx) {
     if (!e.hay.includes(q)) continue;
