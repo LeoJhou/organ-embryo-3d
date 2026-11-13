@@ -57,17 +57,17 @@ main.noL { --lw: 30px; } main.noR { --rw: 30px; }
 /* 面板開關（同 CT 閱片的序列 ‹）：欄頂端的 ‹ ›；收起後剩 30px 窄邊＋直排欄名，點窄邊任何地方都會展開（≤860px 不顯示） */
 .fh { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
 .fh .lbl { margin: 0; }
-.fold { flex: none; align-self: center; width: 24px; height: 26px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--mute); font-size: 16px; line-height: 1; cursor: pointer; }
-.fold:hover { background: var(--chip); color: var(--ink); }
+.pfold { flex: none; align-self: center; width: 24px; height: 26px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--mute); font-size: 16px; line-height: 1; cursor: pointer; }
+.pfold:hover { background: var(--chip); color: var(--ink); }
 #notes .fh { margin: -6px -8px 2px 0; }
-#secHead .fold { margin: -4px 0 0 -8px; }
+#secHead .pfold { margin: -4px 0 0 -8px; }
 .rail { display: none; writing-mode: vertical-rl; letter-spacing: .2em; font-size: 12.5px; color: var(--mute); margin-top: 6px; }
 @media (min-width: 861px) {
 main.noL #notes, main.noR #bench { padding: 4px 2px; align-items: center; cursor: pointer; gap: 0; }
 main.noL #notes:hover, main.noR #bench:hover { background: var(--chip); }
-main.noL #notes > :not(.fh):not(.rail), main.noL #notes .fh .lbl, main.noR #bench > :not(#secHead):not(.rail), main.noR #secHead > :not(.fold) { display: none; }
+main.noL #notes > :not(.fh):not(.rail), main.noL #notes .fh .lbl, main.noR #bench > :not(#secHead):not(.rail), main.noR #secHead > :not(.pfold) { display: none; }
 main.noL #notes .fh, main.noR #secHead { margin: 0; }
-main.noR #secHead .fold { margin: 0; }
+main.noR #secHead .pfold { margin: 0; }
 main.noL #notes .rail, main.noR #bench .rail { display: block; }
 }
 aside { min-height: 0; overflow: auto; background: var(--panel); padding: 12px 14px; }
@@ -227,7 +227,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
   aside { overflow: visible; border: 0 !important; border-top: 1px solid var(--line) !important; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   #notes { display: block; padding-bottom: 12px; }
   .lpane { overflow: visible; }
-  .fold, .rail { display: none !important; }
+  .pfold, .rail { display: none !important; }
   #scrub { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   /* 3D 上方按鈕：單行橫向捲動，底色不透明，不蓋到模型（模型預設置中、留邊） */
   #views { top: 0; left: 0; right: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 6px 10px; background: color-mix(in srgb, var(--panel) 92%, transparent); border-bottom: 1px solid var(--line); pointer-events: auto; }
@@ -285,7 +285,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
   </header>
   <main>
     <aside id="notes">
-      <div class="fh"><div class="lbl">模組</div><button class="fold" id="edgeL" aria-label="收起左欄" title="收起左欄（[）">‹</button></div>
+      <div class="fh"><div class="lbl">模組</div><button class="pfold" id="edgeL" aria-label="收起左欄" title="收起左欄（[）">‹</button></div>
       <span class="rail">事件・國考</span>
       <h2 id="modTitle"></h2>
       <p id="modSub"></p>
@@ -334,7 +334,7 @@ kbd { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--line)
       </div>
     </div>
     <aside id="bench">
-      <div id="secHead"><button class="fold" id="edgeR" aria-label="收起右欄" title="收起右欄（]）">›</button><h2 id="secTitle"></h2><span id="secModes" role="group" aria-label="切面方向"></span><span id="secWhere"></span></div>
+      <div id="secHead"><button class="pfold" id="edgeR" aria-label="收起右欄" title="收起右欄（]）">›</button><h2 id="secTitle"></h2><span id="secModes" role="group" aria-label="切面方向"></span><span id="secWhere"></span></div>
       <canvas id="sec" width="720" height="460"></canvas>
       <div class="row2"><span id="secL"></span><span id="secHint">拖曳改切面位置</span><span id="secR"></span></div>
       <input id="cut" type="range" aria-label="切面位置">
